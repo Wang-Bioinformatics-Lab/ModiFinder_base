@@ -3,7 +3,7 @@
 This repository provides codes and examples for the analysis of the paper:
 ``` ModiFinder: Tandem Mass Spectral Alignment Enables Structural Modification Site Localization ```
 
-_Mohammad Reza Zare Shahneh, Michael Strobel, Giovanni Andrea Vitale, Christian Geibel, Yasin El Abiead, Berenike C Wagner 2 Karl Forchhammer, Neha Garg, Allegra T Aron, Vanessa V Phelan, Daniel Petras,, Mingxun Wang_
+_Mohammad Reza Zare Shahneh, Michael Strobel, Giovanni Andrea Vitale, Christian Geibel, Yasin El Abiead, Berenike C Wagner, Karl Forchhammer, Neha Garg, Allegra T Aron, Vanessa V Phelan, Daniel Petras, Mingxun Wang_
 
 ## Environment Setup
 
