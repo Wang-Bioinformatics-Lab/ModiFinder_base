@@ -1,0 +1,9 @@
+{
+    "Alignment": {
+        "mz_tolerance": 0.1,
+        "ppm_tolerance": 0.1
+    },
+    "Spectrum": {
+        "normalize_peaks": true
+    }
+}
