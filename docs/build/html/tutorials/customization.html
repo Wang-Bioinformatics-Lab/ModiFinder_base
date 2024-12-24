@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customization Tutorial &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Documentation" href="../modifinder/index.html" />
+    <link rel="prev" title="Basics Tutorial" href="basics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basics.html">Basics Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Customization Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#minor-adjustments">Minor Adjustments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#customization-with-alignment-engine-and-annotation-engine">Customization with alignment engine and annotation engine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorial.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Customization Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/customization.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="customization-tutorial">
+<h1>Customization Tutorial<a class="headerlink" href="#customization-tutorial" title="Link to this heading"></a></h1>
+<section id="minor-adjustments">
+<h2>Minor Adjustments<a class="headerlink" href="#minor-adjustments" title="Link to this heading"></a></h2>
+<p>ModiFinder by default uses Modified Cosine for Alignment and MAGMa for Annotation but you can adjust these based on your needs. To do so, you can check the documentation for engines and look at the AlignmentEngine and the AnnotationEngine abstracts. If you don’t want to develope a new engine and want to just modify the results slightly, you can change the values accordingly. Let’s look at an example for the Annotation.</p>
+<p>First, lets look at the unmodified result:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">from</span> <span class="nn">modifinder</span> <span class="kn">import</span> <span class="n">ModiFinder</span><span class="p">,</span> <span class="n">Compound</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities</span> <span class="kn">import</span> <span class="n">visualizer</span> <span class="k">as</span> <span class="n">mf_vis</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">c1</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00011906190&quot;</span>
+<span class="n">c2</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00011906105&quot;</span>
+<span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;mz_tolerance&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;ppm_tolerance&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="s1">&#39;ratio_to_base_peak&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;normalize_peaks&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+<span class="n">known_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">modified_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+<span class="n">mf</span> <span class="o">=</span> <span class="n">ModiFinder</span><span class="p">(</span><span class="n">known_compound</span><span class="p">,</span> <span class="n">modified_compound</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">initial_probs</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">generate_probabilities</span><span class="p">()</span>
+<span class="n">initial_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">initial_probs</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">true_modification</span> <span class="o">=</span> <span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_modifications</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">show_legend</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                              <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modification_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">initial_prediction</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Initial Prediction&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">true_modification</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;True Modification&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/customization_3_0.png" /></p>
+<p>This is an example discussed in the ModiFinder manuscript, for peaks 133.0653, 145.0649, and 147.0803, we want to remove any substructures that is not the result of the fragmentation at the amide bond as they are unlikely to happen.</p>
+<p>First, lets check the fragmentations for the peak 133.0653</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">peak_indexes</span> <span class="o">=</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">get_peak_indexes</span><span class="p">(</span><span class="mf">133.0653</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="c1"># print(peak_indexes)</span>
+<span class="n">peak_index</span> <span class="o">=</span> <span class="n">peak_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fragments</span> <span class="o">=</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak_index</span><span class="p">]</span>
+<span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">fragments</span><span class="p">:</span>
+    <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_frag_of_molecule</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">fragment</span><span class="p">),</span> <span class="n">fragment</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">fragment</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{2747705327616, 3296387399680, 1030792151103, 1023}
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/customization_5_1.png" /></p>
+<p>So we know we want to remove the following fragments: [2747705327616, 3296387399680, 1030792151103]</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2747705327616</span><span class="p">,</span> <span class="mi">3296387399680</span><span class="p">,</span> <span class="mi">1030792151103</span><span class="p">]</span>
+<span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak_index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">fragment</span> <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">fragments</span> <span class="k">if</span> <span class="n">fragment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Lets do the same for peaks 145.0649, and 147.0803</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">145.0649</span><span class="p">,</span> <span class="mf">147.0803</span><span class="p">]:</span>
+    <span class="n">peak_indexes</span> <span class="o">=</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">get_peak_indexes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;peak_indexes&quot;</span><span class="p">,</span> <span class="n">peak_indexes</span><span class="p">)</span>
+    <span class="n">peak_index</span> <span class="o">=</span> <span class="n">peak_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fragments</span> <span class="o">=</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak_index</span><span class="p">]</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">fragments</span><span class="p">:</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_frag_of_molecule</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">fragment</span><span class="p">),</span> <span class="n">fragment</span><span class="p">))</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">fragment</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">images</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Peak </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1"> with the index </span><span class="si">{</span><span class="n">peak_index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>peak_indexes [29]
+{3297461141504, 549755814911}
+peak_indexes [30]
+{11269457313792, 3297461141504, 3294239916035, 1030792151167, 3281355014159, 3264175144991, 549755814911}
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/customization_9_1.png" /></p>
+<p><img alt="png" src="../_images/customization_9_2.png" /></p>
+<p>let’s remove <code class="docutils literal notranslate"><span class="pre">3297461141504</span></code> from peak <code class="docutils literal notranslate"><span class="pre">29</span></code> and <code class="docutils literal notranslate"><span class="pre">11269457313792,</span> <span class="pre">3297461141504,</span> <span class="pre">3294239916035,</span> <span class="pre">1030792151167,</span> <span class="pre">3281355014159,</span> <span class="pre">3264175144991</span></code> from peak 30</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">fragment</span> <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span> <span class="k">if</span> <span class="n">fragment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3297461141504</span><span class="p">]])</span>
+<span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">fragment</span> <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span> <span class="k">if</span> <span class="n">fragment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">11269457313792</span><span class="p">,</span> <span class="mi">3297461141504</span><span class="p">,</span> <span class="mi">3294239916035</span><span class="p">,</span> <span class="mi">1030792151167</span><span class="p">,</span> <span class="mi">3281355014159</span><span class="p">,</span> <span class="mi">3264175144991</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Let’s look at the new result after the adjustment of the peak to fragment map</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">probs</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">generate_probabilities</span><span class="p">()</span>
+
+<span class="n">refined_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">initial_prediction</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Initial Prediction&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">true_modification</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;True Modification&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">refined_prediction</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Refined Prediction&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/customization_13_0.png" /></p>
+<p>As you can see, the prediction result has improved much more and is now predicting with less proximity cover issue and less ambiguity cover issue.</p>
+</section>
+<section id="customization-with-alignment-engine-and-annotation-engine">
+<h2>Customization with alignment engine and annotation engine<a class="headerlink" href="#customization-with-alignment-engine-and-annotation-engine" title="Link to this heading"></a></h2>
+<p>Here we show an example on how to use your alignment engine and your modification engine. Check the code for CosineAlignmentEngine and MAGMaAnnotationEngine for ideas. Here, we choose to use the default engines for demonstration but you can use your own custom implementations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">modifinder.engines.alignment.CosineAlignmentEngine</span> <span class="kn">import</span> <span class="n">CosineAlignmentEngine</span>
+<span class="kn">from</span> <span class="nn">modifinder.engines.annotation.MAGMaAnnotationEngine</span> <span class="kn">import</span> <span class="n">MAGMaAnnotationEngine</span>
+<span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;mz_tolerance&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;ppm_tolerance&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="s1">&#39;ratio_to_base_peak&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;normalize_peaks&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+
+
+<span class="n">annotationEngine</span> <span class="o">=</span> <span class="n">MAGMaAnnotationEngine</span><span class="p">(</span><span class="n">breaks</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">alignmentEngine</span> <span class="o">=</span> <span class="n">CosineAlignmentEngine</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">c1</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00011906020&quot;</span>
+<span class="n">c2</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00011905978&quot;</span>
+
+<span class="n">known_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">modified_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+<span class="n">mf</span> <span class="o">=</span> <span class="n">ModiFinder</span><span class="p">(</span><span class="n">known_compound</span><span class="p">,</span> <span class="n">modified_compound</span><span class="p">,</span> <span class="n">annotationEngine</span><span class="o">=</span><span class="n">annotationEngine</span><span class="p">,</span> <span class="n">alignmentEngine</span><span class="o">=</span><span class="n">alignmentEngine</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">initial_probs</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">generate_probabilities</span><span class="p">()</span>
+
+<span class="n">initial_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">initial_probs</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">annotation_scale</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+
+<span class="n">true_modification</span> <span class="o">=</span> <span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_modifications</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">show_legend</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                              <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modification_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">initial_prediction</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Initial Prediction&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">true_modification</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;True Modification&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/customization_18_0.png" /></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="basics.html" class="btn btn-neutral float-left" title="Basics Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../modifinder/index.html" class="btn btn-neutral float-right" title="Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

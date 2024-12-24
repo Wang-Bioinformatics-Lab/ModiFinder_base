@@ -1,5 +1,4 @@
 __pycache__*
-build
 *.egg-info
 oldTests
 models/predict_modification_site.model

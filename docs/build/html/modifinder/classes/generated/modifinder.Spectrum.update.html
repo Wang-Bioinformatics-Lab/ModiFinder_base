@@ -1,0 +1,157 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.Spectrum.update &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="modifinder.Spectrum.clear" href="modifinder.Spectrum.clear.html" />
+    <link rel="prev" title="Spectrum" href="../classes.Spectrum.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Classes</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../classes.Spectrum.html">Spectrum</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../classes.Spectrum.html#overview">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../classes.Compound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../classes.EdgeDetail.html">classes.EdgeDetail module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../classes.ModiFinder.html">classes.ModiFinder module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/index.html">Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../drawing.html">Visualizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../convert.html">Converting to and from other data formats</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Classes</a></li>
+          <li class="breadcrumb-item"><a href="../classes.Spectrum.html">Spectrum</a></li>
+      <li class="breadcrumb-item active">modifinder.Spectrum.update</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modifinder/classes/generated/modifinder.Spectrum.update.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="modifinder-spectrum-update">
+<h1>modifinder.Spectrum.update<a class="headerlink" href="#modifinder-spectrum-update" title="Link to this heading"></a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="modifinder.Spectrum.update">
+<span class="sig-prename descclassname"><span class="pre">Spectrum.</span></span><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_mz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adduct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ms_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ms_mass_analyzer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ms_dissociation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_to_base_peak</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_large_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/modifinder/classes/Spectrum.html#Spectrum.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.Spectrum.update" title="Link to this definition"></a></dt>
+<dd><p>Update the Spectrum object with the given values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>list</em>) – A list of peaks in the form of [[mz1, intensity1], [mz2, intensity2], …].</p></li>
+<li><p><strong>peaks_json</strong> (<em>str</em>) – A json string of peaks.</p></li>
+<li><p><strong>mz</strong> (<em>list</em>) – A list of m/z values.</p></li>
+<li><p><strong>intensity</strong> (<em>list</em>) – A list of intensity values.</p></li>
+<li><p><strong>precursor_mz</strong> (<em>float</em>) – The precursor m/z value.</p></li>
+<li><p><strong>precursor_charge</strong> (<em>int</em>) – The precursor charge.</p></li>
+<li><p><strong>adduct</strong> (<em>str</em>) – The adduct.</p></li>
+<li><p><strong>ms_level</strong> (<em>int</em>) – The ms level.</p></li>
+<li><p><strong>instrument</strong> (<em>str</em>) – The instrument used.</p></li>
+<li><p><strong>ms_mass_analyzer</strong> (<em>str</em>) – The mass analyzer used.</p></li>
+<li><p><strong>ms_dissociation_method</strong> (<em>str</em>) – The dissociation method used.</p></li>
+<li><p><strong>spectrum_id</strong> (<em>str</em>) – The spectrum id.</p></li>
+<li><p><strong>normalize_peaks</strong> (<em>bool</em>) – If True, the intensity of the peaks will be normalized.</p></li>
+<li><p><strong>ratio_to_base_peak</strong> (<em>float</em>) – If None, no filtering is done, if a float number, it removes all the peaks with intensity</p></li>
+<li><p><strong>peak.</strong> (<em>less than ratio times the base</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../classes.Spectrum.html" class="btn btn-neutral float-left" title="Spectrum" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modifinder.Spectrum.clear.html" class="btn btn-neutral float-right" title="modifinder.Spectrum.clear" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

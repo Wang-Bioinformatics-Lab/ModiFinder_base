@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basics Tutorial &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Customization Tutorial" href="customization.html" />
+    <link rel="prev" title="Tutorial" href="../tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Basics Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-modifinder-use">Basic ModiFinder Use</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-with-usi">Create with USI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-with-your-data">Create with your data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html">Customization Tutorial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorial.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Basics Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/basics.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="basics-tutorial">
+<h1>Basics Tutorial<a class="headerlink" href="#basics-tutorial" title="Link to this heading"></a></h1>
+<p>This guide tries to help you start working with ModiFinder.</p>
+<section id="basic-modifinder-use">
+<h2>Basic ModiFinder Use<a class="headerlink" href="#basic-modifinder-use" title="Link to this heading"></a></h2>
+<section id="create-with-usi">
+<h3>Create with USI<a class="headerlink" href="#create-with-usi" title="Link to this heading"></a></h3>
+<p>You can use ModiFinder in many scenarios but the main one is when you have a known and an unknown compound (with exactly one modification site) and you want to see the likelihood of location the modification. To pass the informations, you can use USI from GNPS. First, Lets Create the Compound objects</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">modifinder</span> <span class="kn">import</span> <span class="n">ModiFinder</span><span class="p">,</span> <span class="n">Compound</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">c1</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010113829&quot;</span>
+<span class="n">c2</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010125628&quot;</span>
+<span class="n">helpers_array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010114304&#39;</span><span class="p">]</span>
+<span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;mz_tolerance&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;ppm_tolerance&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="s1">&#39;ratio_to_base_peak&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;normalize_peaks&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+<span class="n">known_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">c1</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">modified_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">c2</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">helpers_compounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">Compound</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">helpers_array</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Next, we can define ModiFinder object by passing the Known Compound, ModiFied analog and the helpers to that</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mf</span> <span class="o">=</span> <span class="n">ModiFinder</span><span class="p">(</span><span class="n">known_compound</span><span class="p">,</span> <span class="n">modified_compound</span><span class="p">,</span> <span class="n">helpers</span><span class="o">=</span><span class="n">helpers_array</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">probs</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">generate_probabilities</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;predicted probabilities are: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>predicted probabilities are: 
+ [0.16592098 0.15792845 0.03942338 0.04082704 0.03942338 0.03942338
+ 0.03942338 0.         0.         0.         0.         0.
+ 0.         0.         0.         0.         0.         0.
+ 0.         0.03942338 0.06012586 0.06012586 0.06012586 0.06012586
+ 0.06012586 0.06012586 0.07745147]
+</pre></div>
+</div>
+<p>ModiFinder also comes with a lot of visualizing tools, let’s visualize the alignment and the prediction</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">img_alignment</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_alignment</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+<span class="n">img_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">annotation_scale</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_alignment</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Alignment&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_prediction</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/basics_8_0.png" /></p>
+</section>
+<section id="create-with-your-data">
+<h3>Create with your data<a class="headerlink" href="#create-with-your-data" title="Link to this heading"></a></h3>
+<p>You can also create your compounds by passing a dictionary</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">modifinder.utilities</span> <span class="kn">import</span> <span class="n">visualizer</span> <span class="k">as</span> <span class="n">mf_vis</span>
+
+<span class="n">known_compound_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Compound_Name&quot;</span> <span class="p">:</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">methyl 2-amino-4-(2-bromophenyl)-5-oxo-4H-pyrano[3,2-c]chromene-3-carboxylate CollisionEnergy:102040</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Ion_Source&quot;</span> <span class="p">:</span> <span class="s2">&quot;LC-ESI&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Compound_Source&quot;</span> <span class="p">:</span> <span class="s2">&quot;Commercial&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Instrument&quot;</span> <span class="p">:</span> <span class="s2">&quot;Orbitrap&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;PI&quot;</span> <span class="p">:</span> <span class="s2">&quot;Trent Northen&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Data_Collector&quot;</span> <span class="p">:</span> <span class="s2">&quot;JGI&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Adduct&quot;</span> <span class="p">:</span> <span class="s2">&quot;M+H&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Precursor_MZ&quot;</span> <span class="p">:</span> <span class="s2">&quot;428.013&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Charge&quot;</span> <span class="p">:</span> <span class="s2">&quot;1&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Smiles&quot;</span> <span class="p">:</span> <span class="s2">&quot;COC(=O)C1=C(N)Oc2c(c(=O)oc3ccccc23)C1c1ccccc1Br&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ion_Mode&quot;</span> <span class="p">:</span> <span class="s2">&quot;Positive&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ms_level&quot;</span> <span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;peaks&quot;</span> <span class="p">:</span> <span class="p">[[</span><span class="mf">60.998299</span><span class="p">,</span><span class="mf">2942.000000</span><span class="p">],[</span><span class="mf">82.425079</span><span class="p">,</span><span class="mf">2944.000000</span><span class="p">],[</span><span class="mf">100.039070</span><span class="p">,</span><span class="mf">16193.000000</span><span class="p">],[</span><span class="mf">118.427040</span><span class="p">,</span><span class="mf">3043.000000</span><span class="p">],[</span><span class="mf">121.018578</span><span class="p">,</span><span class="mf">3089.000000</span><span class="p">],[</span><span class="mf">121.028198</span><span class="p">,</span><span class="mf">88610.000000</span><span class="p">],[</span><span class="mf">152.897842</span><span class="p">,</span><span class="mf">2874.000000</span><span class="p">],[</span><span class="mf">163.038513</span><span class="p">,</span><span class="mf">46777.000000</span><span class="p">],[</span><span class="mf">168.043304</span><span class="p">,</span><span class="mf">5484.000000</span><span class="p">],[</span><span class="mf">182.943802</span><span class="p">,</span><span class="mf">109108.000000</span><span class="p">],[</span><span class="mf">187.409912</span><span class="p">,</span><span class="mf">3183.000000</span><span class="p">],[</span><span class="mf">196.038361</span><span class="p">,</span><span class="mf">3732.000000</span><span class="p">],[</span><span class="mf">202.218048</span><span class="p">,</span><span class="mf">2971.000000</span><span class="p">],[</span><span class="mf">207.029480</span><span class="p">,</span><span class="mf">3299.000000</span><span class="p">],[</span><span class="mf">207.976593</span><span class="p">,</span><span class="mf">4085.000000</span><span class="p">],[</span><span class="mf">212.033859</span><span class="p">,</span><span class="mf">24431.000000</span><span class="p">],[</span><span class="mf">221.989578</span><span class="p">,</span><span class="mf">4474.000000</span><span class="p">],[</span><span class="mf">233.956146</span><span class="p">,</span><span class="mf">5784.000000</span><span class="p">],[</span><span class="mf">240.028702</span><span class="p">,</span><span class="mf">1177115.000000</span><span class="p">],[</span><span class="mf">249.054092</span><span class="p">,</span><span class="mf">340590.000000</span><span class="p">],[</span><span class="mf">250.062012</span><span class="p">,</span><span class="mf">91262.000000</span><span class="p">],[</span><span class="mf">258.039154</span><span class="p">,</span><span class="mf">229840.000000</span><span class="p">],[</span><span class="mf">262.062988</span><span class="p">,</span><span class="mf">16671.000000</span><span class="p">],[</span><span class="mf">272.054871</span><span class="p">,</span><span class="mf">2691841.000000</span><span class="p">],[</span><span class="mf">275.965454</span><span class="p">,</span><span class="mf">19609.000000</span><span class="p">],[</span><span class="mf">280.037537</span><span class="p">,</span><span class="mf">3552.000000</span><span class="p">],[</span><span class="mf">281.055145</span><span class="p">,</span><span class="mf">18616.000000</span><span class="p">],[</span><span class="mf">288.063934</span><span class="p">,</span><span class="mf">4550.000000</span><span class="p">],[</span><span class="mf">289.070587</span><span class="p">,</span><span class="mf">5006.000000</span><span class="p">],[</span><span class="mf">299.056152</span><span class="p">,</span><span class="mf">6172.000000</span><span class="p">],[</span><span class="mf">316.059662</span><span class="p">,</span><span class="mf">162469.000000</span><span class="p">],[</span><span class="mf">317.067596</span><span class="p">,</span><span class="mf">19549.000000</span><span class="p">],[</span><span class="mf">328.979919</span><span class="p">,</span><span class="mf">22114.000000</span><span class="p">],[</span><span class="mf">377.973846</span><span class="p">,</span><span class="mf">3657.000000</span><span class="p">],[</span><span class="mf">395.985809</span><span class="p">,</span><span class="mf">537614.000000</span><span class="p">],[</span><span class="mf">428.011810</span><span class="p">,</span><span class="mf">641369.000000</span><span class="p">]]</span>
+<span class="p">}</span>
+
+<span class="n">modified_compound_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;CCMSLIB00010125628&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Compound_Name&quot;</span> <span class="p">:</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">ethyl 2-amino-4-(2-bromophenyl)-5-oxo-4H-pyrano[3,2-c]chromene-3-carboxylate CollisionEnergy:205060</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Ion_Source&quot;</span> <span class="p">:</span> <span class="s2">&quot;LC-ESI&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Compound_Source&quot;</span> <span class="p">:</span> <span class="s2">&quot;Commercial&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Instrument&quot;</span> <span class="p">:</span> <span class="s2">&quot;Orbitrap&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;PI&quot;</span> <span class="p">:</span> <span class="s2">&quot;Trent Northen&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Data_Collector&quot;</span> <span class="p">:</span> <span class="s2">&quot;JGI&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Adduct&quot;</span> <span class="p">:</span> <span class="s2">&quot;M+H&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Precursor_MZ&quot;</span> <span class="p">:</span> <span class="s2">&quot;442.028&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Charge&quot;</span> <span class="p">:</span> <span class="s2">&quot;1&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;Smiles&quot;</span> <span class="p">:</span> <span class="s2">&quot;CCOC(=O)C1=C(N)Oc2c(c(=O)oc3ccccc23)C1c1ccccc1Br&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ms_level&quot;</span> <span class="p">:</span> <span class="s2">&quot;2&quot;</span> <span class="p">,</span>
+    <span class="s2">&quot;peaks&quot;</span> <span class="p">:</span> <span class="p">[[</span><span class="mf">66.744087</span><span class="p">,</span><span class="mf">3088.000000</span><span class="p">],[</span><span class="mf">68.013557</span><span class="p">,</span><span class="mf">5761.000000</span><span class="p">],[</span><span class="mf">68.997673</span><span class="p">,</span><span class="mf">4342.000000</span><span class="p">],[</span><span class="mf">84.944817</span><span class="p">,</span><span class="mf">2668.000000</span><span class="p">],[</span><span class="mf">86.023949</span><span class="p">,</span><span class="mf">39517.000000</span><span class="p">],[</span><span class="mf">87.111252</span><span class="p">,</span><span class="mf">2685.000000</span><span class="p">],[</span><span class="mf">88.211983</span><span class="p">,</span><span class="mf">2617.000000</span><span class="p">],[</span><span class="mf">91.054718</span><span class="p">,</span><span class="mf">2792.000000</span><span class="p">],[</span><span class="mf">96.069580</span><span class="p">,</span><span class="mf">2500.000000</span><span class="p">],[</span><span class="mf">106.532509</span><span class="p">,</span><span class="mf">2811.000000</span><span class="p">],[</span><span class="mf">114.054657</span><span class="p">,</span><span class="mf">20689.000000</span><span class="p">],[</span><span class="mf">121.028481</span><span class="p">,</span><span class="mf">81112.000000</span><span class="p">],[</span><span class="mf">129.057541</span><span class="p">,</span><span class="mf">23604.000000</span><span class="p">],[</span><span class="mf">140.050171</span><span class="p">,</span><span class="mf">3201.000000</span><span class="p">],[</span><span class="mf">142.849548</span><span class="p">,</span><span class="mf">3238.000000</span><span class="p">],[</span><span class="mf">155.036545</span><span class="p">,</span><span class="mf">4860.000000</span><span class="p">],[</span><span class="mf">163.039078</span><span class="p">,</span><span class="mf">115792.000000</span><span class="p">],[</span><span class="mf">168.044922</span><span class="p">,</span><span class="mf">10549.000000</span><span class="p">],[</span><span class="mf">182.943878</span><span class="p">,</span><span class="mf">49352.000000</span><span class="p">],[</span><span class="mf">191.034134</span><span class="p">,</span><span class="mf">5956.000000</span><span class="p">],[</span><span class="mf">194.072769</span><span class="p">,</span><span class="mf">3414.000000</span><span class="p">],[</span><span class="mf">205.958740</span><span class="p">,</span><span class="mf">3058.000000</span><span class="p">],[</span><span class="mf">207.028503</span><span class="p">,</span><span class="mf">4013.000000</span><span class="p">],[</span><span class="mf">207.975830</span><span class="p">,</span><span class="mf">12770.000000</span><span class="p">],[</span><span class="mf">212.034348</span><span class="p">,</span><span class="mf">15917.000000</span><span class="p">],[</span><span class="mf">214.049545</span><span class="p">,</span><span class="mf">6682.000000</span><span class="p">],[</span><span class="mf">221.059967</span><span class="p">,</span><span class="mf">62232.000000</span><span class="p">],[</span><span class="mf">222.067261</span><span class="p">,</span><span class="mf">17084.000000</span><span class="p">],[</span><span class="mf">233.955292</span><span class="p">,</span><span class="mf">19126.000000</span><span class="p">],[</span><span class="mf">234.939468</span><span class="p">,</span><span class="mf">3125.000000</span><span class="p">],[</span><span class="mf">240.029068</span><span class="p">,</span><span class="mf">141213.000000</span><span class="p">],[</span><span class="mf">249.054565</span><span class="p">,</span><span class="mf">1321279.000000</span><span class="p">],[</span><span class="mf">250.062378</span><span class="p">,</span><span class="mf">417286.000000</span><span class="p">],[</span><span class="mf">252.948257</span><span class="p">,</span><span class="mf">4031.000000</span><span class="p">],[</span><span class="mf">258.038971</span><span class="p">,</span><span class="mf">6431.000000</span><span class="p">],[</span><span class="mf">275.964935</span><span class="p">,</span><span class="mf">6739.000000</span><span class="p">],[</span><span class="mf">279.358429</span><span class="p">,</span><span class="mf">2923.000000</span><span class="p">],[</span><span class="mf">280.038574</span><span class="p">,</span><span class="mf">5165.000000</span><span class="p">],[</span><span class="mf">286.036102</span><span class="p">,</span><span class="mf">2804.000000</span><span class="p">],[</span><span class="mf">286.070740</span><span class="p">,</span><span class="mf">71269.000000</span><span class="p">],[</span><span class="mf">288.065002</span><span class="p">,</span><span class="mf">4675.000000</span><span class="p">],[</span><span class="mf">298.048431</span><span class="p">,</span><span class="mf">3912.000000</span><span class="p">],[</span><span class="mf">316.059784</span><span class="p">,</span><span class="mf">39353.000000</span><span class="p">],[</span><span class="mf">328.980804</span><span class="p">,</span><span class="mf">50655.000000</span><span class="p">],[</span><span class="mf">347.603516</span><span class="p">,</span><span class="mf">3589.000000</span><span class="p">],[</span><span class="mf">395.986420</span><span class="p">,</span><span class="mf">526724.000000</span><span class="p">],[</span><span class="mf">442.028503</span><span class="p">,</span><span class="mf">115024.000000</span><span class="p">],[</span><span class="mf">508.895294</span><span class="p">,</span><span class="mf">3412.000000</span><span class="p">]]</span>
+<span class="p">}</span>
+    
+<span class="n">known_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">known_compound_data</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">modified_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">modified_compound_data</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">mf</span> <span class="o">=</span> <span class="n">ModiFinder</span><span class="p">(</span><span class="n">known_compound</span><span class="p">,</span> <span class="n">modified_compound</span><span class="p">,</span> <span class="n">helpers</span><span class="o">=</span><span class="n">helpers_array</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">probs</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">generate_probabilities</span><span class="p">()</span>
+
+<span class="n">img_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">annotation_scale</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span>
+
+<span class="n">true_modification</span> <span class="o">=</span> <span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_modifications</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">show_legend</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                              <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modification_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_prediction</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prediction&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">true_modification</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;True Modification&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="png" src="../_images/basics_10_0.png" /></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="customization.html" class="btn btn-neutral float-right" title="Customization Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
