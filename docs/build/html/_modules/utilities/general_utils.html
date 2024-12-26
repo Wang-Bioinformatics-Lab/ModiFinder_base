@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utilities.general_utils &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utilities.general_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utilities.general_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">General utility functions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pyteomics</span> <span class="kn">import</span> <span class="n">mgf</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">modifinder.utilities.gnps_types</span> <span class="k">as</span> <span class="nn">gt</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<div class="viewcode-block" id="is_shifted">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.is_shifted">[docs]</a>
+<span class="k">def</span> <span class="nf">is_shifted</span><span class="p">(</span><span class="n">val1</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">val2</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">ppm</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mz_tol</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine if two values differ by more than a specified tolerance.</span>
+<span class="sd">    </span>
+<span class="sd">    The function checks if the absolute difference between two values exceeds either a given parts per million (ppm) value or a mass/charge (m/z) tolerance. </span>
+<span class="sd">    If only one of ppm or mz_tol is provided, the function uses that value for comparison. </span>
+<span class="sd">    If both are provided, the function checks both conditions and returns True if either condition is satisfied.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        :val1 (float): The first value to compare.</span>
+<span class="sd">        :val2 (float): The second value to compare.</span>
+<span class="sd">        :ppm (float, optional): The parts per million tolerance. Default is None.</span>
+<span class="sd">        :mz_tol (float, optional): The m/z tolerance. Default is None.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :bool: True if the values differ by more than the specified tolerance, False otherwise.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        :ValueError: If neither ppm nor mz_tol is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val1</span> <span class="o">-</span> <span class="n">val2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ppm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mz_tol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either ppm or mz_tol must be provided&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">mz_tol</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mz_tol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ppm</span> <span class="o">/</span> <span class="mf">1e6</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">mz_tol</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ppm</span> <span class="o">/</span> <span class="mf">1e6</span></div>
+
+
+
+<div class="viewcode-block" id="read_mgf">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.read_mgf">[docs]</a>
+<span class="k">def</span> <span class="nf">read_mgf</span><span class="p">(</span><span class="n">mgf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read an MGF file into a pandas DataFrame</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        mgf_path : str</span>
+<span class="sd">            The path to the MGF file to be read</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        pd.DataFrame</span>
+<span class="sd">                pandas DataFrame with columns as metadata and &#39;spectrum&#39; as the m/z and intensity values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">msms_df</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">mgf</span><span class="o">.</span><span class="n">MGF</span><span class="p">(</span><span class="n">mgf_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">spectrum</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;spectrum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">spectrum</span><span class="p">[</span><span class="s1">&#39;m/z array&#39;</span><span class="p">],</span>
+                                        <span class="n">spectrum</span><span class="p">[</span><span class="s1">&#39;intensity array&#39;</span><span class="p">]])</span>
+                <span class="k">if</span> <span class="s1">&#39;precursor_mz&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+                    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;pepmass&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">])</span>
+                <span class="n">msms_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="n">msms_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">msms_df</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;precursor_mz&#39;</span> <span class="ow">in</span> <span class="n">msms_df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s1">&#39;scans&#39;</span> <span class="ow">in</span> <span class="n">msms_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">msms_df</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msms_df</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">msms_df</span><span class="p">[</span><span class="s1">&#39;scans&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msms_df</span><span class="p">[</span><span class="s1">&#39;scans&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msms_df</span></div>
+
+
+
+<div class="viewcode-block" id="write_mgf">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.write_mgf">[docs]</a>
+<span class="k">def</span> <span class="nf">write_mgf</span><span class="p">(</span><span class="n">msms_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">mgf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes a pandas DataFrame to an MGF file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        msms_df : pd.DataFrame</span>
+<span class="sd">            pandas DataFrame with column &#39;spectrum&#39; and other columns as metadata</span>
+<span class="sd">        mgf_path : str</span>
+<span class="sd">            Path to write the MGF file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">specs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">msms_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;spectrum&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;m/z array&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;spectrum&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;intensity array&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;spectrum&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mgf_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+        <span class="n">mgf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span></div>
+
+
+<span class="n">mims</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">1.0078250321</span><span class="p">,</span>
+ <span class="s1">&#39;He&#39;</span><span class="p">:</span> <span class="mf">3.016029</span><span class="p">,</span>
+ <span class="s1">&#39;Li&#39;</span><span class="p">:</span> <span class="mf">6.015122</span><span class="p">,</span>
+ <span class="s1">&#39;Be&#39;</span><span class="p">:</span> <span class="mf">9.012182</span><span class="p">,</span>
+ <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mf">10.012937</span><span class="p">,</span>
+ <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">12.000000</span><span class="p">,</span>
+ <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">14.0030740052</span><span class="p">,</span>
+ <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mf">15.9949146221</span><span class="p">,</span>
+ <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">18.9984032</span><span class="p">,</span>
+ <span class="s1">&#39;Ne&#39;</span><span class="p">:</span> <span class="mf">19.992440</span><span class="p">,</span>
+ <span class="s1">&#39;Na&#39;</span><span class="p">:</span> <span class="mf">22.9897692809</span><span class="p">,</span>
+ <span class="s1">&#39;Mg&#39;</span><span class="p">:</span> <span class="mf">23.985042</span><span class="p">,</span>
+ <span class="s1">&#39;Al&#39;</span><span class="p">:</span> <span class="mf">26.981538</span><span class="p">,</span>
+ <span class="s1">&#39;Si&#39;</span><span class="p">:</span> <span class="mf">27.976927</span><span class="p">,</span>
+ <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mf">30.97376151</span><span class="p">,</span>
+ <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">31.97207069</span><span class="p">,</span>
+ <span class="s1">&#39;Cl&#39;</span><span class="p">:</span> <span class="mf">34.96885271</span><span class="p">,</span>
+ <span class="s1">&#39;Ar&#39;</span><span class="p">:</span> <span class="mf">35.967546</span><span class="p">,</span>
+ <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mf">38.96370668</span><span class="p">,</span>
+ <span class="s1">&#39;Ca&#39;</span><span class="p">:</span> <span class="mf">39.962591</span><span class="p">,</span>
+ <span class="s1">&#39;Sc&#39;</span><span class="p">:</span> <span class="mf">44.955910</span><span class="p">,</span>
+ <span class="s1">&#39;Ti&#39;</span><span class="p">:</span> <span class="mf">45.952629</span><span class="p">,</span>
+ <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mf">49.947163</span><span class="p">,</span>
+ <span class="s1">&#39;Cr&#39;</span><span class="p">:</span> <span class="mf">49.946050</span><span class="p">,</span>
+ <span class="s1">&#39;Mn&#39;</span><span class="p">:</span> <span class="mf">54.938050</span><span class="p">,</span>
+ <span class="s1">&#39;Fe&#39;</span><span class="p">:</span> <span class="mf">53.939615</span><span class="p">,</span>
+ <span class="s1">&#39;Co&#39;</span><span class="p">:</span> <span class="mf">58.933200</span><span class="p">,</span>
+ <span class="s1">&#39;Ni&#39;</span><span class="p">:</span> <span class="mf">57.935348</span><span class="p">,</span>
+ <span class="s1">&#39;Cu&#39;</span><span class="p">:</span> <span class="mf">62.929601</span><span class="p">,</span>
+ <span class="s1">&#39;Zn&#39;</span><span class="p">:</span> <span class="mf">63.929147</span><span class="p">,</span>
+ <span class="s1">&#39;Ga&#39;</span><span class="p">:</span> <span class="mf">68.925581</span><span class="p">,</span>
+ <span class="s1">&#39;Ge&#39;</span><span class="p">:</span> <span class="mf">69.924250</span><span class="p">,</span>
+ <span class="s1">&#39;As&#39;</span><span class="p">:</span> <span class="mf">74.921596</span><span class="p">,</span>
+ <span class="s1">&#39;Se&#39;</span><span class="p">:</span> <span class="mf">73.922477</span><span class="p">,</span>
+ <span class="s1">&#39;Br&#39;</span><span class="p">:</span> <span class="mf">78.9183376</span><span class="p">,</span>
+ <span class="s1">&#39;Kr&#39;</span><span class="p">:</span> <span class="mf">77.920386</span><span class="p">,</span>
+ <span class="s1">&#39;Rb&#39;</span><span class="p">:</span> <span class="mf">84.911789</span><span class="p">,</span>
+ <span class="s1">&#39;Sr&#39;</span><span class="p">:</span> <span class="mf">83.913425</span><span class="p">,</span>
+ <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mf">88.905848</span><span class="p">,</span>
+ <span class="s1">&#39;Zr&#39;</span><span class="p">:</span> <span class="mf">89.904704</span><span class="p">,</span>
+ <span class="s1">&#39;Nb&#39;</span><span class="p">:</span> <span class="mf">92.906378</span><span class="p">,</span>
+ <span class="s1">&#39;Mo&#39;</span><span class="p">:</span> <span class="mf">91.906810</span><span class="p">,</span>
+ <span class="s1">&#39;Tc&#39;</span><span class="p">:</span> <span class="mf">97.907216</span><span class="p">,</span>
+ <span class="s1">&#39;Ru&#39;</span><span class="p">:</span> <span class="mf">95.907598</span><span class="p">,</span>
+ <span class="s1">&#39;Rh&#39;</span><span class="p">:</span> <span class="mf">102.905504</span><span class="p">,</span>
+ <span class="s1">&#39;Pd&#39;</span><span class="p">:</span> <span class="mf">101.905608</span><span class="p">,</span>
+ <span class="s1">&#39;Ag&#39;</span><span class="p">:</span> <span class="mf">106.905093</span><span class="p">,</span>
+ <span class="s1">&#39;Cd&#39;</span><span class="p">:</span> <span class="mf">105.906458</span><span class="p">,</span>
+ <span class="s1">&#39;In&#39;</span><span class="p">:</span> <span class="mf">112.904061</span><span class="p">,</span>
+ <span class="s1">&#39;Sn&#39;</span><span class="p">:</span> <span class="mf">111.904821</span><span class="p">,</span>
+ <span class="s1">&#39;Sb&#39;</span><span class="p">:</span> <span class="mf">120.903818</span><span class="p">,</span>
+ <span class="s1">&#39;Te&#39;</span><span class="p">:</span> <span class="mf">119.904020</span><span class="p">,</span>
+ <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mf">126.904468</span><span class="p">,</span>
+ <span class="s1">&#39;Xe&#39;</span><span class="p">:</span> <span class="mf">123.905896</span><span class="p">,</span>
+ <span class="s1">&#39;Cs&#39;</span><span class="p">:</span> <span class="mf">132.905447</span><span class="p">,</span>
+ <span class="s1">&#39;Ba&#39;</span><span class="p">:</span> <span class="mf">129.906310</span><span class="p">,</span>
+ <span class="s1">&#39;La&#39;</span><span class="p">:</span> <span class="mf">137.907107</span><span class="p">,</span>
+ <span class="s1">&#39;Ce&#39;</span><span class="p">:</span> <span class="mf">135.907144</span><span class="p">,</span>
+ <span class="s1">&#39;Pr&#39;</span><span class="p">:</span> <span class="mf">140.907648</span><span class="p">,</span>
+ <span class="s1">&#39;Nd&#39;</span><span class="p">:</span> <span class="mf">141.907719</span><span class="p">,</span>
+ <span class="s1">&#39;Pm&#39;</span><span class="p">:</span> <span class="mf">144.912744</span><span class="p">,</span>
+ <span class="s1">&#39;Sm&#39;</span><span class="p">:</span> <span class="mf">143.911995</span><span class="p">,</span>
+ <span class="s1">&#39;Eu&#39;</span><span class="p">:</span> <span class="mf">150.919846</span><span class="p">,</span>
+ <span class="s1">&#39;Gd&#39;</span><span class="p">:</span> <span class="mf">151.919788</span><span class="p">,</span>
+ <span class="s1">&#39;Tb&#39;</span><span class="p">:</span> <span class="mf">158.925343</span><span class="p">,</span>
+ <span class="s1">&#39;Dy&#39;</span><span class="p">:</span> <span class="mf">155.924278</span><span class="p">,</span>
+ <span class="s1">&#39;Ho&#39;</span><span class="p">:</span> <span class="mf">164.930319</span><span class="p">,</span>
+ <span class="s1">&#39;Er&#39;</span><span class="p">:</span> <span class="mf">161.928775</span><span class="p">,</span>
+ <span class="s1">&#39;Tm&#39;</span><span class="p">:</span> <span class="mf">168.934211</span><span class="p">,</span>
+ <span class="s1">&#39;Yb&#39;</span><span class="p">:</span> <span class="mf">167.933894</span><span class="p">,</span>
+ <span class="s1">&#39;Lu&#39;</span><span class="p">:</span> <span class="mf">174.940768</span><span class="p">,</span>
+ <span class="s1">&#39;Hf&#39;</span><span class="p">:</span> <span class="mf">173.940040</span><span class="p">,</span>
+ <span class="s1">&#39;Ta&#39;</span><span class="p">:</span> <span class="mf">179.947466</span><span class="p">,</span>
+ <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mf">179.946706</span><span class="p">,</span>
+ <span class="s1">&#39;Re&#39;</span><span class="p">:</span> <span class="mf">184.952956</span><span class="p">,</span>
+ <span class="s1">&#39;Os&#39;</span><span class="p">:</span> <span class="mf">183.952491</span><span class="p">,</span>
+ <span class="s1">&#39;Ir&#39;</span><span class="p">:</span> <span class="mf">190.960591</span><span class="p">,</span>
+ <span class="s1">&#39;Pt&#39;</span><span class="p">:</span> <span class="mf">189.959930</span><span class="p">,</span>
+ <span class="s1">&#39;Au&#39;</span><span class="p">:</span> <span class="mf">196.966552</span><span class="p">,</span>
+ <span class="s1">&#39;Hg&#39;</span><span class="p">:</span> <span class="mf">195.965815</span><span class="p">,</span>
+ <span class="s1">&#39;Tl&#39;</span><span class="p">:</span> <span class="mf">202.972329</span><span class="p">,</span>
+ <span class="s1">&#39;Pb&#39;</span><span class="p">:</span> <span class="mf">203.973029</span><span class="p">,</span>
+ <span class="s1">&#39;Bi&#39;</span><span class="p">:</span> <span class="mf">208.980383</span><span class="p">}</span>
+
+<span class="n">Hmass</span> <span class="o">=</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span>
+<span class="n">elmass</span> <span class="o">=</span> <span class="mf">0.0005486</span>
+<span class="n">ionmasses</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;+H&#39;</span><span class="p">:</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;+NH4&#39;</span><span class="p">:</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;+Na&#39;</span><span class="p">:</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;-OH&#39;</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">mims</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]),</span>
+     <span class="s1">&#39;+K&#39;</span><span class="p">:</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]},</span>
+ <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;-H&#39;</span><span class="p">:</span> <span class="o">-</span><span class="n">mims</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;+Cl&#39;</span><span class="p">:</span> <span class="n">mims</span><span class="p">[</span><span class="s1">&#39;Cl&#39;</span><span class="p">]}}</span>
+
+
+<div class="viewcode-block" id="get_formula_mass">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.get_formula_mass">[docs]</a>
+<span class="k">def</span> <span class="nf">get_formula_mass</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the mass of a chemical formula.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    formula : str</span>
+<span class="sd">        The chemical formula.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The mass of the chemical formula.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([A-Z][a-z]*)(\d*)&#39;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>  <span class="c1"># Find all matches in the formula</span>
+
+    <span class="c1"># Create a dictionary to store element symbol and count pairs</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="o">*</span> <span class="n">mims</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">+=</span> <span class="n">mims</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">weight</span></div>
+
+
+<div class="viewcode-block" id="get_adduct_mass">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.get_adduct_mass">[docs]</a>
+<span class="k">def</span> <span class="nf">get_adduct_mass</span><span class="p">(</span><span class="n">adduct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the mass of an adduct.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    adduct : str</span>
+<span class="sd">        The adduct to get the mass of. </span>
+<span class="sd">        </span>
+<span class="sd">        The supported format is [aM±bA]c± where a and b and c are numbers, M is the molecule, A is the adduct, and c is the charge.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The mass of the adduct.</span>
+<span class="sd">        </span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the adduct format is not accepted</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># remove spaces</span>
+    <span class="n">adduct</span> <span class="o">=</span> <span class="n">adduct</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">acceptedAdductsFormat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\[M(?:\+[A-Za-z0-9]+|\-[A-Za-z0-9]+)*\][0-9]*[+-]&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">acceptedAdductsFormat</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">adduct</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Adduct format not accepted&#39;</span><span class="p">)</span>
+
+    <span class="n">charge</span> <span class="o">=</span> <span class="n">adduct</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">remaining</span> <span class="o">=</span> <span class="n">adduct</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">remaining</span> <span class="o">=</span> <span class="n">remaining</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    
+    <span class="n">regexPattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\+[A-Za-z0-9]+|\-[A-Za-z0-9]+&#39;</span><span class="p">)</span>
+    <span class="n">subformulas</span> <span class="o">=</span> <span class="n">regexPattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">remaining</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">subformula</span> <span class="ow">in</span> <span class="n">subformulas</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">subformula</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">+=</span> <span class="n">get_formula_mass</span><span class="p">(</span><span class="n">subformula</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">-=</span> <span class="n">get_formula_mass</span><span class="p">(</span><span class="n">subformula</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    
+    <span class="k">if</span> <span class="n">charge</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">charge</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">chargeCount</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">chargeCount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">charge</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">weight</span> <span class="o">-=</span> <span class="n">elmass</span> <span class="o">*</span> <span class="n">chargeCount</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">charge</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">chargeCount</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">chargeCount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">charge</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">weight</span> <span class="o">+=</span> <span class="n">elmass</span> <span class="o">*</span> <span class="n">chargeCount</span>
+
+    <span class="k">return</span> <span class="n">weight</span></div>
+
+
+<div class="viewcode-block" id="convert_to_universal_key">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.convert_to_universal_key">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_to_universal_key</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert different types of keys to universal keys.</span>
+<span class="sd">    This function standardizes various key names to a universal format. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :key (str): The key to be converted.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :str: The converted key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gt</span><span class="o">.</span><span class="n">gnps_keys_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
+
+    
+<span class="c1"># TODO: use machine learning prepared data instead of hardcoding</span>
+<div class="viewcode-block" id="parse_data_to_universal">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.parse_data_to_universal">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_data_to_universal</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse the data to a universal format.</span>
+
+<span class="sd">    This function takes a dictionary of data and converts it into a universal format.</span>
+<span class="sd">    It processes specific keys like &quot;peaks_json&quot; and &quot;Charge&quot; differently, and attempts</span>
+<span class="sd">    to convert other values to floats. If the conversion to float is successful and the</span>
+<span class="sd">    key is &quot;Charge&quot;, it further converts the value to an integer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :data (dict): The input data dictionary to be parsed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :dict: A dictionary with keys converted to a universal format and values processed</span>
+<span class="sd">              accordingly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">converted_key</span> <span class="o">=</span> <span class="n">convert_to_universal_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;peaks_json&quot;</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="s1">&#39;peaks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">converted_key</span> <span class="o">==</span> <span class="s2">&quot;adduct&quot;</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">converted_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">gt</span><span class="o">.</span><span class="n">adduct_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;precursor_charge&quot;</span><span class="p">,</span> <span class="s2">&quot;precursor_charge&quot;</span><span class="p">,</span> <span class="s2">&quot;ms_level&quot;</span><span class="p">,</span> <span class="s2">&quot;scan&quot;</span><span class="p">,</span> <span class="s2">&quot;exact_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;precursor_charge&quot;</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="s2">&quot;ms_level&quot;</span><span class="p">]:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not convert </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> to number&quot;</span><span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">converted_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="entropy">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.entropy">[docs]</a>
+<span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+    <span class="c1"># if probabilities is not numpy array, convert it to numpy array</span>
+    <span class="n">probabilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="c1"># if probabilities is not float, convert it to float</span>
+    <span class="n">probabilities</span> <span class="o">=</span> <span class="n">probabilities</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">probabilities</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">regulator</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="n">probabilities</span> <span class="o">=</span> <span class="n">probabilities</span> <span class="o">+</span> <span class="n">regulator</span>
+    <span class="n">probabilities</span> <span class="o">=</span> <span class="n">probabilities</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">H_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)))</span>
+    <span class="c1"># print(H, probabilities, H_max, H/H_max)</span>
+    <span class="k">return</span> <span class="n">H</span><span class="o">/</span><span class="n">H_max</span></div>
+
+
+
+<div class="viewcode-block" id="power_prob">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.power_prob">[docs]</a>
+<span class="k">def</span> <span class="nf">power_prob</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+    <span class="c1"># copy the probabilities to avoid changing the original</span>
+    <span class="n">probabilities2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">probabilities2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">probabilities2</span> <span class="o">=</span> <span class="n">probabilities2</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">probabilities2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">probabilities2</span>
+    <span class="c1"># make anythin less than half of the max value zero</span>
+    <span class="n">probabilities2</span><span class="p">[</span><span class="n">probabilities2</span> <span class="o">&lt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">probabilities2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">probabilities2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">probabilities2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">probabilities2</span>
+    <span class="n">probabilities2</span> <span class="o">=</span> <span class="n">probabilities2</span> <span class="o">/</span> <span class="n">probabilities2</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">probabilities2</span></div>
+
+
+
+<div class="viewcode-block" id="parse_molecular_formula">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.parse_molecular_formula">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_molecular_formula</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+    <span class="c1"># Define the regular expression pattern to match element symbols and their counts</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([A-Z][a-z]*)(\d*)&#39;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>  <span class="c1"># Find all matches in the formula</span>
+
+    <span class="c1"># Create a dictionary to store element symbol and count pairs</span>
+    <span class="n">atom_counts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">atom_counts</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+
+    <span class="k">return</span> <span class="n">atom_counts</span></div>
+
+
+
+<div class="viewcode-block" id="is_submolecule">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.is_submolecule">[docs]</a>
+<span class="k">def</span> <span class="nf">is_submolecule</span><span class="p">(</span><span class="n">sub_formula</span><span class="p">,</span> <span class="n">target_formula</span><span class="p">,</span> <span class="n">ignore_H</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Parse the atom counts of the sub-molecule and target molecule</span>
+    <span class="n">sub_atom_counts</span> <span class="o">=</span> <span class="n">parse_molecular_formula</span><span class="p">(</span><span class="n">sub_formula</span><span class="p">)</span>
+    <span class="n">target_atom_counts</span> <span class="o">=</span> <span class="n">parse_molecular_formula</span><span class="p">(</span><span class="n">target_formula</span><span class="p">)</span>
+
+    <span class="c1"># Check if every atom in sub-molecule is in target molecule and has less or equal count</span>
+    <span class="k">for</span> <span class="n">element</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">sub_atom_counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span> <span class="ow">and</span> <span class="n">ignore_H</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_atom_counts</span> <span class="ow">or</span> <span class="n">target_atom_counts</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="add_adduct_to_formula">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.add_adduct_to_formula">[docs]</a>
+<span class="k">def</span> <span class="nf">add_adduct_to_formula</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">adduct</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">adduct</span> <span class="o">!=</span> <span class="s2">&quot;M+H&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only H adduct is supported.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adduct</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">adduct</span><span class="p">)</span>
+        <span class="n">adduct</span> <span class="o">=</span> <span class="s2">&quot;H&quot;</span>
+    <span class="c1"># add one H to the formula</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;([A-Z][a-z]*)(\d*)&quot;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>  <span class="c1"># Find all matches in the formula</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">Found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">adduct</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">formula</span> <span class="o">+=</span> <span class="n">adduct</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="n">Found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formula</span> <span class="o">+=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">formula</span> <span class="o">+=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Found</span><span class="p">:</span>
+        <span class="n">formula</span> <span class="o">+=</span> <span class="n">adduct</span>
+    
+    <span class="k">return</span> <span class="n">formula</span></div>
+
+
+<div class="viewcode-block" id="remove_adduct_from_formula">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.remove_adduct_from_formula">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_adduct_from_formula</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">adduct</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">adduct</span> <span class="o">!=</span> <span class="s2">&quot;M+H&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only H adduct is supported.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adduct</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">adduct</span><span class="p">)</span>
+        <span class="n">adduct</span> <span class="o">=</span> <span class="s2">&quot;H&quot;</span>
+    
+    <span class="c1"># remove one H from the formula</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([A-Z][a-z]*)(\d*)&#39;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>  <span class="c1"># Find all matches in the formula</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;H&quot;</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">formula</span> <span class="o">+=</span> <span class="s2">&quot;H&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">formula</span> <span class="o">+=</span> <span class="s2">&quot;H&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formula</span> <span class="o">+=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">formula</span> <span class="o">+=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">formula</span></div>
+
+
+<div class="viewcode-block" id="get_elements">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.get_elements">[docs]</a>
+<span class="k">def</span> <span class="nf">get_elements</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([A-Z][a-z]*)(\d*)&#39;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[(</span><span class="n">element</span><span class="p">,</span> <span class="n">count</span> <span class="k">if</span> <span class="n">count</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">elements</span></div>
+
+
+<div class="viewcode-block" id="get_diff">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.get_diff">[docs]</a>
+<span class="k">def</span> <span class="nf">get_diff</span><span class="p">(</span><span class="n">formula1</span><span class="p">,</span> <span class="n">formula2</span><span class="p">):</span>
+    <span class="n">elements1</span> <span class="o">=</span> <span class="n">get_elements</span><span class="p">(</span><span class="n">formula1</span><span class="p">)</span>
+    <span class="n">elements2</span> <span class="o">=</span> <span class="n">get_elements</span><span class="p">(</span><span class="n">formula2</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">element</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">elements1</span><span class="p">:</span>
+        <span class="n">diff</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">element</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">elements2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">diff</span><span class="p">:</span>
+            <span class="n">diff</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">-=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diff</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    
+    <span class="c1"># remove 0s</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">diff</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="c1"># dict to string</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">diff</span></div>
+
+
+<div class="viewcode-block" id="convert_to_formula">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.general_utils.html#utilities.general_utils.convert_to_formula">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_to_formula</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[</span><span class="se">\&#39;</span><span class="s1">\s]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+    <span class="c1"># item = sorted(item, key=lambda x: x[1], reverse=True)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">item</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

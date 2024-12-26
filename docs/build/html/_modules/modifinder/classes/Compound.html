@@ -1,0 +1,599 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.classes.Compound &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">modifinder.classes.Compound</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modifinder.classes.Compound</h1><div class="highlight"><pre>
+<span></span>
+
+<span class="kn">import</span> <span class="nn">modifinder.utilities.general_utils</span> <span class="k">as</span> <span class="nn">general_utils</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.mol_utils</span> <span class="kn">import</span> <span class="n">_get_molecule</span>
+<span class="kn">import</span> <span class="nn">rdkit.Chem.rdMolDescriptors</span> <span class="k">as</span> <span class="nn">rdMolDescriptors</span>
+<span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<span class="c1"># import modifinder as mf</span>
+<span class="kn">from</span> <span class="nn">modifinder.classes.Spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+<span class="kn">from</span> <span class="nn">modifinder</span> <span class="kn">import</span> <span class="n">convert</span> <span class="k">as</span> <span class="n">convert</span>
+
+
+<div class="viewcode-block" id="Compound">
+<a class="viewcode-back" href="../../../modifinder/classes/classes.Compound.html#modifinder.Compound">[docs]</a>
+<span class="k">class</span> <span class="nc">Compound</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A class to represent a compound </span>
+
+<span class="sd">    The compound always has spectrum data.</span>
+<span class="sd">    If the compound structure is known, it also has a structure property.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Known Compound Attributes:</span>
+<span class="sd">    </span>
+<span class="sd">        id (str) : The id of the compound</span>
+<span class="sd">            </span>
+<span class="sd">        spectrum (Spectrum) : Spectrum Tuple representing mz, intensity, Precursor mass and Charge for mass spectrumetry data</span>
+<span class="sd">    </span>
+<span class="sd">    Known Compound Attributes:</span>
+
+<span class="sd">        structure (Chem.Mol): The structure of the compound</span>
+<span class="sd">        </span>
+<span class="sd">        distances (dict): A dictionary of distances between every pair of atoms in the compound</span>
+<span class="sd">        </span>
+<span class="sd">        peak_fragments_map (dict): A dictionary mapping peaks to fragments</span>
+
+<span class="sd">    Other Attributes:</span>
+<span class="sd">    </span>
+<span class="sd">        adduct_mass (float): The adduct mass, derived from the Adduct</span>
+<span class="sd">        </span>
+<span class="sd">        is_known (bool): A boolean indicating whether the compound is known, derived from the structure</span>
+<span class="sd">        </span>
+<span class="sd">        usi (str): The USI of the compound</span>
+<span class="sd">        </span>
+<span class="sd">        name (str): The name of the compound</span>
+<span class="sd">        </span>
+<span class="sd">        accession (str): The accession of the compound</span>
+<span class="sd">        </span>
+<span class="sd">        library_membership (str): The GNPS library membership of the compound</span>
+<span class="sd">        </span>
+<span class="sd">        exact_mass (float): The exact mass of the compound</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create a compound by providing the necessary information:</span>
+
+<span class="sd">    &gt;&gt;&gt; compound = Compound(id=&quot;CCMSLIB00005435812&quot;, peaks=[[110.066925,38499.089844],[138.060638,412152.093750],[195.079575,6894530.000000],[195.200180,480874.812500],[196.082092,43027.628906]], precursor_mz=195.087, precursor_charge=1, adduct=&quot;[M+H]+&quot;, smiles=&quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;)</span>
+
+<span class="sd">    Alternatively, you can create a compound by providing a dictionary of data:</span>
+
+<span class="sd">    &gt;&gt;&gt; data = {</span>
+<span class="sd">    ...     &quot;id&quot;: &quot;CCMSLIB00005435812&quot;,</span>
+<span class="sd">    ...     &quot;peaks&quot;: [[110.066925,38499.089844],[138.060638,412152.093750],[195.079575,6894530.000000],[195.200180,480874.812500],[196.082092,43027.628906]],</span>
+<span class="sd">    ...     &quot;precursor_mz&quot;: 195.087,</span>
+<span class="sd">    ...     &quot;charge&quot;: 1,</span>
+<span class="sd">    ...     &quot;adduct&quot;: &quot;[M+H]+&quot;,</span>
+<span class="sd">    ...     &quot;smiles&quot;: &quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; compound = Compound(data)</span>
+
+<span class="sd">    You can also create a compound by providing a usi:</span>
+
+<span class="sd">    &gt;&gt;&gt; usi = &quot;mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435812&quot;</span>
+<span class="sd">    &gt;&gt;&gt; compound = Compound(usi)</span>
+
+<span class="sd">    or with an accession:</span>
+
+<span class="sd">    &gt;&gt;&gt; accession = &quot;CCMSLIB00005435812&quot;</span>
+<span class="sd">    &gt;&gt;&gt; compound = Compound(accession)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># def __init__(self, data = None, structure = None, id: str = None, spectrum: Spectrum = None,</span>
+    <span class="c1">#             is_known: bool = None, name: str = None, peak_fragments_map: dict = None, distances: dict = None, **kwargs):</span>
+<div class="viewcode-block" id="Compound.__init__">
+<a class="viewcode-back" href="../../../modifinder/classes/classes.Compound.html#modifinder.Compound.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">incoming_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Compound class</span>
+
+<span class="sd">        The compound class can be initialized in three different ways:</span>
+<span class="sd">        1. By providing a dictionary of data to the *data* parameter that contains all the necessary information</span>
+<span class="sd">        2. By providing a usi to the *data* parameter to retrieve the necessary information from GNPS</span>
+<span class="sd">        3. By providing the necessary information as parameter</span>
+<span class="sd">        </span>
+<span class="sd">        If both the *data* and the parameters are provided, the parameters will override the data.</span>
+<span class="sd">        </span>
+<span class="sd">        If of the incoming data and kwargs are provided, an empty instance of the class will be created.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        incoming_data : input data (optional, default: None)</span>
+<span class="sd">            The data to initialize the class with, can be a dictionary of data, a usi, or a compound object. If not provided,</span>
+<span class="sd">            the class will be initialized with the provided keyword arguments. If provided, the keyword arguments will still</span>
+<span class="sd">            override the data.</span>
+
+<span class="sd">        kwargs : keyword arguments (optional, default: No attributes)</span>
+<span class="sd">            Attributes to initialize the class with, if provided, they will override the attributes from the data</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        convert.to_compound </span>
+<span class="sd">        </span>
+<span class="sd">        Spectrum</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># define the attributes of the class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">usi</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct_mass</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exact_mass</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">incoming_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># attempt to initialize the class with the provided data</span>
+        <span class="k">if</span> <span class="n">incoming_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">convert</span><span class="o">.</span><span class="n">to_compound</span><span class="p">(</span><span class="n">incoming_data</span><span class="p">,</span> <span class="n">use_object</span> <span class="o">=</span> <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="c1"># update the attributes with the provided keyword arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+        <span class="c1"># TODO: write setters for spectrum, structure to warn the user to update the dependent attributes</span>
+
+    
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the compound data and reset all the attributes to None&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">usi</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct_mass</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="c1"># # remove any additional attributes</span>
+        <span class="c1"># all_keys = list(self.__dict__.keys())</span>
+        <span class="c1"># for key in all_keys:</span>
+        <span class="c1">#     if key not in [&#39;id&#39;, &#39;spectrum&#39;, &#39;structure&#39;, &#39;is_known&#39;, &#39;name&#39;, &#39;peak_fragments_map&#39;, &#39;distances&#39;, &#39;usi&#39;, &#39;adduct_mass&#39;]:</span>
+        <span class="c1">#         delattr(self, key)</span>
+        
+    
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">:</span> <span class="n">Spectrum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">usi</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">adduct_mass</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">is_known</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">peak_fragments_map</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">distances</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the attributes of the class</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        ----------</span>
+<span class="sd">        structure (Chem.Mol, Smiles, InChi): The structure of the compound</span>
+<span class="sd">        id (str): The id of the compound</span>
+<span class="sd">        spectrum (Spectrum): an instance of Spectrum containing peak information [(mz, intensity)], precursor mass, charge, and adduct for mass spectrumetry data</span>
+<span class="sd">        usi (str): The USI of the compound</span>
+<span class="sd">        adduct_mass (float): The adduct mass, derived from the Adduct</span>
+<span class="sd">        is_known (bool): A boolean indicating whether the compound is known, if set to False, annotators or other parts of the code will treat this compound as unknown, if not provided but the structure is provided, it will be set to True</span>
+<span class="sd">        name (str): The name of the compound</span>
+<span class="sd">        peak_fragments_map (dict): A dictionary mapping peaks to fragments</span>
+<span class="sd">        distances (dict): A dictionary of distances between every pair of atoms in the compound, if not provided, it will be calculated from the structure</span>
+<span class="sd">        **kwargs: Additional data</span>
+<span class="sd">            - A use case is for the scenarios where the *data* parameter is provided, these arguments will be used to parse and clean the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># convert keys to lowercase</span>
+        <span class="n">lower_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">temp_structure</span> <span class="o">=</span> <span class="n">_get_molecule</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="o">**</span><span class="n">lower_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">temp_structure</span> <span class="k">if</span> <span class="n">temp_structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span> <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">if</span> <span class="n">spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s2">&quot;precursor_mz&quot;</span> <span class="ow">in</span> <span class="n">lower_kwargs</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">spectrum</span> <span class="o">=</span> <span class="n">convert</span><span class="o">.</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="o">**</span><span class="n">lower_kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">if</span> <span class="n">spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">spectrum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">usi</span> <span class="o">=</span> <span class="n">usi</span> <span class="k">if</span> <span class="n">usi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">usi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">adduct_mass</span> <span class="k">if</span> <span class="n">adduct_mass</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">adduct_mass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="n">is_known</span> <span class="k">if</span> <span class="n">is_known</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">lower_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;compound_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span> <span class="o">=</span> <span class="n">peak_fragments_map</span> <span class="k">if</span> <span class="n">peak_fragments_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span> <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span>
+
+        <span class="c1"># update the rest of the attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse_data</span><span class="p">()</span>
+    
+
+    <span class="k">def</span> <span class="nf">_parse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Parse missing and verify the data of the class&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exact_mass</span> <span class="o">=</span> <span class="n">rdMolDescriptors</span><span class="o">.</span><span class="n">CalcExactMolWt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Chem</span><span class="o">.</span><span class="n">rdmolops</span><span class="o">.</span><span class="n">GetDistanceMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adduct_mass</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">general_utils</span><span class="o">.</span><span class="n">get_adduct_mass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">adduct</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="c1"># TODO: check for a valid compound</span>
+        <span class="c1"># what is needed for a compound:</span>
+        <span class="c1"># id, spectrum.peaks, spectrum.precursor_mass, spectrum.charge, spectrum.adduct</span>
+    
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">valuable_data_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;usi&#39;</span><span class="p">]</span>
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valuable_data_keys</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">joined</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Compound(</span><span class="si">{</span><span class="n">joined</span><span class="si">}</span><span class="s2">) with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2"> peaks&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; and structure </span><span class="si">{</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+    
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the compound&quot;&quot;&quot;</span>
+        <span class="n">copied_compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">()</span>
+        <span class="n">convert</span><span class="o">.</span><span class="n">to_compound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_object</span> <span class="o">=</span> <span class="n">copied_compound</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copied_compound</span>
+    
+
+    <span class="k">def</span> <span class="nf">get_meta_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the meta data of the compound</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary containing the meta data of the compound</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;num_peaks&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">),</span>
+            <span class="s2">&quot;adduct&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">adduct</span><span class="p">,</span>
+            <span class="s2">&quot;precursor_mz&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mass</span><span class="p">,</span>
+            <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">description</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span><span class="p">:</span>
+            <span class="n">description</span><span class="p">[</span><span class="s1">&#39;num_aromatic_rings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdMolDescriptors</span><span class="o">.</span><span class="n">CalcNumAromaticRings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>
+            <span class="n">description</span><span class="p">[</span><span class="s1">&#39;num_atoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
+            <span class="n">description</span><span class="p">[</span><span class="s1">&#39;num_bonds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+            <span class="n">description</span><span class="p">[</span><span class="s1">&#39;num_rings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdMolDescriptors</span><span class="o">.</span><span class="n">CalcNumRings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>
+
+            <span class="c1"># TODO: add peak annotation information</span>
+        
+        <span class="k">return</span> <span class="n">description</span>
+    
+    
+    <span class="k">def</span> <span class="nf">print_peaks_to_fragments_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peaks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the peaks to fragments map</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        peaks : list, optional (default: None)</span>
+<span class="sd">            The list of peaks to print the fragments for, if None, print all peaks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">))</span>
+        
+        <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peak </span><span class="si">{</span><span class="n">peak</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">peak</span><span class="p">]</span><span class="si">}</span><span class="s2">, Fragments: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        
+    
+    <span class="k">def</span> <span class="nf">find_existance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peakids</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For each atom, and for each peak in the list, find the fragments that the atom is part of</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            peakids : list of peak ids</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            existance : list of dicts for each atom, each dict contains the peak ids as keys and the fragments as values</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">existance</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()))]</span>
+        <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peakids</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak</span><span class="p">]:</span>
+                <span class="c1"># get all the bits that are 1 in the fragment</span>
+                <span class="n">bin_fragment</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+                <span class="n">len_fragment</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_fragment</span><span class="p">)</span>
+                <span class="n">hitAtoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">len_fragment</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_fragment</span><span class="p">))</span> <span class="k">if</span> <span class="n">bin_fragment</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">hitAtoms</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">peak</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existance</span><span class="p">[</span><span class="n">atom</span><span class="p">]:</span>
+                        <span class="n">existance</span><span class="p">[</span><span class="n">atom</span><span class="p">][</span><span class="n">peak</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">existance</span><span class="p">[</span><span class="n">atom</span><span class="p">][</span><span class="n">peak</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">existance</span>
+    
+    
+    <span class="k">def</span> <span class="nf">calculate_contribution_atom_in_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">peakindx</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">existance_data</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">CI</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">CPA</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">CFA</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the contribution of an atom to a peak</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom : int</span>
+<span class="sd">            The index of the atom</span>
+<span class="sd">        peakindx : int</span>
+<span class="sd">            The index of the peak</span>
+<span class="sd">        existance_data : list of dicts</span>
+<span class="sd">            The existance data for the atoms</span>
+<span class="sd">        CI : bool, optional (default: False)</span>
+<span class="sd">            Calculate the intensity factor</span>
+<span class="sd">        CPA : bool, optional (default: True)</span>
+<span class="sd">            Calculate the atom peak ambiguity factor</span>
+<span class="sd">        CFA : bool, optional (default: True)</span>
+<span class="sd">            Calculate the fragment ambiguity factor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contribution</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">peakindx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existance_data</span><span class="p">[</span><span class="n">atom</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">contribution</span>
+        
+        <span class="n">intensity_factor</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">atom_peak_ambiguity_factor</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">fragment_ambiguity_factor</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">CI</span><span class="p">:</span>
+            <span class="n">intensity_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">peakindx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">CPA</span><span class="p">:</span>
+            <span class="n">atom_peak_ambiguity_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peakindx</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">existance_data</span><span class="p">[</span><span class="n">atom</span><span class="p">][</span><span class="n">peakindx</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">CFA</span><span class="p">:</span>
+                <span class="n">fragment_ambiguity_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="nb">bin</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">))</span>
+            
+            <span class="n">contribution</span> <span class="o">+=</span> <span class="n">intensity_factor</span> <span class="o">*</span> <span class="n">atom_peak_ambiguity_factor</span> <span class="o">*</span> <span class="n">fragment_ambiguity_factor</span>
+        
+        <span class="k">return</span> <span class="n">contribution</span>
+    
+    
+    <span class="k">def</span> <span class="nf">calculate_contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peakids</span><span class="p">,</span> <span class="n">CI</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">CPA</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">CFA</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">CPE</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        input:</span>
+<span class="sd">        peakids: list of peak ids</span>
+<span class="sd">        CI: (Consider_Intensity) bool, if True, the intensity of the peaks is considered (default: False)</span>
+<span class="sd">        CPA: (Consider_Peak_Ambiguity) bool, if True, the peak ambiguity (number of fragments assigned to a peak) is considered (default: True)</span>
+<span class="sd">        CFA: (Consider_Fragment_Ambiguity) bool, if True, the fragment ambiguity (number of atoms in fragment) is considered (default: True)</span>
+<span class="sd">        CPA: (Consider_Peak_Entropy) bool, if True, the peak entropy (how ambiguis the fragments are) is considered (default: True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_atoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">())</span>
+        <span class="n">existance_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_existance</span><span class="p">(</span><span class="n">peakids</span><span class="p">)</span>
+        <span class="n">contributions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_atoms</span><span class="p">)]</span>
+        <span class="n">peak_atom_contributions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">peakids</span><span class="p">),</span> <span class="n">num_atoms</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">peak</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">peakids</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_atoms</span><span class="p">):</span>
+                <span class="n">peak_atom_contributions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_contribution_atom_in_peak</span><span class="p">(</span><span class="n">atom</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="n">existance_data</span><span class="p">,</span> <span class="n">CI</span><span class="o">=</span><span class="n">CI</span><span class="p">,</span> <span class="n">CPA</span><span class="o">=</span><span class="n">CPA</span><span class="p">,</span> <span class="n">CFA</span><span class="o">=</span><span class="n">CFA</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">CPE</span><span class="p">:</span>
+            <span class="n">peak_entropies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peakids</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peakids</span><span class="p">)):</span>
+                <span class="n">peak_entropies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">general_utils</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span><span class="n">peak_atom_contributions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            
+            <span class="c1"># peak_entropies = peak_entropies / np.max(peak_entropies)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">peak_entropies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peakids</span><span class="p">))</span>
+            
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_atoms</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peakids</span><span class="p">)):</span>
+                <span class="n">contributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">peak_atom_contributions</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">peak_entropies</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">contributions</span>
+
+
+    <span class="k">def</span> <span class="nf">filter_fragments_by_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">peaks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Filter the fragments by the atoms, remove fragments that do not contain at least one of the atoms</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            atoms: a list of atoms to filter the fragments</span>
+<span class="sd">            peaks: a list of peaks to filter their fragments, if None, use all peaks</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            updated: the number of updated peaks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">))]</span>
+        
+        <span class="n">updated</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">:</span>
+            <span class="n">updated_fragments</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">atom</span> <span class="o">&amp;</span> <span class="n">fragment</span><span class="p">:</span>
+                        <span class="n">updated_fragments</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">updated_fragments</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">updated</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated_fragments</span>
+
+        <span class="k">return</span> <span class="n">updated</span>
+    
+    
+    <span class="k">def</span> <span class="nf">calculate_peak_annotation_ambiguity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peaks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the peak annotation ambiguity</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            peaks : list</span>
+<span class="sd">                a list of peaks to calculate the ambiguity for, if None, use all peaks</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (float, float) : a tuple of two values (ambiguity, ratio)</span>
+<span class="sd">                ambiguity: the average number of fragments per annotated peaks</span>
+<span class="sd">                ratio: the ratio of annotated peaks to all peaks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">))]</span>
+        <span class="n">ambiguity</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">annotated_peaks</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">annotated_peaks</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">ambiguity</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">annotated_peaks</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">ambiguity</span> <span class="o">/</span> <span class="n">annotated_peaks</span><span class="p">,</span> <span class="n">annotated_peaks</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">calculate_annotation_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peaks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the entropy of the annotation</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            peaks : list</span>
+<span class="sd">                a list of peaks to calculate the entropy for, if None, use all peaks</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            float : the entropy of the annotation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">))]</span>
+        <span class="n">peak_entropies</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">))]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">:</span>
+            <span class="n">atoms_appearance</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">atom</span> <span class="o">&amp;</span> <span class="n">fragment</span><span class="p">:</span>
+                        <span class="n">atoms_appearance</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">entropy</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">atoms_appearance</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">atoms_appearance</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span><span class="p">[</span><span class="n">peak</span><span class="p">])</span>
+                    <span class="n">entropy</span> <span class="o">-=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">peak_entropies</span><span class="p">[</span><span class="n">peak</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_entropies</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">entropy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">peak_entropies</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_entropies</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entropy</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

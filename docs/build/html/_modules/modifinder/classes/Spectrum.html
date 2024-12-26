@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.classes.Spectrum &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">modifinder.classes.Spectrum</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modifinder.classes.Spectrum</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.gnps_types</span> <span class="kn">import</span> <span class="n">adduct_mapping</span>
+<span class="kn">from</span> <span class="nn">modifinder</span> <span class="kn">import</span> <span class="n">convert</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="Spectrum">
+<a class="viewcode-back" href="../../../modifinder/classes/classes.Spectrum.html#modifinder.Spectrum">[docs]</a>
+<span class="k">class</span> <span class="nc">Spectrum</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to represent a spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mz: list</span>
+<span class="sd">        A list of m/z values.</span>
+<span class="sd">    intensity: list</span>
+<span class="sd">        A list of intensity values.</span>
+<span class="sd">    precursor_mz: float</span>
+<span class="sd">        The precursor m/z value.</span>
+<span class="sd">    precursor_charge: int</span>
+<span class="sd">        The precursor charge.</span>
+<span class="sd">    adduct: str</span>
+<span class="sd">        The adduct.</span>
+<span class="sd">    ms_level: int</span>
+<span class="sd">        The ms level, default is 2.</span>
+<span class="sd">    instrument: str, optional</span>
+<span class="sd">        The instrument used.</span>
+<span class="sd">    ms_mass_analyzer: str, optional</span>
+<span class="sd">        The mass analyzer used.</span>
+<span class="sd">    ms_dissociation_method: str, optional</span>
+<span class="sd">        The dissociation method used.</span>
+<span class="sd">    spectrum_id: str, optional</span>
+<span class="sd">        The spectrum id.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="Spectrum.__init__">
+<a class="viewcode-back" href="../../../modifinder/classes/classes.Spectrum.html#modifinder.Spectrum.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">incoming_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Spectrum class.</span>
+
+<span class="sd">        the spectrum class can be initialized with a dictionary of data or with the individual values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            incoming_data : Input data (optional, default is None).</span>
+<span class="sd">                The data to initialize the Spectrum object. The data can be a dictionary, a usi, or a Spectrum object.</span>
+<span class="sd">            normalize_peaks : bool, default is True.</span>
+<span class="sd">                If True, the intensity of the peaks will be normalized at initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">if</span> <span class="n">incoming_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="k">if</span> <span class="n">incoming_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">convert</span><span class="o">.</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">incoming_data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">normalize_peaks</span> <span class="o">=</span> <span class="n">normalize_peaks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peaks</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peaks_json</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precursor_mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precursor_charge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+               <span class="n">adduct</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_mass_analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+               <span class="n">ms_dissociation_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spectrum_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_to_base_peak</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remove_large_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the Spectrum object with the given values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            peaks (list): A list of peaks in the form of [[mz1, intensity1], [mz2, intensity2], ...].</span>
+<span class="sd">            peaks_json (str): A json string of peaks.</span>
+<span class="sd">            mz (list): A list of m/z values.</span>
+<span class="sd">            intensity (list): A list of intensity values.</span>
+<span class="sd">            precursor_mz (float): The precursor m/z value.</span>
+<span class="sd">            precursor_charge (int): The precursor charge.</span>
+<span class="sd">            adduct (str): The adduct.</span>
+<span class="sd">            ms_level (int): The ms level.</span>
+<span class="sd">            instrument (str): The instrument used.</span>
+<span class="sd">            ms_mass_analyzer (str): The mass analyzer used.</span>
+<span class="sd">            ms_dissociation_method (str): The dissociation method used.</span>
+<span class="sd">            spectrum_id (str): The spectrum id.</span>
+<span class="sd">            normalize_peaks (bool): If True, the intensity of the peaks will be normalized.</span>
+<span class="sd">            ratio_to_base_peak (float): If None, no filtering is done, if a float number, it removes all the peaks with intensity</span>
+<span class="sd">            less than ratio times the base peak.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">peaks_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">peaks_json</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span> <span class="k">if</span> <span class="n">mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span> <span class="k">if</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">precursor_mz</span><span class="p">)</span> <span class="k">if</span> <span class="n">precursor_mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">precursor_charge</span><span class="p">))</span> <span class="k">if</span> <span class="n">precursor_charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="n">adduct_mapping</span><span class="p">[</span><span class="n">adduct</span><span class="p">]</span> <span class="k">if</span> <span class="n">adduct</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ms_level</span><span class="p">)</span> <span class="k">if</span> <span class="n">ms_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span> <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span> <span class="o">=</span> <span class="n">ms_mass_analyzer</span> <span class="k">if</span> <span class="n">ms_mass_analyzer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span> <span class="o">=</span> <span class="n">ms_dissociation_method</span> <span class="k">if</span> <span class="n">ms_dissociation_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="n">spectrum_id</span> <span class="k">if</span> <span class="n">spectrum_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">)))</span>
+        
+        <span class="k">if</span> <span class="n">normalize_peaks</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_peaks</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">ratio_to_base_peak</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_small_peaks</span><span class="p">(</span><span class="n">ratio_to_base_peak</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">remove_large_peaks</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_larger_than_precursor_peaks</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">object_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">to_delete</span> <span class="o">=</span> <span class="p">[</span><span class="n">keys</span> <span class="k">for</span> <span class="n">keys</span> <span class="ow">in</span> <span class="n">object_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">object_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">to_delete</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">object_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">object_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the Spectrum object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the Spectrum object.&quot;&quot;&quot;</span>
+        <span class="n">copied_spectrum</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">()</span>
+        <span class="n">convert</span><span class="o">.</span><span class="n">to_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_object</span><span class="o">=</span><span class="n">copied_spectrum</span><span class="p">,</span> <span class="n">needs_parse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copied_spectrum</span>
+    
+    
+    <span class="k">def</span> <span class="nf">normalize_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_self</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;l2 Normalize the intensity of the Spectrum object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        change_self : bool, default is True</span>
+<span class="sd">            If True, the intensity of the Spectrum object will be normalized in place.</span>
+<span class="sd">            If False, a new Spectrum object with the normalized intensity will be returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            If change_self is True, the intensity of the Spectrum object will be normalized in place.</span>
+<span class="sd">        Spectrum</span>
+<span class="sd">            A new Spectrum object with the normalized intensity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">l2_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">)</span>
+        <span class="n">new_intensity</span> <span class="o">=</span> <span class="p">[</span><span class="n">intensity</span> <span class="o">/</span> <span class="n">l2_norm</span> <span class="k">for</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">change_self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+            <span class="k">return</span> <span class="n">new_spectrum</span>
+    
+    
+    <span class="k">def</span> <span class="nf">remove_small_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio_to_base_peak</span><span class="p">:</span><span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">change_self</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove peaks with intensity lower than a given ratio to the base peak.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ratio_to_base_peak : float (0, 1), default is 0.01</span>
+<span class="sd">            The ratio to the base peak.</span>
+<span class="sd">        change_self : bool, default is True</span>
+<span class="sd">            If True, the peaks with intensity lower than the given ratio will be removed in place.</span>
+<span class="sd">            If False, a new Spectrum object with the peaks removed will be returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        map from old index to new index</span>
+<span class="sd">            If change_self is True, the peaks with intensity lower than the given ratio will be removed in place and a map from the old index to the new index will be returned.</span>
+<span class="sd">        (Spectrum, map from old index to new index)</span>
+<span class="sd">            A new Spectrum object with the peaks removed and a map from the old index to the new index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">base_peak</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">)</span>
+        <span class="n">new_mz</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_intensity</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">intensity</span> <span class="o">&gt;=</span> <span class="n">ratio_to_base_peak</span> <span class="o">*</span> <span class="n">base_peak</span><span class="p">:</span>
+                <span class="n">new_mz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+                <span class="n">new_intensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span>
+                <span class="n">index_mapping</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_mz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        
+        <span class="k">if</span> <span class="n">change_self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">new_mz</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+            <span class="k">return</span> <span class="n">index_mapping</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">new_mz</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+            <span class="k">return</span> <span class="n">new_spectrum</span><span class="p">,</span> <span class="n">index_mapping</span>
+    
+    
+    <span class="k">def</span> <span class="nf">keep_top_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">change_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keep only the top k peaks in the Spectrum object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k : int, default is 100</span>
+<span class="sd">            The number of peaks to keep.</span>
+<span class="sd">        change_self : bool, default is True</span>
+<span class="sd">            If True, only the top k peaks will be kept in place.</span>
+<span class="sd">            If False, a new Spectrum object with only the top k peaks will be returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        map from old index to new index</span>
+<span class="sd">            If change_self is True, only the top k peaks will be kept in place and a map from the old index to the new index will be returned.</span>
+<span class="sd">        (Spectrum, map from old index to new index)</span>
+<span class="sd">            A new Spectrum object with only the top k peaks and a map from the old index to the new index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">top_k_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">new_mz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">top_k_indices</span><span class="p">])</span>
+        <span class="n">new_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">top_k_indices</span><span class="p">])</span>
+        <span class="c1"># sort the peaks by mz</span>
+        <span class="n">new_mz</span><span class="p">,</span> <span class="n">new_intensity</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">new_mz</span><span class="p">,</span> <span class="n">new_intensity</span><span class="p">)))</span>
+        <span class="n">index_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">index</span><span class="p">:</span> <span class="n">new_index</span> <span class="k">for</span> <span class="n">new_index</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">top_k_indices</span><span class="p">)}</span>
+        
+        <span class="k">if</span> <span class="n">change_self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">new_mz</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+            <span class="k">return</span> <span class="n">index_mapping</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">new_mz</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+            <span class="k">return</span> <span class="n">new_spectrum</span><span class="p">,</span> <span class="n">index_mapping</span>
+        
+    <span class="k">def</span> <span class="nf">remove_larger_than_precursor_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove peaks that are larger than the precursor m/z value.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        change_self : bool, default is True</span>
+<span class="sd">            If True, the peaks that are larger than the precursor m/z value will be removed in place.</span>
+<span class="sd">            If False, a new Spectrum object with the peaks removed will be returned.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">new_mz</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_intensity</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">mz</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span><span class="p">:</span>
+                <span class="n">new_mz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span>
+                <span class="n">new_intensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">change_self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">new_mz</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">new_mz</span>
+            <span class="n">new_spectrum</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">new_intensity</span>
+            <span class="k">return</span> <span class="n">new_spectrum</span>
+    
+    <span class="k">def</span> <span class="nf">get_peak_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mf">40.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the indexes of the peaks within the given m/z tolerance.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mz : float</span>
+<span class="sd">            The m/z value of the peak.</span>
+<span class="sd">        mz_tolerance : float, optional</span>
+<span class="sd">            The m/z tolerance for the peak, default is 0.02.</span>
+<span class="sd">        ppm_tolerance : float, optional</span>
+<span class="sd">            The ppm tolerance for the peak, default is 40.0.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The indexes of the peaks within the given m/z tolerance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">peak_mz</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">peak_mz</span> <span class="o">-</span> <span class="n">mz</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">mz_tolerance</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">peak_mz</span> <span class="o">-</span> <span class="n">mz</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">mz</span> <span class="o">*</span> <span class="n">ppm_tolerance</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>    
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    
+    
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utilities.network &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utilities.network</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utilities.network</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">GNPS Utils - Network Module</span>
+
+<span class="sd">This module provides functionality to connect to GNPS and retrieve data.</span>
+
+<span class="sd">Author: Shahneh</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.gnps_types</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.general_utils</span> <span class="kn">import</span> <span class="n">parse_data_to_universal</span>
+<span class="kn">from</span> <span class="nn">modifinder.exceptions</span> <span class="kn">import</span> <span class="n">ModiFinderNetworkError</span>
+
+<div class="viewcode-block" id="usi_to_accession">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.network.html#utilities.network.usi_to_accession">[docs]</a>
+<span class="k">def</span> <span class="nf">usi_to_accession</span><span class="p">(</span><span class="n">usi</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the accession number from a USI</span>
+<span class="sd">    param usi: str</span>
+<span class="sd">    return: str if found, None otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;accession&quot;</span> <span class="ow">in</span> <span class="n">usi</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">usi</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">usi</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">usi</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="accession_to_usi">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.network.html#utilities.network.accession_to_usi">[docs]</a>
+<span class="k">def</span> <span class="nf">accession_to_usi</span><span class="p">(</span><span class="n">accession</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the USI from an accession id</span>
+<span class="sd">    param accession: str</span>
+<span class="sd">    return: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;mzspec:GNPS:</span><span class="si">{}</span><span class="s2">:accession:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;GNPS-LIBRARY&quot;</span><span class="p">,</span> <span class="n">accession</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_data">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.network.html#utilities.network.get_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get data from GNPS, either from USI or Accession. if the identifier points to a known item in gnps,</span>
+<span class="sd">      it will return the full data, otherwise it will return partial data (ms2 data)</span>
+<span class="sd">    param identifier: str - USI or Accession</span>
+<span class="sd">    return: dict - dictionary of data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModiFinderNetworkError</span><span class="p">(</span><span class="s2">&quot;No identifier provided&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ModiFinderNetworkError</span><span class="p">(</span><span class="s2">&quot;Identifier must be a string&quot;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">_is_usi</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_is_known</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
+            <span class="n">identifier</span> <span class="o">=</span> <span class="n">usi_to_accession</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">_get_partial_data</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;usi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">identifier</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">identifier</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">parse_data_to_universal</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+    <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://external.gnps2.org/gnpsspectrum?SpectrumID=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModiFinderNetworkError</span><span class="p">(</span><span class="s2">&quot;Error in retrieving data from GNPS for identifier: </span><span class="si">{}</span><span class="s2">, link: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">link</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;annotations&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;spectruminfo&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;comments&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;comments&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parse_data_to_universal</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;usi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">accession_to_usi</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">identifier</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="get_matched_peaks">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.network.html#utilities.network.get_matched_peaks">[docs]</a>
+<span class="k">def</span> <span class="nf">get_matched_peaks</span><span class="p">(</span><span class="n">identifier1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">identifier2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    runs the gnps modified cosine matching algorithm and returns the matched peaks</span>
+<span class="sd">    param identifier1: str - USI or Accession</span>
+<span class="sd">    param identifier2: str - USI or Accession</span>
+<span class="sd">    return: dict - dictionary of matched peaks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_usi</span><span class="p">(</span><span class="n">identifier1</span><span class="p">):</span>
+        <span class="n">identifier1</span> <span class="o">=</span> <span class="n">accession_to_usi</span><span class="p">(</span><span class="n">identifier1</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_usi</span><span class="p">(</span><span class="n">identifier2</span><span class="p">):</span>
+        <span class="n">identifier2</span> <span class="o">=</span> <span class="n">accession_to_usi</span><span class="p">(</span><span class="n">identifier2</span><span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;usi1&#39;</span><span class="p">:</span> <span class="n">identifier1</span><span class="p">,</span>
+        <span class="s1">&#39;usi2&#39;</span><span class="p">:</span> <span class="n">identifier2</span><span class="p">,</span>
+     <span class="s1">&#39;mz_min&#39;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;mz_max&#39;</span><span class="p">:</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;cosine&#39;</span><span class="p">:</span><span class="s1">&#39;shifted&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;mz_tolerance&#39;</span><span class="p">:</span><span class="s1">&#39;0.1&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;grid&#39;</span><span class="p">:</span> <span class="s1">&#39;True&#39;</span><span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://metabolomics-usi.gnps2.org/json/mirror/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>  <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_get_partial_data</span><span class="p">(</span><span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get partial data (ms2 data) from USI</span>
+<span class="sd">    param identifier: str - USI</span>
+<span class="sd">    return: dict - dictionary of data with keys: precursor_mz, precursor_charge, mz: list, intensity: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://metabolomics-usi.gnps2.org/json/&#39;</span> <span class="o">+</span> <span class="s2">&quot;?usi1=&quot;</span> <span class="o">+</span> <span class="n">identifier</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error in retrieving data from GNPS for identifier: </span><span class="si">{}</span><span class="s2">, link: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parse_data_to_universal</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">_is_usi</span><span class="p">(</span><span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the identifier is a USI</span>
+<span class="sd">    param identifier: str</span>
+<span class="sd">    return: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;mzspec&quot;</span> <span class="ow">in</span> <span class="n">identifier</span>
+
+
+<span class="k">def</span> <span class="nf">_is_known</span><span class="p">(</span><span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the identifier is a known identifier in GNPS</span>
+<span class="sd">    param identifier: str</span>
+<span class="sd">    return: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;accession&quot;</span> <span class="ow">in</span> <span class="n">identifier</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

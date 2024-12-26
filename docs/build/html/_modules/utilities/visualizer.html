@@ -1,0 +1,1026 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utilities.visualizer &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utilities.visualizer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utilities.visualizer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">GNPS Utils - Visualizer Module</span>
+
+<span class="sd">This module provides functionality to visualize data from GNPS.</span>
+
+<span class="sd">Author: Shahneh</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="kn">import</span> <span class="n">AllChem</span><span class="p">,</span> <span class="n">Descriptors</span><span class="p">,</span> <span class="n">rdFMCS</span>
+<span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="kn">import</span> <span class="n">Draw</span>
+<span class="kn">from</span> <span class="nn">modifinder.convert</span> <span class="kn">import</span> <span class="n">to_spectrum</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.network</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.gnps_types</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.general_utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">modifinder.utilities.mol_utils</span> <span class="k">as</span> <span class="nn">mu</span>
+<span class="c1"># import modifinder.utilities.spectra_utils as su</span>
+<span class="c1"># from modifinder.alignment import _cosine_fast</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span><span class="p">,</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">ConnectionPatch</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+
+<div class="viewcode-block" id="draw_molecule">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.draw_molecule">[docs]</a>
+<span class="k">def</span> <span class="nf">draw_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_font_size</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">label_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">label_position</span> <span class="o">=</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw a molecule using RDKit</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol : rdkit molecule or str</span>
+<span class="sd">        rdkit molecule or str for SMILES or InChI or GNPS identifier (USI or Accession)</span>
+<span class="sd">    output_type : str</span>
+<span class="sd">        type of output (png or svg)</span>
+<span class="sd">    font_size : int, optional (default=None)</span>
+<span class="sd">        font size for the labels</span>
+<span class="sd">    label : str, optional (default=None)</span>
+<span class="sd">        label for the molecule</span>
+<span class="sd">    label_font_size : int, optional (default=20)</span>
+<span class="sd">        font size for the label</span>
+<span class="sd">    label_color : tuple, optional (default=(0,0,0))</span>
+<span class="sd">        color of the label</span>
+<span class="sd">    label_position : str, optional (default=&#39;top&#39;)</span>
+<span class="sd">        position of the label (top or bottom)</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        additional arguments for drawing the molecule in rdkit</span>
+<span class="sd">        like highlightAtoms, highlightAtomColors, highlightBonds, highlightBondColors, highlightAtomRadii, etc.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array or str</span>
+<span class="sd">        image of the molecule</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+
+<span class="sd">        img = mf_vis.draw_molecule(&#39;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&#39;, output_type=&#39;png&#39;, label=&quot;Caffeine&quot;)</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">    </span>
+<span class="sd">    .. image:: ../_static/draw_molecule1.png</span>
+<span class="sd">        :width: 300px</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        from rdkit import Chem</span>
+
+<span class="sd">        def mol_with_atom_index(mol):</span>
+<span class="sd">            for atom in mol.GetAtoms():</span>
+<span class="sd">                atom.SetAtomMapNum(atom.GetIdx())</span>
+<span class="sd">            return mol</span>
+<span class="sd">        mol = Chem.MolFromSmiles(&#39;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&#39;)</span>
+<span class="sd">        mol = mol_with_atom_index(mol)</span>
+<span class="sd">        highlightAtoms = {1, 3, 11, 8}</span>
+<span class="sd">        img = mf_vis.draw_molecule(mol, output_type=&#39;png&#39;, label=&quot;Caffeine&quot;, highlightAtoms=highlightAtoms)</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">    </span>
+<span class="sd">    .. image:: ../_static/draw_molecule2.png</span>
+<span class="sd">        :width: 300px</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: test svg</span>
+
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">_get_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Molecule not found&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output_type</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Output type should be a string&quot;</span><span class="p">)</span>
+    <span class="n">output_type</span> <span class="o">=</span> <span class="n">output_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;svg&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Output type should be either png or svg&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># if size is not provided, use default size</span>
+    <span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
+    <span class="n">x_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x_dim&quot;</span><span class="p">,</span> <span class="n">x_dim</span><span class="p">)</span>
+    <span class="n">y_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y_dim&quot;</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">font_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">font_size</span> <span class="o">=</span> <span class="n">x_dim</span> <span class="o">//</span> <span class="mi">20</span>
+
+    <span class="n">extra_info</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra_info&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="n">draw_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;highlightAtoms&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightAtomColors&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightBonds&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightBondColors&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightAtomRadii&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">draw_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
+        <span class="n">d2d</span> <span class="o">=</span> <span class="n">Draw</span><span class="o">.</span><span class="n">MolDraw2DCairo</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">)</span>
+        <span class="n">d2d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">minFontSize</span> <span class="o">=</span> <span class="n">font_size</span>
+        <span class="n">d2d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">maxFontSize</span> <span class="o">=</span> <span class="n">font_size</span>
+        <span class="k">if</span> <span class="s2">&quot;annotation_scale&quot;</span> <span class="ow">in</span> <span class="n">extra_info</span><span class="p">:</span>
+            <span class="n">d2d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">annotationFontScale</span> <span class="o">=</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;annotation_scale&quot;</span><span class="p">]</span>        
+
+        <span class="n">d2d</span><span class="o">.</span><span class="n">DrawMolecule</span><span class="p">(</span><span class="n">molecule</span><span class="p">,</span> <span class="o">**</span><span class="n">draw_kwargs</span><span class="p">)</span>
+        <span class="n">d2d</span><span class="o">.</span><span class="n">FinishDrawing</span><span class="p">()</span>
+        <span class="n">png</span> <span class="o">=</span> <span class="n">d2d</span><span class="o">.</span><span class="n">GetDrawingText</span><span class="p">()</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">png</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">((</span><span class="n">img</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+            <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+            <span class="n">path_of_this_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+            <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_of_this_file</span><span class="p">,</span> <span class="s2">&quot;fonts/NotoSans-Regular.ttf&quot;</span><span class="p">),</span> <span class="n">label_font_size</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">label_position</span> <span class="o">==</span> <span class="s1">&#39;top&#39;</span><span class="p">:</span>
+                <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">x_dim</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="p">,</span> <span class="n">label_color</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;mt&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">x_dim</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">),</span> <span class="n">label</span><span class="p">,</span> <span class="n">label_color</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;mb&quot;</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;show_legend&quot;</span> <span class="ow">in</span> <span class="n">extra_info</span> <span class="ow">and</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;show_legend&quot;</span><span class="p">]:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">_add_heatmap_legend</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;highlightAtomColors&quot;</span><span class="p">],</span>
+                               <span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;legend_width&quot;</span><span class="p">],</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;legend_font&quot;</span><span class="p">],</span> <span class="n">output_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">img</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d2d</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Draw</span><span class="o">.</span><span class="n">MolDraw2DSVG</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">)</span>
+        <span class="n">d2d</span><span class="o">.</span><span class="n">SetFontSize</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;annotation_scale&quot;</span> <span class="ow">in</span> <span class="n">extra_info</span><span class="p">:</span>
+            <span class="n">d2d</span><span class="o">.</span><span class="n">drawOptions</span><span class="p">()</span><span class="o">.</span><span class="n">annotationFontScale</span> <span class="o">=</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;annotation_scale&quot;</span><span class="p">]</span>
+        <span class="n">d2d</span><span class="o">.</span><span class="n">DrawMolecule</span><span class="p">(</span><span class="n">molecule</span><span class="p">,</span> <span class="o">**</span><span class="n">draw_kwargs</span><span class="p">)</span>
+        <span class="n">d2d</span><span class="o">.</span><span class="n">FinishDrawing</span><span class="p">()</span>
+        <span class="n">svg</span> <span class="o">=</span> <span class="n">d2d</span><span class="o">.</span><span class="n">GetDrawingText</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;show_legend&quot;</span> <span class="ow">in</span> <span class="n">extra_info</span> <span class="ow">and</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;show_legend&quot;</span><span class="p">]:</span>
+            <span class="n">svg</span> <span class="o">=</span> <span class="n">_add_heatmap_legend</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;highlightAtomColors&quot;</span><span class="p">],</span>
+                              <span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;legend_width&quot;</span><span class="p">],</span> <span class="n">extra_info</span><span class="p">[</span><span class="s2">&quot;legend_font&quot;</span><span class="p">],</span> <span class="n">output_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">svg</span></div>
+
+
+
+<div class="viewcode-block" id="draw_modifications">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.draw_modifications">[docs]</a>
+<span class="k">def</span> <span class="nf">draw_modifications</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">show_legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">legend_font</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">legend_position</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">highlight_common</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">highlight_added</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">highlight_removed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modification_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw the modifications from molecule 1 to molecule 2</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol1 : rdkit molecule, str</span>
+<span class="sd">        rdkit molecule or str for SMILES or InChI or GNPS identifier (USI or Accession)</span>
+<span class="sd">    mol2 : rdkit molecule</span>
+<span class="sd">        rdkit molecule or str for SMILES or InChI or GNPS identifier (USI or Accession)</span>
+<span class="sd">    output_type : str, optional (default=&#39;png&#39;)</span>
+<span class="sd">        type of output (png or svg)</span>
+<span class="sd">    show_legend : bool, optional (default=True)</span>
+<span class="sd">        show the legend or not</span>
+<span class="sd">    legend_font : int, optional (default=15)</span>
+<span class="sd">        font size of the legend</span>
+<span class="sd">    legend_position : tuple, optional (default=None)</span>
+<span class="sd">        position of the legend</span>
+<span class="sd">    highlight_common : bool, optional (default=True)</span>
+<span class="sd">        highlight the common atoms</span>
+<span class="sd">    highlight_added : bool, optional (default=True)</span>
+<span class="sd">        highlight the added atoms</span>
+<span class="sd">    highlight_removed : bool, optional (default=True)</span>
+<span class="sd">        highlight the removed atoms</span>
+<span class="sd">    modification_only : bool, optional (default=False)</span>
+<span class="sd">        only highlight the modification edges, if highlight_removed or highlight_added is False, this will only show the enabled ones</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array or str</span>
+<span class="sd">        image of the modification</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        from rdkit import Chem</span>
+
+<span class="sd">        smiles1, smiles2 = &#39;N[C@@H](CCC(=O)N[C@@H](CS)C(=O)NCC(O)=O)C(O)=O&#39;, &#39;CCCCCCSCC(CNCC(=O)O)NC(=O)CCC(C(=O)O)N&#39;</span>
+<span class="sd">        mol1 = mf_vis.draw_molecule(smiles1, label=&quot;mol1&quot;)</span>
+<span class="sd">        mol2 = mf_vis.draw_molecule(smiles2, label=&quot;mol2&quot;)</span>
+<span class="sd">        modification = mf_vis.draw_modifications(smiles1, smiles2, label=&quot;modifications&quot;)</span>
+<span class="sd">        fig, ax = plt.subplots(1, 3, figsize=(15, 5))</span>
+<span class="sd">        ax[0].imshow(mol1)</span>
+<span class="sd">        ax[1].imshow(mol2)</span>
+<span class="sd">        ax[2].imshow(modification)</span>
+<span class="sd">        for a in ax:</span>
+<span class="sd">            a.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">    </span>
+<span class="sd">    .. image:: ../_static/draw_modifications.png</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">_get_molecules</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">get_transition</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+
+    <span class="n">highlight_color_removed</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">highlight_color_removed_dark</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">highlight_color_added</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">highlight_color_added_dark</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">highlight_color_common</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="n">highlight_atoms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">highlight_bonds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">highlight_atoms_colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">highlight_bonds_colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">modification_only</span><span class="p">:</span>
+        <span class="n">highlight_common</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">highlight_common</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;common_atoms&#39;</span><span class="p">]:</span>
+            <span class="n">highlight_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+            <span class="n">highlight_atoms_colors</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_common</span>
+    
+    <span class="k">if</span> <span class="n">highlight_added</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;added_atoms&#39;</span><span class="p">]:</span>
+            <span class="n">highlight_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+            <span class="n">highlight_atoms_colors</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_added</span>
+
+    <span class="k">if</span> <span class="n">highlight_removed</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;removed_atoms&#39;</span><span class="p">]:</span>
+            <span class="n">highlight_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+            <span class="n">highlight_atoms_colors</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_removed</span>
+
+    <span class="n">modification_added_edges</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;modified_added_edges_bridge&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;modified_added_edges_inside&#39;</span><span class="p">]</span>
+    <span class="n">modification_removed_edges</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;modified_removed_edges_bridge&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;modified_removed_edges_inside&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">bondIdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;merged_mol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()):</span>
+        <span class="n">bond</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;merged_mol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">GetBondWithIdx</span><span class="p">(</span><span class="n">bondIdx</span><span class="p">)</span>
+        <span class="n">pair1</span> <span class="o">=</span> <span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">())</span>
+        <span class="n">pair2</span> <span class="o">=</span> <span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">highlight_common</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pair1</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;common_bonds&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;common_bonds&#39;</span><span class="p">]:</span>
+                <span class="n">highlight_bonds_colors</span><span class="p">[</span><span class="n">bondIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_common</span>
+                <span class="n">highlight_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bondIdx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">highlight_added</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pair1</span> <span class="ow">in</span> <span class="n">modification_added_edges</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">modification_added_edges</span><span class="p">:</span>
+                <span class="n">highlight_bonds_colors</span><span class="p">[</span><span class="n">bondIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_added_dark</span>
+                <span class="n">highlight_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bondIdx</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">modification_only</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pair1</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;added_edges&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;added_edges&#39;</span><span class="p">]):</span>
+                <span class="n">highlight_bonds_colors</span><span class="p">[</span><span class="n">bondIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_added</span>
+                <span class="n">highlight_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bondIdx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">highlight_removed</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pair1</span> <span class="ow">in</span> <span class="n">modification_removed_edges</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">modification_removed_edges</span><span class="p">:</span>
+                <span class="n">highlight_bonds_colors</span><span class="p">[</span><span class="n">bondIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_removed_dark</span>
+                <span class="n">highlight_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bondIdx</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">modification_only</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pair1</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;removed_edges&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;removed_edges&#39;</span><span class="p">]):</span>
+                <span class="n">highlight_bonds_colors</span><span class="p">[</span><span class="n">bondIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlight_color_removed</span>
+                <span class="n">highlight_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bondIdx</span><span class="p">)</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">draw_molecule</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;merged_mol&#39;</span><span class="p">],</span> <span class="n">highlightAtoms</span><span class="o">=</span><span class="n">highlight_atoms</span><span class="p">,</span> <span class="n">highlightAtomColors</span><span class="o">=</span><span class="n">highlight_atoms_colors</span><span class="p">,</span> <span class="n">highlightBonds</span><span class="o">=</span><span class="n">highlight_bonds</span><span class="p">,</span> <span class="n">highlightBondColors</span><span class="o">=</span><span class="n">highlight_bonds_colors</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">output_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_legend</span><span class="p">:</span>
+        <span class="n">legend</span> <span class="o">=</span> <span class="n">_generate_modification_legend</span><span class="p">(</span><span class="n">legend_font</span><span class="p">,</span> <span class="n">output_type</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">_overlay_legend</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">legend</span><span class="p">,</span> <span class="n">legend_position</span><span class="p">,</span> <span class="n">output_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="draw_molecule_heatmap">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.draw_molecule_heatmap">[docs]</a>
+<span class="k">def</span> <span class="nf">draw_molecule_heatmap</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">show_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">shrink_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">annotation_scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">show_legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">legend_width</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">legend_font</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw a molecule and color the atoms based on the scores</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol : rdkit molecule</span>
+<span class="sd">        Molecule to Draw the heatmap for</span>
+<span class="sd">    scores : list</span>
+<span class="sd">        list of scores for each atom (the order should be the same as the order of atoms in the molecule)</span>
+<span class="sd">    output_type : str, optional (default=&#39;png&#39;)</span>
+<span class="sd">        type of output (png or svg)</span>
+<span class="sd">    show_labels : bool, optional (default=False)</span>
+<span class="sd">        add labels to the atoms</span>
+<span class="sd">    shrink_labels : bool, optional (default=False)</span>
+<span class="sd">        shrink the labels to more compact form</span>
+<span class="sd">    annotation_scale : float, optional (default=1)</span>
+<span class="sd">        size of the labels (font size)</span>
+<span class="sd">    show_legend : bool, optional (default=True)</span>
+<span class="sd">        show the legend or not</span>
+<span class="sd">    legend_width : int, optional (default=50)</span>
+<span class="sd">        width of the legend in pixels</span>
+<span class="sd">    legend_font : int, optional (default=40)</span>
+<span class="sd">        font size of the legend</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array or str</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        import numpy as np</span>
+<span class="sd">        mol = Chem.MolFromSmiles(&#39;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&#39;)</span>
+<span class="sd">        scores = np.random.rand(mol.GetNumAtoms())</span>
+<span class="sd">        img = mf_vis.draw_molecule_heatmap(mol, scores, label=&quot;Caffeine&quot;, show_labels=True, legend_font=20)</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        </span>
+<span class="sd">    .. image:: ../_static/draw_molecule_heatmap.png</span>
+<span class="sd">        :width: 300px</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#TODO: test svg</span>
+    
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">_get_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">or</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Molecule not found&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># get copy of the molecule</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
+    
+    <span class="n">colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()):</span>
+        <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_heat_map_colors</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">show_labels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+            <span class="n">lbl</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()],</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">shrink_labels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">lbl</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lbl</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()],</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;atomNote&#39;</span><span class="p">,</span><span class="n">lbl</span><span class="p">)</span>
+
+    <span class="c1"># # set the colors in kwargs</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;highlightAtoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;highlightAtomColors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">colors</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;highlightBonds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">][</span><span class="s1">&#39;annotation_scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotation_scale</span>
+
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">][</span><span class="s1">&#39;output_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_type</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">][</span><span class="s1">&#39;show_legend&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">show_legend</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">][</span><span class="s1">&#39;legend_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">legend_width</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">][</span><span class="s1">&#39;legend_font&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">legend_font</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;extra_info&#39;</span><span class="p">][</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
+
+    <span class="c1"># draw the molecule</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">draw_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">output_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="draw_spectrum">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.draw_spectrum">[docs]</a>
+<span class="k">def</span> <span class="nf">draw_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">flipped</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_x_label</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">show_y_label</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bar_width</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">x_lim</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw a spectrum </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spectrum : Spectrum or list of tuples or USI or Accession</span>
+<span class="sd">        Spectrum to draw</span>
+<span class="sd">    output_type : str, optional (default=&#39;png&#39;)</span>
+<span class="sd">        type of output (png or svg)</span>
+<span class="sd">    normalize_peaks : bool, optional (default=False)</span>
+<span class="sd">        normalize the peaks or not</span>
+<span class="sd">    colors : dict, optional (default={})</span>
+<span class="sd">        dictionary of colors for the peaks, keys are the indices of the peaks,</span>
+<span class="sd">        if value is a list, the first value is the color of top half and the </span>
+<span class="sd">        second value is the color of the bottom half.</span>
+<span class="sd">    flipped : bool, optional (default=False)</span>
+<span class="sd">        flip the spectrum or not</span>
+<span class="sd">    size : tuple, optional (default=None)</span>
+<span class="sd">        size of the figure</span>
+<span class="sd">    show_x_label : bool, optional (default=False)</span>
+<span class="sd">        show x label or not</span>
+<span class="sd">    show_y_label : bool, optional (default=False)</span>
+<span class="sd">        show y label or not</span>
+<span class="sd">    font_size : int, optional (default=None)</span>
+<span class="sd">        font size of the labels</span>
+<span class="sd">    bar_width : int, optional (default=3)</span>
+<span class="sd">        width of the spectrum bars</span>
+<span class="sd">    x_lim : tuple, optional (default=None)</span>
+<span class="sd">        x limit of the figure</span>
+<span class="sd">    dpi : int, optional (default=300)</span>
+<span class="sd">        dpi of the stored image</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        additional arguments for drawing the spectrum in matplotlib</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array or str</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        import numpy as np</span>
+<span class="sd">        mz = [100, 200, 270, 400, 450]</span>
+<span class="sd">        intensity = [0.1, 0.2, 0.5, 0.4, 0.3]</span>
+<span class="sd">        colors = {</span>
+<span class="sd">            0: &#39;red&#39;,</span>
+<span class="sd">            1: [&#39;blue&#39;, &#39;green&#39;],</span>
+<span class="sd">            3: &#39;#FFA500&#39;,</span>
+<span class="sd">            4: (0.9,0.9,0.2)</span>
+<span class="sd">        }</span>
+<span class="sd">        img = mf_vis.draw_spectrum(list(zip(mz, intensity)), output_type=&#39;png&#39;, show_x_label=True, show_y_label=True, colors=colors)</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        </span>
+<span class="sd">    .. image:: ../_static/draw_spectrum.png</span>
+<span class="sd">        :width: 300px</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spectrum</span> <span class="o">=</span> <span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">normalize_peaks</span><span class="p">:</span>
+        <span class="n">spectrum</span><span class="o">.</span><span class="n">normalize_peaks</span><span class="p">()</span>
+    
+    <span class="c1"># if output type is ax, use the ax to draw the spectrum</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_type</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">output_type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">normalize_peaks</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.001</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">font_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="n">font_size</span><span class="p">})</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)):</span>
+        <span class="n">mz</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">intensity</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gray&#39;</span>
+            <span class="k">if</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gray&#39;</span>
+            
+            <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">intensity</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">show_x_label</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;m/z&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_y_label</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Intensity&quot;</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">flipped</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">invert_yaxis</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">x_lim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_lim</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>    
+        <span class="n">alignment_bytes</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Set the figure patch alpha to 0 (fully transparent)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">alignment_bytes</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+        <span class="n">alignment_bytes</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="c1"># convert the image to numpy array</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">alignment_bytes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">img</span>
+    
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;svg&quot;</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">svg</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">svg</span>
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;ax&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="draw_alignment">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.draw_alignment">[docs]</a>
+<span class="k">def</span> <span class="nf">draw_alignment</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">matches</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">draw_mapping_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ppm</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">x_lim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw the alignment of multiple spectrums</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spectrums : list of SpectrumTuple or list of list of tuples (mz, intensity)</span>
+<span class="sd">        list of spectrums to draw</span>
+<span class="sd">    matches : list of list of tuples or list of tuples, optional (default=None)</span>
+<span class="sd">        matching between the spectrums</span>
+<span class="sd">    output_type : str, optional (default=&#39;png&#39;)</span>
+<span class="sd">        type of output (png or svg)</span>
+<span class="sd">    normalize_peaks : bool, optional (default=False)</span>
+<span class="sd">        normalize the peaks or not</span>
+<span class="sd">    size : tuple, optional (default=None)</span>
+<span class="sd">        size of the figure</span>
+<span class="sd">    dpi : int, optional (default=300)</span>
+<span class="sd">        dpi of the stored image</span>
+<span class="sd">    draw_mapping_lines : bool, optional (default=True)</span>
+<span class="sd">        draw the mapping lines</span>
+<span class="sd">    ppm : float, optional (default=40)</span>
+<span class="sd">        ppm value for the alignment</span>
+<span class="sd">    x_lim : tuple, optional (default=None)</span>
+<span class="sd">        x limit of the figure</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        additional arguments for drawing the spectrum in matplotlib</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array or str</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        import numpy as np</span>
+<span class="sd">        peaks1 = list(zip([100, 200, 270, 400, 450], [0.1, 0.2, 0.5, 0.4, 0.3]))</span>
+<span class="sd">        peaks2 = list(zip([100, 230, 350, 360, 430], [0.1, 0.3, 0.2, 0.4, 0.5]))</span>
+<span class="sd">        peaks3 = list(zip([120, 230, 300, 380, 550], [0.1, 0.2, 0.5, 0.4, 0.3]))</span>
+<span class="sd">        matches = [[(0, 0), (1, 1), (3, 4)], [(0, 0), (1, 1), (3, 3)]]</span>
+<span class="sd">        img = mf_vis.draw_alignment([peaks1, peaks2, peaks3], matches=matches,</span>
+<span class="sd">                                    output_type=&#39;png&#39;,</span>
+<span class="sd">                                    normalize_peaks=True,</span>
+<span class="sd">                                    x_lim=(0, 550))</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+
+<span class="sd">    .. image:: ../_static/draw_alignment.png</span>
+<span class="sd">        :width: 400px</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">spectrums</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span> <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">normalize_peaks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">:</span>
+            <span class="n">spectrum</span><span class="o">.</span><span class="n">normalize_peaks</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">x_lim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_lim</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">:</span>
+            <span class="n">x_lim</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">x_lim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">min</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x_lim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">max</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)))</span>
+    
+    <span class="c1"># calculating the colors</span>
+    <span class="c1"># matches should be a list of matchings for each spectrum pairs, each matching is a list of tuples (index1, index2)</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">))]</span>
+
+    <span class="k">if</span> <span class="n">matches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># perform the alignment</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># if matches == &#39;default&#39;:</span>
+    <span class="c1">#     matches = []</span>
+    <span class="c1">#     for i in range(len(spectrums) - 1):</span>
+    <span class="c1">#         cosine, match = _cosine_fast(spectrums[i], spectrums[i+1], 0.1, ppm, True)</span>
+    <span class="c1">#         matches.append(match)</span>
+            
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of matches should be equal to the number of spectrums - 1&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># in case there is only one match, accept it as both a list of tuples or a list of lists</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">matches</span><span class="p">]</span>
+
+    <span class="n">flipped</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="s2">&quot;flipped&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">flipped</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;flipped&quot;</span><span class="p">]</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;flipped&quot;</span><span class="p">)</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">match_index</span><span class="p">,</span> <span class="n">match</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">temp_color</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span>
+            <span class="k">if</span> <span class="n">is_shifted</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">ppm</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">temp_color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span>
+            
+            <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">match_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">temp_color</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">temp_color</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_color</span>
+            
+            <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">match_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">temp_color</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">temp_color</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">colors</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_color</span>
+            
+            <span class="k">if</span> <span class="n">draw_mapping_lines</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">flipped</span> <span class="ow">and</span> <span class="n">match_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="n">match_index</span><span class="p">,</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">0</span><span class="p">),</span> <span class="n">temp_color</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="n">match_index</span><span class="p">,</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">match_index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">temp_color</span><span class="p">])</span>
+    
+                
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spectrums</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">draw_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">x_lim</span><span class="o">=</span><span class="n">x_lim</span><span class="p">,</span> <span class="n">normalize_peaks</span><span class="o">=</span><span class="n">normalize_peaks</span><span class="p">,</span> <span class="n">flipped</span><span class="o">=</span><span class="n">flipped</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">draw_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">x_lim</span><span class="o">=</span><span class="n">x_lim</span><span class="p">,</span> <span class="n">normalize_peaks</span><span class="o">=</span><span class="n">normalize_peaks</span><span class="p">,</span> <span class="n">flipped</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;bar_width&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">bar_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;bar_width&quot;</span><span class="p">]</span><span class="o">//</span><span class="mf">1.5</span><span class="p">)</span>
+            <span class="n">con</span> <span class="o">=</span> <span class="n">ConnectionPatch</span><span class="p">(</span><span class="n">xyA</span><span class="o">=</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span> <span class="n">xyB</span><span class="o">=</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span> <span class="n">coordsA</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">coordsB</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">axesA</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">axesB</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">bar_width</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">con</span> <span class="o">=</span> <span class="n">ConnectionPatch</span><span class="p">(</span><span class="n">xyA</span><span class="o">=</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span> <span class="n">xyB</span><span class="o">=</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span> <span class="n">coordsA</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">coordsB</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">axesA</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">axesB</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+    
+    <span class="c1"># remove all extra paddings (but make sure the labels are not cut)</span>
+    <span class="k">if</span> <span class="n">flipped</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># remove xtick labels</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
+        <span class="n">alignment_bytes</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Set the figure patch alpha to 0 (fully transparent)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">alignment_bytes</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+        <span class="n">alignment_bytes</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="c1"># convert the image to numpy array</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">alignment_bytes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">img</span>
+    <span class="k">elif</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;svg&quot;</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">svg</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">svg</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span></div>
+
+
+
+<div class="viewcode-block" id="draw_frag_of_molecule">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.draw_frag_of_molecule">[docs]</a>
+<span class="k">def</span> <span class="nf">draw_frag_of_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">fragment</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    draws a fragment of the molecule. The fragment is represented by a binary string where 1 indicates the presence of the atom and 0 indicates the absence.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mol : rdkit molecule</span>
+<span class="sd">        Molecule to draw the fragment for</span>
+<span class="sd">    fragment : int</span>
+<span class="sd">        fragment represented by a binary string</span>
+<span class="sd">    output_type : str, optional (default=&#39;png&#39;)</span>
+<span class="sd">        type of output (png or svg)</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        additional arguments for drawing the molecule in rdkit</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array or str</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        from rdkit import Chem</span>
+<span class="sd">        mol = Chem.MolFromSmiles(&#39;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&#39;)</span>
+<span class="sd">        def mol_with_atom_index(mol):</span>
+<span class="sd">            for atom in mol.GetAtoms():</span>
+<span class="sd">                atom.SetAtomMapNum(atom.GetIdx())</span>
+<span class="sd">            return mol</span>
+<span class="sd">        mol = mol_with_atom_index(mol)</span>
+<span class="sd">        fragment = int(&quot;110111&quot;, 2) # Convert binary to decimal</span>
+<span class="sd">        img = mf_vis.draw_frag_of_molecule(mol, fragment, output_type=&#39;png&#39;)</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&#39;off&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        </span>
+<span class="sd">    .. image:: ../_static/draw_frag_of_molecule.png</span>
+<span class="sd">        :width: 300px</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">_get_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">highlightAtoms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">fragment</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">):</span>
+            <span class="n">highlightAtoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="c1"># print(highlightAtoms)</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;highlightAtoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">highlightAtoms</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">draw_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_get_heat_map_colors</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the heat map color based on an input value</span>
+<span class="sd">    :param val: float - value between 0 and 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mf">0.2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">val</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">val</span><span class="p">),</span> <span class="mf">0.4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mf">0.95</span><span class="o">*</span><span class="n">val</span><span class="p">,</span> <span class="mf">0.2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">val</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">val</span><span class="p">),</span> <span class="n">val</span><span class="o">*</span><span class="mf">0.3</span> <span class="o">+</span> <span class="mf">0.40</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_add_heatmap_legend</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">image_width</span><span class="p">,</span> <span class="n">image_height</span><span class="p">,</span> <span class="n">legend_span</span><span class="p">,</span> <span class="n">fontSize</span><span class="p">,</span> <span class="n">output_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add legend to the image</span>
+<span class="sd">    :param img: image</span>
+<span class="sd">    :param scores: list of scores</span>
+<span class="sd">    :param colors: dictionary of colors</span>
+<span class="sd">    :param type: str - type of output (png or svg)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
+        <span class="n">legend_patch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">legend_span</span><span class="p">,</span> <span class="n">image_width</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+                <span class="n">legend_patch</span><span class="p">[:,</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">image_width</span><span class="o">/</span><span class="n">steps</span><span class="p">):</span><span class="nb">int</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">image_width</span><span class="o">/</span><span class="n">steps</span><span class="p">),</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_get_heat_map_colors</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="n">steps</span><span class="p">)]</span><span class="o">*</span><span class="n">legend_span</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">legend_span</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    
+        <span class="n">legend_patch</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">legend_patch</span><span class="p">[:,:,:]</span><span class="o">*</span><span class="mi">255</span>
+        <span class="n">legend_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">legend_patch</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="s1">&#39;RGBA&#39;</span><span class="p">)</span>
+
+        <span class="c1"># add legend text</span>
+        <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">legend_image</span><span class="p">)</span>
+        <span class="n">path_of_this_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_of_this_file</span><span class="p">,</span> <span class="s2">&quot;fonts/NotoSans-Regular.ttf&quot;</span><span class="p">),</span> <span class="n">fontSize</span><span class="p">)</span>
+        <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="n">legend_span</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Low likelihood&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;lm&quot;</span><span class="p">)</span>
+        <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">image_width</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">legend_span</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;high likelihood&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;rm&quot;</span><span class="p">)</span>
+
+        <span class="n">legend_patch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">legend_image</span><span class="p">)</span>
+
+        <span class="c1"># if image is in RGB format, convert it to RGBA</span>
+        <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="p">(</span><span class="n">img</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">img</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">img</span><span class="p">,</span> <span class="n">legend_patch</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">img</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;svg width=&quot;</span><span class="si">{}</span><span class="s2">&quot; height=&quot;</span><span class="si">{}</span><span class="s2">&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">legend_span</span><span class="p">,</span> <span class="n">image_width</span><span class="p">)</span>
+        <span class="n">rectWidth</span> <span class="o">=</span> <span class="n">legend_span</span><span class="o">/</span><span class="n">steps</span>
+        <span class="n">rectHeight</span> <span class="o">=</span> <span class="n">image_width</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">_get_heat_map_colors</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="n">steps</span><span class="p">)</span>
+            <span class="n">svg</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;rect x=&quot;</span><span class="si">{}</span><span class="s2">&quot; y=&quot;</span><span class="si">{}</span><span class="s2">&quot; width=&quot;</span><span class="si">{}</span><span class="s2">&quot; height=&quot;</span><span class="si">{}</span><span class="s2">&quot; fill=&quot;rgba(</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;/&gt;&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">rectWidth</span><span class="p">,</span> <span class="n">image_height</span><span class="o">-</span><span class="n">legend_span</span><span class="p">,</span> <span class="n">rectWidth</span><span class="o">*</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">rectHeight</span><span class="p">,</span>
+                                                                                                          <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">,</span><span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">svg</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;text x=&quot;</span><span class="si">{}</span><span class="s2">&quot; y=&quot;</span><span class="si">{}</span><span class="s2">&quot; font-size=&quot;</span><span class="si">{}</span><span class="s2">px&quot; fill=&quot;white&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/text&gt;&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">image_height</span><span class="o">-</span><span class="n">legend_span</span> <span class="o">+</span> <span class="p">(</span><span class="n">rectHeight</span><span class="o">+</span><span class="n">fontSize</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">fontSize</span><span class="p">,</span> <span class="s2">&quot;Low likelihood&quot;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;high likelihood&quot;</span>
+            <span class="c1"># add text to the right side</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">svg</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;text x=&quot;</span><span class="si">{}</span><span class="s2">&quot; y=&quot;</span><span class="si">{}</span><span class="s2">&quot; font-size=&quot;</span><span class="si">{}</span><span class="s2">px&quot; fill=&quot;white&quot;, text-anchor=&quot;end&quot;&gt;</span><span class="si">{}</span><span class="s2">&lt;/text&gt;&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">legend_span</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">image_height</span><span class="o">-</span><span class="n">legend_span</span> <span class="o">+</span> <span class="p">(</span><span class="n">rectHeight</span><span class="o">+</span><span class="n">fontSize</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">fontSize</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="n">svg</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/svg&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">svg</span>
+    
+
+<span class="k">def</span> <span class="nf">_generate_modification_legend</span><span class="p">(</span><span class="n">fontSize</span><span class="p">,</span> <span class="n">output_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    generate legend for image</span>
+<span class="sd">    :param img: image</span>
+<span class="sd">    :param type: str - type of output (png or svg)</span>
+<span class="sd">    return: numpy array of the image</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Common&#39;</span><span class="p">,</span> <span class="s1">&#39;Added&#39;</span><span class="p">,</span> <span class="s1">&#39;Removed&#39;</span><span class="p">]</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)]</span>
+
+        <span class="c1"># Plot the dummy data to create a legend</span>
+        <span class="k">for</span> <span class="n">color</span><span class="p">,</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">fontSize</span><span class="o">//</span><span class="mf">1.5</span><span class="p">)</span>
+        <span class="n">legend_location</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontSize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="n">legend_location</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">legend_bytes</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">legend_bytes</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">legend_bytes</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="n">legend_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">legend_bytes</span><span class="p">)</span>
+        <span class="n">legend_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">legend_image</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">legend_image</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># TODO: Implement this</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;SVG not implemented&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_overlay_legend</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">legend</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">output_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Overlay the legend on the image</span>
+<span class="sd">    :param img: image</span>
+<span class="sd">    :param legend: image</span>
+<span class="sd">    :param position: tuple - position of the legend</span>
+<span class="sd">    :param output_type: str - type of output (png or svg)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="p">(</span><span class="n">img</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">img2</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">legend</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span>
+
+        <span class="c1"># if position is not provided, place the legend at the bottom right corner</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img2</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">legend</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">img2</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">legend</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Position should be a tuple&quot;</span><span class="p">)</span>
+        
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">img2</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">legend</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">img2</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">))</span>
+        <span class="n">combined_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">img2</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+        <span class="n">combined_image</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">combined_image</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">legend</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">legend</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">combined_image</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># TODO: Implement this</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;SVG not implemented&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_cname2hex</span><span class="p">(</span><span class="n">cname</span><span class="p">):</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">BASE_COLORS</span><span class="p">,</span> <span class="o">**</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">CSS4_COLORS</span><span class="p">)</span> <span class="c1"># dictionary. key: names, values: hex codes</span>
+    <span class="k">try</span><span class="p">:</span>
+       <span class="nb">hex</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">cname</span><span class="p">]</span>
+       <span class="k">return</span> <span class="nb">hex</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+       <span class="nb">print</span><span class="p">(</span><span class="n">cname</span><span class="p">,</span> <span class="s1">&#39; is not registered as default colors by matplotlib!&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="k">def</span> <span class="nf">_hex2rgb</span><span class="p">(</span><span class="nb">hex</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">hex</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">rgb</span>
+
+<span class="k">def</span> <span class="nf">_handle_color</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_hex2rgb</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_hex2rgb</span><span class="p">(</span><span class="n">_cname2hex</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">color</span>
+    
+
+<div class="viewcode-block" id="return_public_functions">
+<a class="viewcode-back" href="../../modifinder/drawing.html#utilities.visualizer.return_public_functions">[docs]</a>
+<span class="k">def</span> <span class="nf">return_public_functions</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the public functions of the module</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;draw_molecule&quot;</span><span class="p">:</span> <span class="n">draw_molecule</span><span class="p">,</span>
+        <span class="c1"># &quot;draw_modifications&quot;: draw_modifications,</span>
+        <span class="s2">&quot;draw_molecule_heatmap&quot;</span><span class="p">:</span> <span class="n">draw_molecule_heatmap</span><span class="p">,</span>
+        <span class="c1"># &quot;draw_spectrum&quot;: draw_spectrum,</span>
+        <span class="c1"># &quot;draw_alignment&quot;: draw_alignment,</span>
+        <span class="s2">&quot;draw_frag_of_molecule&quot;</span><span class="p">:</span> <span class="n">draw_frag_of_molecule</span>
+    <span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ModiFinder &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Engines" href="../engines/index.html" />
+    <link rel="prev" title="EdgeDetail module" href="classes.EdgeDetail.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Classes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="classes.Spectrum.html">Spectrum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classes.Compound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classes.EdgeDetail.html">EdgeDetail module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ModiFinder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes.ModiFinder.ModiFinder"><code class="docutils literal notranslate"><span class="pre">ModiFinder</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../drawing.html">Visualizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../convert.html">Converting to and from other data formats</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Classes</a></li>
+      <li class="breadcrumb-item active">ModiFinder</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modifinder/classes/classes.ModiFinder.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-classes.ModiFinder">
+<span id="modifinder"></span><h1>ModiFinder<a class="headerlink" href="#module-classes.ModiFinder" title="Link to this heading"></a></h1>
+<p>Base class for ModiFinder.</p>
+<p>This class is used to create a ModiFinder object.
+The object can be used to get information about unknown compounds in the network using the known compounds.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">classes.ModiFinder.</span></span><span class="sig-name descname"><span class="pre">ModiFinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knownCompond</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="classes.Compound.html#modifinder.Compound" title="modifinder.classes.Compound.Compound"><span class="pre">Compound</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unknownCompound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="classes.Compound.html#modifinder.Compound" title="modifinder.classes.Compound.Compound"><span class="pre">Compound</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edgeDetail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EdgeDetail</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">helpers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">networkUnknowns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">should_align</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignmentEngine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AlignmentEngine</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">should_annotate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotationEngine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnotationEngine</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for compound network.</p>
+<p>ModiFinder Can be used in two scenarios
+1. between a known and an unknown compound.
+2. in a network consisting of known and unknown compounds.</p>
+<p>In both scenarios, the ModiFinder object stores a directed graph where the nodes are compounds (known and unknown)
+and edges are directed (from smaller compound to the larger compound) holding the relationships between the pair (alignment, similarity, etc). The object also stores
+the unknown compounds in the network. The object can be used to get information about the unknown compound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>nx.DiGraph</em>) – A networkx graph object with the nodes are identified by the compound ids and the “compound”
+attibute of a node is a Compound object. The edges are the relationships between the compounds
+and the “edgedetail” attribute of an edge is an EdgeDetail object.</p></li>
+<li><p><strong>unknowns</strong> (<em>list</em>) – A list of compound ids that are unknown in the network.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Compound</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">EdgeDetail</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Engines</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.add_adjusted_edge">
+<span class="sig-name descname"><span class="pre">add_adjusted_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edgeDetail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EdgeDetail</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.add_adjusted_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.add_adjusted_edge" title="Link to this definition"></a></dt>
+<dd><p>Add an edge between two compounds.</p>
+<p>The method will add an edge between two compounds. If the edgeDetail is not passed, the method will align
+the spectra of the compounds using the alignment engine. If the edgeDetail is passed,
+It has to be from the smaller compound to the larger compound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>str</em>) – The id of the first compound.</p></li>
+<li><p><strong>v</strong> (<em>str</em>) – The id of the second compound.</p></li>
+<li><p><strong>edgeDetail</strong> (<a class="reference internal" href="classes.EdgeDetail.html#classes.EdgeDetail.EdgeDetail" title="classes.EdgeDetail.EdgeDetail"><em>EdgeDetail</em></a>) – The edge detail between the compounds.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional parameters to pass to the alignment engine.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.add_neighbor">
+<span class="sig-name descname"><span class="pre">add_neighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="classes.Compound.html#modifinder.Compound" title="modifinder.classes.Compound.Compound"><span class="pre">Compound</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edgeDetail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EdgeDetail</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.add_neighbor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.add_neighbor" title="Link to this definition"></a></dt>
+<dd><p>Add a neighbor to a compound.</p>
+<p>The method will add a neighbor to a compound. If the edgeDetail is not passed, the method will align
+the spectra of the compound and the neighbor using the alignment engine. If the edgeDetail is passed,
+It has to be from the smaller compound to the larger compound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compound</strong> (<a class="reference internal" href="classes.Compound.html#modifinder.Compound" title="modifinder.Compound"><em>Compound</em></a>) – The compound to add the neighbor to.</p></li>
+<li><p><strong>neighbor</strong> (<em>str</em>) – The id of the neighbor compound.</p></li>
+<li><p><strong>edgeDetail</strong> (<a class="reference internal" href="classes.EdgeDetail.html#classes.EdgeDetail.EdgeDetail" title="classes.EdgeDetail.EdgeDetail"><em>EdgeDetail</em></a>) – The edge detail between the compound and the neighbor.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional parameters to pass to the alignment engine.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.draw_alignment">
+<span class="sig-name descname"><span class="pre">draw_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.draw_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.draw_alignment" title="Link to this definition"></a></dt>
+<dd><p>Draw the alignment between two compounds.</p>
+<p>The method will draw the alignment between two compounds. The compounds must be in the network and connected by an edge.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">visualizer.draw_alignment</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id1</strong> (<em>str</em>) – The id of the first compound.</p></li>
+<li><p><strong>id2</strong> (<em>str</em>) – The id of the second compound.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional parameters to pass to the visualizer.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.draw_prediction">
+<span class="sig-name descname"><span class="pre">draw_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probabilities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">known_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.draw_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.draw_prediction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.generate_probabilities">
+<span class="sig-name descname"><span class="pre">generate_probabilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">known_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unknown_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifted_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CPA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CFA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CPE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.generate_probabilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.generate_probabilities" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.re_align">
+<span class="sig-name descname"><span class="pre">re_align</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alignmentEngine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AlignmentEngine</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.re_align"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.re_align" title="Link to this definition"></a></dt>
+<dd><p>Re-align the network.
+For each edge in the network, the method will re-align the edges using the alignment engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alignmentEngine</strong> (<a class="reference internal" href="../engines/engines.Abtracts.html#engines.Abtracts.AlignmentEngine" title="engines.Abtracts.AlignmentEngine"><em>AlignmentEngine</em></a>) – The alignment engine to use to align the unknown compound with the known compounds in the network.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional parameters to pass to the alignment engine.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.re_annotate">
+<span class="sig-name descname"><span class="pre">re_annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotationEngine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnotationEngine</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.re_annotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.re_annotate" title="Link to this definition"></a></dt>
+<dd><p>Annotate the network.
+For each node (Compound) in the network, the method will annotate the node using the annotation engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>annotationEngine</strong> (<a class="reference internal" href="../engines/engines.Abtracts.html#engines.Abtracts.AnnotationEngine" title="engines.Abtracts.AnnotationEngine"><em>AnnotationEngine</em></a>) – The annotation engine to use to annotate the compounds in the network.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional parameters to pass to the annotation engine.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unknown</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the network.</p>
+<p>The method will solve the network for an unknown compound</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unknown</strong> (<em>str</em>) – The id of the unknown compound in the network.</p></li>
+<li><p><strong>alignmentEngine</strong> (<a class="reference internal" href="../engines/engines.Abtracts.html#engines.Abtracts.AlignmentEngine" title="engines.Abtracts.AlignmentEngine"><em>AlignmentEngine</em></a>) – The alignment engine to use to align the unknown compound with the known compounds in the network.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with the following keys:
+- probabilities: the probabilities of the atoms in the unknown compound.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="classes.ModiFinder.ModiFinder.update_edge">
+<span class="sig-name descname"><span class="pre">update_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edgeDetail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">EdgeDetail</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/classes/ModiFinder.html#ModiFinder.update_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#classes.ModiFinder.ModiFinder.update_edge" title="Link to this definition"></a></dt>
+<dd><p>Update the edge between two compounds.</p>
+<p>The method will update the edge between two compounds.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="classes.EdgeDetail.html" class="btn btn-neutral float-left" title="EdgeDetail module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../engines/index.html" class="btn btn-neutral float-right" title="Engines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

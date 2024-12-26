@@ -1,0 +1,31 @@
+from setuptools import setup, find_packages
+
+setup(
+    name='ModiFinder',
+    version='1.4-beta',
+    packages=find_packages(),
+    install_requires=[
+        'cairosvg',
+        'rdkit',
+        'requests',
+        'xlsxwriter',
+        'prettytable',
+        'dash',
+        'numpy',
+        'tqdm',
+        'IPython',
+        'furl',
+        'dash-bootstrap-components',
+        'pillow',
+        'openpyxl',
+        'openpyxl-image-loader',
+        'msbuddy==0.2.3',
+        'lightgbm',
+        'seaborn',
+        'pyteomics',
+        'matplotlib',
+    ],
+    author='Reza Shahneh',
+    author_email='mzare008@ucr.edu',
+    description='ModiFinder package',
+)

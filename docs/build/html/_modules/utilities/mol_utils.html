@@ -1,0 +1,818 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utilities.mol_utils &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=56dcb7b8"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utilities.mol_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utilities.mol_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">GNPS Utils - Molecule Utils</span>
+<span class="sd">---------------------------</span>
+<span class="sd">This file contains utility functions around molecules and molecules modification based on RDKit library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="kn">import</span> <span class="n">rdFMCS</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">modifinder.utilities.network</span> <span class="kn">import</span> <span class="n">get_data</span>
+
+<span class="kn">import</span> <span class="nn">rdkit.rdBase</span> <span class="k">as</span> <span class="nn">rkrb</span>
+<span class="kn">import</span> <span class="nn">rdkit.RDLogger</span> <span class="k">as</span> <span class="nn">rkl</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rkl</span><span class="o">.</span><span class="n">logger</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">rkl</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">rkrb</span><span class="o">.</span><span class="n">DisableLog</span><span class="p">(</span><span class="s1">&#39;rdApp.error&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_modification_nodes">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.get_modification_nodes">[docs]</a>
+<span class="k">def</span> <span class="nf">get_modification_nodes</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">in_mol1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the modification sites between two molecules when one molecule is a substructure of the other molecule</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        :mol1: first molecule </span>
+<span class="sd">        :mol2: second molecule</span>
+<span class="sd">        :in_mol1: bool, if True, the modification sites are given in the mol1, if False, the modification sites are given in the mol2</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">        list of modification sites</span>
+<span class="sd">        </span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">        import modifinder.utilities.mol_utils as mf_mu</span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        from rdkit import Chem</span>
+<span class="sd">        def mol_with_atom_index(mol):</span>
+<span class="sd">            for atom in mol.GetAtoms():</span>
+<span class="sd">                atom.SetAtomMapNum(atom.GetIdx())</span>
+<span class="sd">            return mol</span>
+<span class="sd">        mol1 = mol_with_atom_index(Chem.MolFromSmiles(&quot;O=C1C2=C(N=CN2)N(C)C(N1C)=O&quot;))</span>
+<span class="sd">        mol2 = mol_with_atom_index(Chem.MolFromInchi(&quot;InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3&quot;))</span>
+<span class="sd">        edit_in_mol1 = mf_mu.get_modification_nodes(mol1, mol2, True)</span>
+<span class="sd">        edit_in_mol2 = mf_mu.get_modification_nodes(mol1, mol2, False)</span>
+<span class="sd">        fig, ax = plt.subplots(1, 2, figsize=(10, 5))</span>
+<span class="sd">        ax[0].imshow(mf_vis.draw_molecule(mol1, highlightAtoms=edit_in_mol1))</span>
+<span class="sd">        ax[1].imshow(mf_vis.draw_molecule(mol2, highlightAtoms=edit_in_mol2))</span>
+<span class="sd">        for i in range(2):</span>
+<span class="sd">            ax[i].axis(&quot;off&quot;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        print(&quot;edit_in_mol1&quot;, edit_in_mol1)</span>
+<span class="sd">        print(&quot;edit_in_mol2&quot;, edit_in_mol2)</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; edit_in_mol1 6</span>
+<span class="sd">    &gt;&gt;&gt; edit_in_mol2 9</span>
+<span class="sd">        </span>
+<span class="sd">    .. image:: ../../_static/get_modification_nodes.png</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">copy_mol1</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">copy_mol2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_calculateModificationSites</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span><span class="p">,</span> <span class="n">in_mol1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">copy_mol2</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_calculateModificationSites</span><span class="p">(</span><span class="n">copy_mol2</span><span class="p">,</span> <span class="n">copy_mol1</span><span class="p">,</span> <span class="ow">not</span> <span class="n">in_mol1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One molecule should be a substructure of the other molecule&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_modification_edges">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.get_modification_edges">[docs]</a>
+<span class="k">def</span> <span class="nf">get_modification_edges</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">only_outward_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the modification edges between two molecules when one molecule is a substructure of the other molecule</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        :mol1: first molecule</span>
+<span class="sd">        :mol2: second molecule</span>
+<span class="sd">        :only_outward_edges: bool, if True, only the modification edges that go from atoms in the substructure to atoms outside the substructure are returned</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">        list of the the modification edges in the parent molecule as tuples of atom indices</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mol1</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">mol2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mol2</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">mol1</span><span class="p">):</span>
+            <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">copy_mol2</span><span class="p">,</span> <span class="n">copy_mol1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One molecule should be a substructure of the other molecule&quot;</span><span class="p">)</span>
+    
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">_find_minimal_modification_edges_match</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span><span class="p">)</span>
+    <span class="n">modificationEdgesOutward</span><span class="p">,</span> <span class="n">modificationEdgesInside</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_edge_modifications</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span><span class="p">,</span> <span class="n">matches</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">only_outward_edges</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">modificationEdgesOutward</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">modificationEdgesOutward</span> <span class="o">+</span> <span class="n">modificationEdgesInside</span></div>
+
+
+
+<div class="viewcode-block" id="get_edit_distance">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.get_edit_distance">[docs]</a>
+<span class="k">def</span> <span class="nf">get_edit_distance</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the edit distance between mol1 and mol2.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">            :mol1: first molecule</span>
+<span class="sd">            :mol2: second molecule</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">            :edit_distance: edit distance between mol1 and mol2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+    <span class="n">mcs1</span> <span class="o">=</span> <span class="n">rdFMCS</span><span class="o">.</span><span class="n">FindMCS</span><span class="p">([</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span><span class="p">])</span>
+    <span class="n">mcs_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">mcs1</span><span class="o">.</span><span class="n">smartsString</span><span class="p">)</span>
+    <span class="n">dist1</span> <span class="o">=</span> <span class="n">get_modification_edges</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">)</span>
+    <span class="n">dist2</span> <span class="o">=</span> <span class="n">get_modification_edges</span><span class="p">(</span><span class="n">copy_mol2</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_edit_distance_detailed">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.get_edit_distance_detailed">[docs]</a>
+<span class="k">def</span> <span class="nf">get_edit_distance_detailed</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">mcs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the edit distance between mol1 and mol2.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">            :mol1: first molecule</span>
+<span class="sd">            :mol2: second molecule</span>
+<span class="sd">            :mcs: the maximum common substructure between mol1 and mol2</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">            :removed edges: the removed modification edges</span>
+<span class="sd">            :added edges: the added modification edges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mcs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mcs1</span> <span class="o">=</span> <span class="n">rdFMCS</span><span class="o">.</span><span class="n">FindMCS</span><span class="p">([</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span><span class="p">])</span>
+        <span class="n">mcs_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">mcs1</span><span class="o">.</span><span class="n">smartsString</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mcs_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">(</span><span class="n">mcs</span><span class="p">)</span>
+    <span class="n">dist1</span> <span class="o">=</span> <span class="n">get_modification_edges</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">)</span>
+    <span class="n">dist2</span> <span class="o">=</span> <span class="n">get_modification_edges</span><span class="p">(</span><span class="n">copy_mol2</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_transition">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.get_transition">[docs]</a>
+<span class="k">def</span> <span class="nf">get_transition</span><span class="p">(</span><span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the transition between mol1 and mol2.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">            :input1: first molecule</span>
+<span class="sd">            :input2: second molecule</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">            :result: a dictionary with the following keys:</span>
+<span class="sd">            </span>
+<span class="sd">                **merged_mol**: the merged molecule</span>
+<span class="sd">                </span>
+<span class="sd">                **common_bonds**: the common bonds between mol1 and mol2</span>
+<span class="sd">                </span>
+<span class="sd">                **common_atoms**: the common atoms between mol1 and mol2</span>
+<span class="sd">                </span>
+<span class="sd">                **removed_atoms**: the removed atoms from mol1</span>
+<span class="sd">                </span>
+<span class="sd">                **added_atoms**: the added atoms from mol2</span>
+<span class="sd">                </span>
+<span class="sd">                **modified_added_edges_inside**: the added edges inside the common substructure</span>
+<span class="sd">                </span>
+<span class="sd">                **modified_added_edges_bridge**: the added edges between the common substructure and the added atoms</span>
+<span class="sd">                </span>
+<span class="sd">                **modified_removed_edges_inside**: the removed edges inside the common substructure</span>
+<span class="sd">                </span>
+<span class="sd">                **modified_removed_edges_bridge**: the removed edges between the common substructure and the removed</span>
+<span class="sd">                </span>
+<span class="sd">                **added_edges**: the added edges that are not modification edges</span>
+<span class="sd">                </span>
+<span class="sd">                **removed_edges**: the removed edges that are not modification edges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">)</span>
+    <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">(</span><span class="n">mol1</span><span class="p">),</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">(</span><span class="n">mol2</span><span class="p">)</span>
+    <span class="c1"># finding the maximum common substructure</span>
+    <span class="n">mcs1</span> <span class="o">=</span> <span class="n">rdFMCS</span><span class="o">.</span><span class="n">FindMCS</span><span class="p">([</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">])</span>
+    <span class="n">mcs_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">mcs1</span><span class="o">.</span><span class="n">smartsString</span><span class="p">)</span>
+
+    <span class="c1"># finding the mapping between the atoms of the common substructure</span>
+    <span class="n">mol1_indices</span> <span class="o">=</span> <span class="n">_find_minimal_modification_edges_match</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">)</span>
+    <span class="n">mol2_indices</span> <span class="o">=</span> <span class="n">_find_minimal_modification_edges_match</span><span class="p">(</span><span class="n">mol2</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">)</span>
+
+    <span class="n">map_mcs_from_mol1_to_mol2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">map_mcs_from_mol2_to_mol1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mcs_mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()):</span>
+        <span class="n">map_mcs_from_mol1_to_mol2</span><span class="p">[</span><span class="n">mol1_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mol2_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">map_mcs_from_mol2_to_mol1</span><span class="p">[</span><span class="n">mol2_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mol1_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># calculating the removed atoms from mol1</span>
+    <span class="n">removed_atoms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">mol1</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">mol1_indices</span><span class="p">))</span>
+    <span class="n">modified_removed_edges_bridge</span><span class="p">,</span> <span class="n">modified_removed_edges_inside</span><span class="p">,</span> <span class="n">removed_edges</span> <span class="o">=</span> <span class="n">_get_edge_modifications</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">,</span> <span class="n">mol1_indices</span><span class="p">)</span>
+
+    <span class="c1"># calculating the added atoms from mol2</span>
+    <span class="n">added_atoms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">mol2</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">mol2_indices</span><span class="p">)</span>
+    <span class="n">modified_added_edges_bridge</span><span class="p">,</span> <span class="n">modified_added_edges_inside</span><span class="p">,</span> <span class="n">added_edges</span> <span class="o">=</span> <span class="n">_get_edge_modifications</span><span class="p">(</span><span class="n">mol2</span><span class="p">,</span> <span class="n">mcs_mol</span><span class="p">,</span> <span class="n">mol2_indices</span><span class="p">)</span>
+
+    <span class="c1"># creating the merged molecule</span>
+    <span class="n">editable_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">EditableMol</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">)</span>
+    <span class="c1">## adding the atoms from mol2</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">mol1</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
+    <span class="n">map_old_mol2_to_added</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="c1"># mapping from the old mol2 indices to the new indices in the merged molecule (for the added atoms)</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">added_atoms</span><span class="p">:</span>
+        <span class="n">editable_mol</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">mol2</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">atom</span><span class="p">))</span>
+        <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol2_indices</span><span class="p">:</span>
+        <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">map_mcs_from_mol2_to_mol1</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span>
+    <span class="c1">## adding the bonds from mol2</span>
+    <span class="n">updated_modified_added_edges_inside</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">modified_added_edges_inside</span><span class="p">:</span>
+        <span class="n">editable_mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">order</span><span class="o">=</span><span class="n">copy_mol2</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+        <span class="n">updated_modified_added_edges_inside</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
+    <span class="n">updated_modified_added_edges_bridge</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">modified_added_edges_bridge</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">added_atoms</span><span class="p">:</span>
+            <span class="n">index1</span> <span class="o">=</span> <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">index2</span> <span class="o">=</span> <span class="n">map_mcs_from_mol2_to_mol1</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index1</span> <span class="o">=</span> <span class="n">map_mcs_from_mol2_to_mol1</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">index2</span> <span class="o">=</span> <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">updated_modified_added_edges_bridge</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">index1</span><span class="p">,</span> <span class="n">index2</span><span class="p">))</span>
+        <span class="n">editable_mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">index1</span><span class="p">,</span> <span class="n">index2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">copy_mol2</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+    <span class="n">updated_added_edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">added_edges</span><span class="p">:</span>
+        <span class="n">index1</span> <span class="o">=</span> <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">index2</span> <span class="o">=</span> <span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">updated_added_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">index1</span><span class="p">,</span> <span class="n">index2</span><span class="p">))</span>
+        <span class="n">editable_mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">index1</span><span class="p">,</span> <span class="n">index2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">copy_mol2</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+    <span class="c1">## adding the common bonds</span>
+    <span class="n">common_bonds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol1</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+        <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">modified_removed_edges_inside</span> <span class="ow">or</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">modified_removed_edges_bridge</span> <span class="ow">or</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">removed_edges</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">pair2</span> <span class="o">=</span> <span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">modified_removed_edges_inside</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">modified_removed_edges_bridge</span> <span class="ow">or</span> <span class="n">pair2</span> <span class="ow">in</span> <span class="n">removed_edges</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">common_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+
+    
+    <span class="n">common_atoms</span> <span class="o">=</span> <span class="n">mol1_indices</span>
+    <span class="n">mol1_atoms</span> <span class="o">=</span> <span class="n">removed_atoms</span>
+    <span class="n">mol2_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">map_old_mol2_to_added</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">added_atoms</span><span class="p">]</span>
+
+    <span class="c1"># create a structure for result</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;merged_mol&#39;</span><span class="p">:</span> <span class="n">editable_mol</span><span class="o">.</span><span class="n">GetMol</span><span class="p">(),</span>
+        <span class="s1">&#39;common_bonds&#39;</span><span class="p">:</span> <span class="n">common_bonds</span><span class="p">,</span>
+        <span class="s1">&#39;common_atoms&#39;</span><span class="p">:</span> <span class="n">common_atoms</span><span class="p">,</span>
+        <span class="s1">&#39;removed_atoms&#39;</span><span class="p">:</span> <span class="n">mol1_atoms</span><span class="p">,</span>
+        <span class="s1">&#39;added_atoms&#39;</span><span class="p">:</span> <span class="n">mol2_atoms</span><span class="p">,</span>
+        <span class="s1">&#39;added_edges&#39;</span><span class="p">:</span> <span class="n">updated_added_edges</span><span class="p">,</span>
+        <span class="s1">&#39;removed_edges&#39;</span><span class="p">:</span> <span class="n">removed_edges</span><span class="p">,</span>
+        <span class="s1">&#39;modified_added_edges_inside&#39;</span><span class="p">:</span> <span class="n">updated_modified_added_edges_inside</span><span class="p">,</span>
+        <span class="s1">&#39;modified_added_edges_bridge&#39;</span><span class="p">:</span> <span class="n">updated_modified_added_edges_bridge</span><span class="p">,</span>
+        <span class="s1">&#39;modified_removed_edges_inside&#39;</span><span class="p">:</span> <span class="n">modified_removed_edges_inside</span><span class="p">,</span>
+        <span class="s1">&#39;modified_removed_edges_bridge&#39;</span><span class="p">:</span> <span class="n">modified_removed_edges_bridge</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="get_modification_graph">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.get_modification_graph">[docs]</a>
+<span class="k">def</span> <span class="nf">get_modification_graph</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the substructure difference between main_struct and sub_struct when there is exactly one modification edge,</span>
+<span class="sd">          if there are multiple modification edges, one of the modifications is returned randomly.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">            :main_struct: main molecule</span>
+<span class="sd">            :sub_struct: substructure molecule</span>
+<span class="sd">        Output:</span>
+<span class="sd">            :all_modifications: a list of the modifications structures, each modification is a tuple of:</span>
+<span class="sd">                1. the modified subgraph molecule (as an rdkit editable molecule)</span>
+<span class="sd">                2. a dictionary that maps the wildcard atom indices in subgraph to its true index in the main molecule</span>
+<span class="sd">                3. the SMARTS representation of the modification</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">main_struct</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">sub_struct</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sub_struct</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">main_struct</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">get_modification_graph</span><span class="p">(</span><span class="n">sub_struct</span><span class="p">,</span> <span class="n">main_struct</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One molecule should be a substructure of the other molecule&quot;</span><span class="p">)</span>
+
+    <span class="n">atoms_of_substructure</span> <span class="o">=</span> <span class="n">_find_minimal_modification_edges_match</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">)</span>
+    <span class="n">modificationEdgesOutward</span><span class="p">,</span> <span class="n">modificationEdgesInside</span><span class="p">,</span> <span class="n">noneModificationDifferentEdges</span> <span class="o">=</span> <span class="n">_get_edge_modifications</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">,</span> <span class="n">atoms_of_substructure</span><span class="p">)</span>
+    <span class="n">all_modification_edges</span> <span class="o">=</span> <span class="n">modificationEdgesOutward</span> <span class="o">+</span> <span class="n">modificationEdgesInside</span> <span class="o">+</span> <span class="n">noneModificationDifferentEdges</span>
+
+    <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">all_modification_edges</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">visited</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
+        
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">all_modification_edges</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                <span class="n">target</span> <span class="o">=</span> <span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                <span class="n">target</span> <span class="o">=</span> <span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+            
+            <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">dfs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">all_modification_edges</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">visited</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">main_struct</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span> <span class="ow">and</span> <span class="n">atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atoms_of_substructure</span><span class="p">:</span>
+            <span class="n">dfs</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">all_modification_edges</span><span class="p">)</span>
+            <span class="n">color</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="n">all_modifications</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">modification</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+        <span class="n">true_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">edit_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">(</span><span class="n">main_struct</span><span class="p">)</span>
+        <span class="c1"># delete any atom that is not in the modification</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">main_struct</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span> <span class="ow">or</span> <span class="n">visited</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">modification</span><span class="p">:</span>
+                <span class="n">edit_mol</span><span class="o">.</span><span class="n">RemoveAtom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms_of_substructure</span><span class="p">:</span>
+                <span class="n">edit_mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;atomNote&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;substructure_</span><span class="si">{</span><span class="n">atom</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="n">new_edit_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">edit_mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s1">&#39;atomNote&#39;</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">note</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">note</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;substructure&#39;</span><span class="p">):</span>
+                <span class="n">new_edit_mol</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">true_map</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()]</span> <span class="o">=</span> <span class="n">note</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_edit_mol</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">edit_mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+            <span class="n">new_edit_mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+            
+        <span class="c1"># new_edit_mol = new_edit_mol.GetMol()</span>
+        <span class="n">all_modifications</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_edit_mol</span><span class="p">,</span> <span class="n">true_map</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmarts</span><span class="p">(</span><span class="n">new_edit_mol</span><span class="p">)))</span>
+        
+    <span class="k">return</span> <span class="n">all_modifications</span></div>
+
+
+
+<div class="viewcode-block" id="attach_mols">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.attach_mols">[docs]</a>
+<span class="k">def</span> <span class="nf">attach_mols</span><span class="p">(</span><span class="n">main_mol</span><span class="p">,</span> <span class="n">attachment_mol</span><span class="p">,</span> <span class="n">attach_location_main</span><span class="p">,</span> <span class="n">attach_location_attachment</span><span class="p">,</span> <span class="n">bond_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attaches the attachment structure to main molecule at the attach_location_main and attach_location_attachment with bond_type.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">            :main_mol: rdkit molecule of the main molecule</span>
+<span class="sd">            :attachment_mol: rdkit molecule of the attachment molecule</span>
+<span class="sd">            :attach_location_main: the index of the atom in the main molecule where the attachment should be done</span>
+<span class="sd">            :attach_location_attachment: the index of the atom in the attachment molecule where the attachment should be done</span>
+<span class="sd">            :bond_type: the type of the bond between the main molecule and the attachment molecule</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">            :new_mol: the new molecule after attachment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">new_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">CombineMols</span><span class="p">(</span><span class="n">main_mol</span><span class="p">,</span> <span class="n">attachment_mol</span><span class="p">)</span>
+    <span class="n">new_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">EditableMol</span><span class="p">(</span><span class="n">new_mol</span><span class="p">)</span>
+    <span class="n">new_mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">attach_location_main</span><span class="p">,</span> <span class="n">attach_location_attachment</span> <span class="o">+</span> <span class="n">main_mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">(),</span> <span class="n">bond_type</span><span class="p">)</span>
+    <span class="n">new_mol</span> <span class="o">=</span> <span class="n">new_mol</span><span class="o">.</span><span class="n">GetMol</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">new_mol</span></div>
+
+
+
+<div class="viewcode-block" id="generate_possible_stuctures">
+<a class="viewcode-back" href="../../modifinder/utilities/utilities.mol_utils.html#utilities.mol_utils.generate_possible_stuctures">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_possible_stuctures</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates all possible structures after attaching the difference between sub_struct and main_struct to main_struct.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">            :main_struct: main molecule</span>
+<span class="sd">            :sub_struct: substructure molecule</span>
+<span class="sd">        Output:</span>
+<span class="sd">            :list of possible_structures: all possible structures after attachment with the index of the atom</span>
+<span class="sd">    </span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        import modifinder.utilities.mol_utils as mf_mu</span>
+<span class="sd">        import modifinder.utilities.visualizer as mf_vis</span>
+<span class="sd">        from matplotlib import pyplot as plt</span>
+<span class="sd">        from rdkit import Chem</span>
+<span class="sd">        from rdkit.Chem import Draw</span>
+<span class="sd">        modification = Chem.MolFromSmiles(&quot;C1=C(NC(=O)N=C1)N&quot;)</span>
+<span class="sd">        mol1 = Chem.MolFromSmiles(&quot;CC1=C(NC(=O)N=C1)N&quot;)</span>
+<span class="sd">        res = mf_mu.generate_possible_stuctures(mol1, modification)</span>
+<span class="sd">        img = mf_vis.draw_modifications(modification, mol1)</span>
+<span class="sd">        plt.imshow(img)</span>
+<span class="sd">        plt.axis(&quot;off&quot;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        res_mols = [x[1] for x in res]</span>
+<span class="sd">        res_index = [&quot;attach modification at location: &quot; + str(x[0]) for x in res]</span>
+<span class="sd">        img = Draw.MolsToGridImage(res_mols, molsPerRow=2, subImgSize=(200, 200), legends=res_index)</span>
+<span class="sd">        display(img)</span>
+<span class="sd">    </span>
+<span class="sd">    .. image:: ../../_static/generate_possible_stuctures1.png</span>
+<span class="sd">    .. image:: ../../_static/generate_possible_stuctures2.png</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span> <span class="o">=</span> <span class="n">_get_molecules</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">main_struct</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">sub_struct</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sub_struct</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">main_struct</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">generate_possible_stuctures</span><span class="p">(</span><span class="n">sub_struct</span><span class="p">,</span> <span class="n">main_struct</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One molecule should be a substructure of the other molecule&quot;</span><span class="p">)</span>
+
+    <span class="n">all_modifications</span> <span class="o">=</span> <span class="n">get_modification_graph</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_modifications</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No modification is found&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_modifications</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Multiple modifications are found&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Multiple modifications are found&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ISSUE WITH CODE, PLEASE REPORT&quot;</span><span class="p">)</span>
+    
+    <span class="n">wild_atom</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">neighbor</span> <span class="o">=</span> <span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">wild_atom</span><span class="p">)</span><span class="o">.</span><span class="n">GetNeighbors</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">bondType</span> <span class="o">=</span> <span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="n">wild_atom</span><span class="p">,</span> <span class="n">neighbor</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">()</span>
+    <span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">RemoveAtom</span><span class="p">(</span><span class="n">wild_atom</span><span class="p">)</span>
+
+    <span class="n">frag</span> <span class="o">=</span> <span class="n">all_modifications</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">index_in_frag</span> <span class="o">=</span> <span class="n">neighbor</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span>
+
+    <span class="n">structs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">sub_struct</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">temp_struct</span> <span class="o">=</span> <span class="n">_attach_struct_try</span><span class="p">(</span><span class="n">sub_struct</span><span class="p">,</span> <span class="n">frag</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">(),</span> <span class="n">index_in_frag</span><span class="p">,</span> <span class="n">bondType</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temp_struct</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">structs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">(),</span> <span class="n">temp_struct</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">structs</span></div>
+
+    
+
+<span class="k">def</span> <span class="nf">_attach_struct_try</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">frag</span><span class="p">,</span> <span class="n">main_location</span><span class="p">,</span> <span class="n">frag_location</span><span class="p">,</span> <span class="n">bond_type</span><span class="p">):</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">attach_mols</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">frag</span><span class="p">,</span> <span class="n">main_location</span><span class="p">,</span> <span class="n">frag_location</span><span class="p">,</span> <span class="n">bond_type</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mol</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">bond</span> <span class="o">!=</span> <span class="n">bond_type</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">mol</span> <span class="o">=</span> <span class="n">attach_mols</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">frag</span><span class="p">,</span> <span class="n">main_location</span><span class="p">,</span> <span class="n">frag_location</span><span class="p">,</span> <span class="n">bond</span><span class="p">)</span>
+                    <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">mol</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">continue</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_find_minimal_modification_sites_match</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">substructure</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the matching that results in the minimum number of modification sites, if multiple matches are found.</span>
+<span class="sd">        If multiple results are found, one random result is returned.</span>
+<span class="sd">        Input:</span>
+<span class="sd">            mol: first molecule</span>
+<span class="sd">            substructure: substructure molecule</span>
+<span class="sd">        Output:</span>
+<span class="sd">            match array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">substructure</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">min_modifications</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">min_match</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">modif_sites</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">match</span> <span class="ow">and</span> <span class="o">~</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">match</span><span class="p">):</span>
+                    <span class="n">modif_sites</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">match</span> <span class="ow">and</span> <span class="o">~</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">match</span><span class="p">):</span>
+                    <span class="n">modif_sites</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modif_sites</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_modifications</span><span class="p">:</span>
+                <span class="n">min_modifications</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modif_sites</span><span class="p">)</span>
+                <span class="n">min_match</span> <span class="o">=</span> <span class="n">match</span>
+        <span class="k">return</span> <span class="n">min_match</span>
+
+
+<span class="k">def</span> <span class="nf">_find_minimal_modification_edges_match</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">substructure</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the matching that results in the minimum number of modification edges, if multiple matches are found.</span>
+<span class="sd">        If multiple matches have the minimum number, one random result is returned.</span>
+<span class="sd">        Input:</span>
+<span class="sd">            mol: first molecule</span>
+<span class="sd">            substructure: substructure molecule</span>
+<span class="sd">        Output:</span>
+<span class="sd">            match array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mol</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">substructure</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The substructure is not a substructure of the molecule&quot;</span><span class="p">)</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">substructure</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">min_modifications</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">min_match</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">modificationEdgesOutward</span><span class="p">,</span> <span class="n">modificationEdgesInside</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_edge_modifications</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">substructure</span><span class="p">,</span> <span class="n">match</span><span class="p">)</span>
+            <span class="n">num_modifications</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modificationEdgesOutward</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">modificationEdgesInside</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_modifications</span> <span class="o">&lt;</span> <span class="n">min_modifications</span><span class="p">:</span>
+                <span class="n">min_modifications</span> <span class="o">=</span> <span class="n">num_modifications</span>
+                <span class="n">min_match</span> <span class="o">=</span> <span class="n">match</span>
+        <span class="k">return</span> <span class="n">min_match</span>
+
+
+<span class="k">def</span> <span class="nf">_get_edge_modifications</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">substructure</span><span class="p">,</span> <span class="n">match</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the modification edges to get mol from substructure given the mapping of the atoms</span>
+<span class="sd">        Input:</span>
+<span class="sd">            mol: first molecule</span>
+<span class="sd">            substructure: substructure molecule</span>
+<span class="sd">            match: the match array, mapping atoms from substructure to mol</span>
+<span class="sd">        Output:</span>
+<span class="sd">            modificationEdgesOutward: the modification edges that go from atoms in the substructure to atoms outside the substructure</span>
+<span class="sd">            modificationEdgesInside: the modification edges that happen within the atoms in the substructure</span>
+<span class="sd">            noneModificationDifferentEdges: the edges that are not modification edges but are different between the two molecules (edges that are completely outside the substructure)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reverse_match</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">match</span><span class="p">)}</span>
+    <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+    <span class="n">modificationEdgesOutward</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">modificationEdgesInside</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">noneModificationDifferentEdges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">intersect</span> <span class="ow">or</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">intersect</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">intersect</span> <span class="ow">and</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span> <span class="ow">in</span> <span class="n">intersect</span><span class="p">:</span>
+                <span class="n">a1</span> <span class="o">=</span> <span class="n">reverse_match</span><span class="p">[</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()]</span>
+                <span class="n">a2</span> <span class="o">=</span> <span class="n">reverse_match</span><span class="p">[</span><span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()]</span>
+                <span class="k">if</span> <span class="n">substructure</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">modificationEdgesInside</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">modificationEdgesOutward</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">noneModificationDifferentEdges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()))</span>
+    
+    <span class="k">return</span> <span class="n">modificationEdgesOutward</span><span class="p">,</span> <span class="n">modificationEdgesInside</span><span class="p">,</span> <span class="n">noneModificationDifferentEdges</span>
+
+
+<span class="k">def</span> <span class="nf">_calculateModificationSites</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">substructure</span><span class="p">,</span> <span class="n">inParent</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the number of modification sites to get mol from substructure (works when one moleculte is a substructure of the other molecule)</span>
+<span class="sd">        if multiple matches are found, the modification sites that result in the minimum number of modifications are returned</span>
+<span class="sd">        Input:</span>
+<span class="sd">            mol1: first molecule</span>
+<span class="sd">            substructure: substructure molecule</span>
+<span class="sd">            inParent: bool, if True, the modification sites are given in the parent molecule, if False, the modification sites are given in the substructure</span>
+<span class="sd">        Output:</span>
+<span class="sd">            count: modification sites</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">_find_minimal_modification_edges_match</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">substructure</span><span class="p">)</span>
+    <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+
+    
+    <span class="n">modificationSites</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">intersect</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tempAtom</span> <span class="ow">in</span> <span class="n">intersect</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBondBetweenAtoms</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">(),</span> <span class="n">tempAtom</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">modificationSites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tempAtom</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">inParent</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">modificationSites</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="c1"># multiple matches (substructure is happening multiple times in the parent molecule)</span>
+            <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="n">subMatches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+                <span class="n">temp_res</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">modificationSites</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">subMatches</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="c1"># based on rdkit library, the value in matches array are sorted by index</span>
+                    <span class="n">temp_res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">modificationSites</span><span class="p">:</span>
+                <span class="n">subMatches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">subMatches</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="c1"># based on rdkit library, the value in matches array are sorted by index</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span> <span class="nf">_get_molecules</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">):</span>
+    <span class="n">copy_mol1</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">mol1</span><span class="p">)</span>
+    <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">mol2</span><span class="p">)</span>
+    <span class="n">copy_mol1</span> <span class="o">=</span> <span class="n">_get_molecule</span><span class="p">(</span><span class="n">copy_mol1</span><span class="p">)</span>
+    <span class="n">copy_mol2</span> <span class="o">=</span> <span class="n">_get_molecule</span><span class="p">(</span><span class="n">copy_mol2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">copy_mol1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">copy_mol2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The molecules are not valid&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">copy_mol1</span><span class="p">,</span> <span class="n">copy_mol2</span>
+
+
+<span class="k">def</span> <span class="nf">_get_molecule</span><span class="p">(</span><span class="n">identifier</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">smiles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inchi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">molblock</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smarts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the rdkit molecule from smiles, inchi or GNPS identifier</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    identifier: str</span>
+<span class="sd">        GNPS identifier, smiles, inchi, molblock or smart</span>
+<span class="sd">    smiles: str</span>
+<span class="sd">        smiles string</span>
+<span class="sd">    inchi: str</span>
+<span class="sd">        inchi string</span>
+<span class="sd">    molblock: str</span>
+<span class="sd">        molblock string</span>
+<span class="sd">    smart: str</span>
+
+<span class="sd">    :return: rdkit molecule or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">identifier</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">molecule</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromInchi</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">molecule</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromMolBlock</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">molecule</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">molecule</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+                <span class="n">smiles</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Smiles&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">smiles</span><span class="p">:</span>
+                    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">molecule</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The identifier is not valid or it is not supported&quot;</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">identifier</span>
+        
+    
+    <span class="k">if</span> <span class="n">smiles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">molecule</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The smiles string is not valid&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">inchi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromInchi</span><span class="p">(</span><span class="n">inchi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">molecule</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The inchi string is not valid&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">molblock</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromMolBlock</span><span class="p">(</span><span class="n">molblock</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">molecule</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The molblock string is not valid&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">smarts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">smarts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">molecule</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">molecule</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The smart string is not valid&quot;</span><span class="p">)</span>
+    
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No valid input is provided&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

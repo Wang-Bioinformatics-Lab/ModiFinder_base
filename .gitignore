@@ -1,4 +1,4 @@
 __pycache__*
-/data/libraries/*
-poster/
-presentation/
+*.egg-info
+oldTests
+models/predict_modification_site.model
