@@ -97,7 +97,7 @@ class Spectrum:
         self.intensity = np.array(intensity) if intensity is not None else self.intensity
         self.precursor_mz = float(precursor_mz) if precursor_mz is not None else self.precursor_mz
         self.precursor_charge = int(float(precursor_charge)) if precursor_charge is not None else self.precursor_charge
-        self.adduct = adduct_mapping[adduct] if adduct is not None else self.adduct
+        self.adduct = adduct_mapping.get(adduct, adduct) if adduct is not None else self.adduct
         self.ms_level = int(ms_level) if ms_level is not None else self.ms_level
         self.instrument = instrument if instrument is not None else self.instrument
         self.ms_mass_analyzer = ms_mass_analyzer if ms_mass_analyzer is not None else self.ms_mass_analyzer
