@@ -113,9 +113,9 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
     if data is None:
         if needs_parse:
             data = parse_data_to_universal(kwargs)
+        else:
+            data = kwargs
         try:
-            # add kwargs to data
-            data.update(kwargs)
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
@@ -128,12 +128,16 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
 
     # Spectrum Object
     if hasattr(data, "mz"):
+        if needs_parse:
+            additional_data = parse_data_to_universal(kwargs)
+        else:
+            additional_data = kwargs
         try:
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
                 spectrun_dict = spectrum_to_dict(data)
-                spectrun_dict.update(kwargs)
+                spectrun_dict.update(additional_data)
                 spectrum.update(**spectrun_dict)
             else:
                 spectrum = data
@@ -146,9 +150,9 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
     if isinstance(data, str):
         try:
             data = network.get_data(data)
-            parse_data_to_universal(data)
-            # add kwargs to data
+            data = parse_data_to_universal(data)
             data.update(kwargs)
+            data = parse_data_to_universal(data)
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
