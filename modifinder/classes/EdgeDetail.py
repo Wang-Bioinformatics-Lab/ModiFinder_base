@@ -34,6 +34,12 @@ class Match:
     
     def __repr__(self):
         return f"Match({self.first_peak_index}, {self.second_peak_index}, {self.match_type})"
+    
+    def copy(self):
+        """
+        Create a copy of the Match object
+        """
+        return Match(self.first_peak_index, self.second_peak_index, self.match_type)
 
 class EdgeDetail:
     """
@@ -62,3 +68,22 @@ class EdgeDetail:
     
     def __str__(self):
         return f"EdgeDetail({self.number_of_modifications}, {self.match_score}, {self.matches})"
+    
+    def reverse_match(self):
+        """
+        Reverse the matches
+        """
+        for match in self.matches:
+            match.first_peak_index, match.second_peak_index = match.second_peak_index, match.first_peak_index
+    
+    def copy(self):
+        """
+        Create a copy of the EdgeDetail object
+        """
+        return EdgeDetail(self.number_of_modifications, self.match_score, self.matches.copy(), self.start_spectrum_id, self.end_spectrum_id)
+    
+    def get_matches_pairs(self) -> List[Tuple[int, int]]:
+        """
+        Get the matches as a list of tuples
+        """
+        return [(match.first_peak_index, match.second_peak_index) for match in self.matches]

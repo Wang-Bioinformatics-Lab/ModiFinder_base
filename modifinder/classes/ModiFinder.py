@@ -414,6 +414,41 @@ class ModiFinder:
         return probabilities
     
     
+    def get_edge_detail(self, id1, id2):
+        """Returns the edge detail between two compounds. If the backward edge exists, the matching data is replaced
+
+        Parameters
+        ----------
+        id1 : str
+            The id of the first compound.
+        
+        id2 : str
+            The id of the second compound.
+        
+        Returns
+        -------
+        EdgeDetail
+            The edge detail between the two compounds.
+        
+        Raises
+        ------
+        ValueError
+            If the compounds are not connected in the network.
+        """
+        
+        if self.network.has_edge(id1, id2):
+            return self.network[id1][id2]["edgedetail"]
+        elif self.network.has_edge(id2, id1):
+            edge_detail = self.network[id2][id1]["edgedetail"]
+            new_edge_detail = edge_detail.copy()
+            new_edge_detail.reverse_match()
+            return new_edge_detail
+        else:
+            raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
+        
+        
+    
+    
     def draw_prediction(self, probabilities, known_id, **kwargs):
         
         return mf_vis.draw_molecule_heatmap(self.network.nodes[known_id]["compound"].structure, probabilities, **kwargs)

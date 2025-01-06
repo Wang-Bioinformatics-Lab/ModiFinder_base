@@ -55,6 +55,7 @@ def to_compound(data = None, use_object=None, **kwargs):
     
     # USI
     if isinstance(data, str):
+        print("in convert, data is a string", data)
         try:
             
             data = network.get_data(data)
@@ -69,7 +70,7 @@ def to_compound(data = None, use_object=None, **kwargs):
             return compound
 
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid USI string.") from err
+            raise mf.ModiFinderError("Input data is not a valid USI string." + str(err)) from err
     
     # Dictionary
     if isinstance(data, dict):
