@@ -172,9 +172,13 @@ class ModiFinder:
         
         if helpers is not None:
             for helper in helpers:
-                helper = convert.to_compound(data=helper)
-                self.network.add_node(helper.id, compound=helper)
-                self.add_adjusted_edge(helper.id, knownCompond.id)
+                try:
+                    helper = convert.to_compound(data=helper)
+                    self.network.add_node(helper.id, compound=helper)
+                    self.add_adjusted_edge(helper.id, knownCompond.id)
+                except Exception as e:
+                    print(f"Error adding helper compound: {e}")
+                    raise e
         
         if should_align:
             self.re_align(self.alignmentEngine, **kwargs)
