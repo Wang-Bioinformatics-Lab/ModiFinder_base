@@ -1,19 +1,22 @@
-        'cairosvg',
-        'rdkit',
-        'requests',
-        'xlsxwriter',
-        'prettytable',
-        'dash',
-        'numpy',
-        'tqdm',
-        'IPython',
-        'furl',
-        'dash-bootstrap-components',
-        'pillow',
-        'openpyxl',
-        'openpyxl-image-loader',
-        'msbuddy==0.2.3',
-        'lightgbm',
-        'seaborn',
-        'pyteomics',
-        'matplotlib',
+cairosvg
+rdkit
+requests
+xlsxwriter
+prettytable
+numpy
+tqdm
+pillow
+openpyxl
+openpyxl-image-loader
+msbuddy==0.2.3
+lightgbm
+seaborn
+pyteomics
+matplotlib
+myst-parser
+nbsphinx
+sphinx-rtd-theme
+sphinx
+networkx
+sphinx-autobuild
+-e .
