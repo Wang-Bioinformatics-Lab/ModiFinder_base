@@ -20,7 +20,6 @@ setup(
         'openpyxl',
         'openpyxl-image-loader',
         'msbuddy==0.2.3',
-        'lightgbm',
         'seaborn',
         'pyteomics',
         'matplotlib',
