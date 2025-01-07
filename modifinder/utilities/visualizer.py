@@ -684,7 +684,7 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
         return fig, axs
 
 
-def draw_frag_of_molecule(mol, fragment: int, output_type='png', **kwargs):
+def draw_frag_of_molecule(mol, fragment, output_type='png', **kwargs):
     """
     draws a fragment of the molecule. The fragment is represented by a binary string where 1 indicates the presence of the atom and 0 indicates the absence.
     
@@ -692,8 +692,8 @@ def draw_frag_of_molecule(mol, fragment: int, output_type='png', **kwargs):
     ----------
     mol : rdkit molecule
         Molecule to draw the fragment for
-    fragment : int
-        fragment represented by a binary string
+    fragment : int or list
+        fragment represented in base 10 where in the binary representation 1 indicates the presence of the atom and 0 indicates the absence, or a list of atom indices
     output_type : str, optional (default='png')
         type of output (png or svg)
     kwargs : dict
@@ -726,14 +726,19 @@ def draw_frag_of_molecule(mol, fragment: int, output_type='png', **kwargs):
         :width: 300px
         
     """
+    print("in visualizer", fragment)
     mol = mu._get_molecule(mol)
     highlightAtoms = []
-    for i in range(0, mol.GetNumAtoms()):
-        if fragment & (1 << i):
-            highlightAtoms.append(i)
+    if isinstance(fragment, int):
+        for i in range(0, mol.GetNumAtoms()):
+            if fragment & (1 << i):
+                highlightAtoms.append(i)
+    elif isinstance(fragment, list):
+        highlightAtoms = fragment
     # print(highlightAtoms)
     kwargs['highlightAtoms'] = highlightAtoms
-    img = draw_molecule(mol, **kwargs)
+    img = draw_molecule(mol, output_type=output_type, **kwargs)
+    print(img)
     return img
 
 
@@ -828,6 +833,8 @@ def _generate_modification_legend(fontSize, output_type, **kwargs):
         legend_image = np.array(legend_image)
         return legend_image
     else:
+        # return empty svg
+        return "<svg></svg>"
         # TODO: Implement this
         raise NotImplementedError("SVG not implemented")
 
@@ -861,6 +868,7 @@ def _overlay_legend(img, legend, position, output_type):
         combined_image.paste(legend, position, legend)
         return np.array(combined_image)
     else:
+        return img
         # TODO: Implement this
         raise NotImplementedError("SVG not implemented")
 

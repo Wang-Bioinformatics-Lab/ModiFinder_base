@@ -66,6 +66,7 @@ class ModiFinder:
         alignmentEngine: AlignmentEngine = None,
         should_annotate: bool = True,
         annotationEngine: AnnotationEngine = None,
+        ppm_tolerance: float = 40,
         **kwargs,
     ):
         """
@@ -133,6 +134,7 @@ class ModiFinder:
 
         self.network = None
         self.unknonws = None
+        self.ppm_tolerance = ppm_tolerance
         self.args = kwargs
         
         if alignmentEngine is None:
