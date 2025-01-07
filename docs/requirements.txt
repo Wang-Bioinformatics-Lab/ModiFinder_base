@@ -18,6 +18,6 @@ seaborn
 myst-parser
 nbsphinx
 sphinx-rtd-theme
-sphinx==7.4.7
+sphinx==7.1.2
 sphinx-autobuild
 -e .
