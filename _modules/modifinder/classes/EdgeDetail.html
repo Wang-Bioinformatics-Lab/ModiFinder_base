@@ -1,0 +1,192 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.classes.EdgeDetail &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=91e4a3f0"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">modifinder.classes.EdgeDetail</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modifinder.classes.EdgeDetail</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+
+<div class="viewcode-block" id="MatchType"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.MatchType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MatchType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">shifted</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">unshifted</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+<div class="viewcode-block" id="Match"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.Match">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Match</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for Match</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_peak_index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">second_peak_index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">match_type</span><span class="p">:</span> <span class="n">MatchType</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Match object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        first_peak_index : int</span>
+<span class="sd">            Index of the first peak</span>
+<span class="sd">        second_peak_index : int</span>
+<span class="sd">            Index of the second peak</span>
+<span class="sd">        match_type : MatchType</span>
+<span class="sd">            Type of the match</span>
+
+<span class="sd">        Customization</span>
+<span class="sd">        -------------</span>
+<span class="sd">        if you need matches with more information, create a new class and inherit from this class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_peak_index</span> <span class="o">=</span> <span class="n">first_peak_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">second_peak_index</span> <span class="o">=</span> <span class="n">second_peak_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="n">match_type</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Match(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">first_peak_index</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">second_peak_index</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">match_type</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
+<div class="viewcode-block" id="Match.copy"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.Match.copy">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a copy of the Match object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_peak_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_peak_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="EdgeDetail"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EdgeDetail</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for Edge Details</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_modifications</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">match_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Match</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_spectrum_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_spectrum_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the EdgeDetail object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        number_of_modifications : int</span>
+<span class="sd">            Number of modifications, -1 for unknown</span>
+<span class="sd">        match_score : float</span>
+<span class="sd">            Match score, how well the two spectra match</span>
+<span class="sd">        matches : List[Match]</span>
+<span class="sd">            List of matches, each match is a tuple of two peak indices and the match type. It is </span>
+<span class="sd">            important to note that match has directionality. The first peak index is from the first </span>
+<span class="sd">            node of the edge and the second peak index is from the second node of the edge.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_spectrum_id</span> <span class="o">=</span> <span class="n">start_spectrum_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_spectrum_id</span> <span class="o">=</span> <span class="n">end_spectrum_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_modifications</span> <span class="o">=</span> <span class="n">number_of_modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_score</span> <span class="o">=</span> <span class="n">match_score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matches</span> <span class="o">=</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">matches</span> <span class="k">else</span> <span class="p">[]</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;EdgeDetail(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_modifications</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">match_score</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
+<div class="viewcode-block" id="EdgeDetail.reverse_match"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail.reverse_match">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reverse_match</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reverse the matches</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">:</span>
+            <span class="k">match</span><span class="o">.</span><span class="n">first_peak_index</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_index</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_index</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">first_peak_index</span></div>
+    
+<div class="viewcode-block" id="EdgeDetail.copy"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail.copy">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a copy of the EdgeDetail object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">EdgeDetail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_modifications</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_spectrum_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_spectrum_id</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="EdgeDetail.get_matches_pairs"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail.get_matches_pairs">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_matches_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the matches as a list of tuples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">match</span><span class="o">.</span><span class="n">first_peak_index</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_index</span><span class="p">)</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
