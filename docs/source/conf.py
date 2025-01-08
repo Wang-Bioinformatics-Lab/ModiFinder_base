@@ -26,9 +26,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'matplotlib.sphinxext.plot_directive',
     'myst_parser',
-
-    
-    
 ]
 
 source_suffix = ['.rst', '.md']
