@@ -1,6 +1,8 @@
 Utilities
 =========
 
+.. currentmodule:: modifinder.utilities
+
 .. toctree::
    :maxdepth: 2
 

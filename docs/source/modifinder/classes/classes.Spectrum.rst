@@ -7,7 +7,7 @@ Overview
 
 .. currentmodule:: modifinder
 
-.. autoclass:: Spectrum
+.. autoclass:: modifinder.classes.Spectrum
 
    
    .. automethod:: __init__
@@ -17,8 +17,8 @@ Overview
    .. autosummary::
       :toctree: generated
    
-      ~Spectrum.update
-      ~Spectrum.clear
-      ~Spectrum.normalize_peaks
-      ~Spectrum.remove_small_peaks
-      ~Spectrum.keep_top_k
+      ~modifinder.Spectrum.update
+      ~modifinder.Spectrum.clear
+      ~modifinder.Spectrum.normalize_peaks
+      ~modifinder.Spectrum.remove_small_peaks
+      ~modifinder.Spectrum.keep_top_k

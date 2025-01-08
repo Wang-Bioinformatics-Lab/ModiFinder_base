@@ -9,7 +9,7 @@ Overview
 .. currentmodule:: modifinder
 
 
-.. autoclass:: Compound
+.. autoclass:: modifinder.classes.Compound
 
    
    .. automethod:: __init__
@@ -20,14 +20,14 @@ Overview
    .. autosummary::
       :toctree: generated
 
-      ~Compound.calculate_annotation_entropy
-      ~Compound.calculate_contribution_atom_in_peak
-      ~Compound.calculate_contributions
-      ~Compound.calculate_peak_annotation_ambiguity
-      ~Compound.clear
-      ~Compound.copy
-      ~Compound.filter_fragments_by_atoms
-      ~Compound.find_existance
-      ~Compound.get_meta_data
-      ~Compound.print_peaks_to_fragments_map
-      ~Compound.update
+      ~modifinder.Compound.calculate_annotation_entropy
+      ~modifinder.Compound.calculate_contribution_atom_in_peak
+      ~modifinder.Compound.calculate_contributions
+      ~modifinder.Compound.calculate_peak_annotation_ambiguity
+      ~modifinder.Compound.clear
+      ~modifinder.Compound.copy
+      ~modifinder.Compound.filter_fragments_by_atoms
+      ~modifinder.Compound.find_existance
+      ~modifinder.Compound.get_meta_data
+      ~modifinder.Compound.print_peaks_to_fragments_map
+      ~modifinder.Compound.update

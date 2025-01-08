@@ -8,6 +8,8 @@ The following classes are defined in the modifinder package:
 * EdgeDetail: Represents an alignment, contains the alignment score, matched peaks and the type of the match
 * ModiFinder: The main class of the package, using the known analogs, tries to provide structural information about the unknown compound.
 
+.. currentmodule:: modifinder
+
 .. toctree::
    :maxdepth: 1
 

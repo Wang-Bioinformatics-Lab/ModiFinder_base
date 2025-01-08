@@ -1,7 +1,7 @@
 Molecule utilities
 ===========================
 
-.. currentmodule:: utilities.mol_utils
+.. currentmodule:: modifinder.utilities.mol_utils
 .. autosummary::
    :nosignatures:
 
@@ -14,7 +14,7 @@ Molecule utilities
    attach_mols
    generate_possible_stuctures
 
-.. automodule:: utilities.mol_utils
+.. automodule:: modifinder.utilities.mol_utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
 General utilities module
 ===============================
 
-.. currentmodule:: utilities.general_utils
+.. currentmodule:: modifinder.utilities.general_utils
 .. autosummary::
    :nosignatures:
 
@@ -12,7 +12,7 @@ General utilities module
    get_adduct_mass
 
 
-.. automodule:: utilities.general_utils
+.. automodule:: modifinder.utilities.general_utils
    :members:
    :undoc-members:
    :show-inheritance:

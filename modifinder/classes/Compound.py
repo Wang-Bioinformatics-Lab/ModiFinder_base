@@ -166,7 +166,7 @@ class Compound:
                peak_fragments_map: dict = None, distances: dict = None, **kwargs):
         """Update the attributes of the class
 
-        Parameters:
+        Parameters
         ----------
         structure (Chem.Mol, Smiles, InChi): The structure of the compound
         id (str): The id of the compound
@@ -323,7 +323,7 @@ class Compound:
         return existance
     
     
-    def calculate_contribution_atom_in_peak(self, atom: int, peakindx:int, existance_data:list[Dict], CI:bool = False, CPA:bool = True, CFA:bool = True):
+    def calculate_contribution_atom_in_peak(self, atom: int, peakindx:int, existance_data:list, CI:bool = False, CPA:bool = True, CFA:bool = True):
         """Calculates the contribution of an atom to a peak
 
         Parameters

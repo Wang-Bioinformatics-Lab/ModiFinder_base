@@ -1,7 +1,7 @@
 EdgeDetail module
 =========================
 
-.. automodule:: classes.EdgeDetail
+.. automodule:: modifinder.classes.EdgeDetail
    :members:
    :undoc-members:
    :show-inheritance:

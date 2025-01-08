@@ -1,6 +1,8 @@
 Documentation
 =============
 
+currentmodule:: modifinder
+
 .. toctree::
    :maxdepth: 2
 

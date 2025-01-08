@@ -1,7 +1,7 @@
 Visualizer
 ===========================
 
-.. currentmodule:: utilities.visualizer
+.. currentmodule:: modifinder.utilities.visualizer
 .. autosummary::
    :nosignatures:
 
@@ -17,7 +17,7 @@ More information on the features provided here are available at
 rdkit: http://www.rdkit.org/
 matplotlib: http://matplotlib.org/
 
-.. automodule:: utilities.visualizer
+.. automodule:: modifinder.utilities.visualizer
    :members:
    :undoc-members:
    :show-inheritance:

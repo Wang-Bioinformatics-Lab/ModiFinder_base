@@ -1,7 +1,7 @@
 Network module
 ========================
 
-.. automodule:: utilities.network
+.. automodule:: modifinder.utilities.network
    :members:
    :undoc-members:
    :show-inheritance:
