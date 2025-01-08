@@ -1,4 +1,4 @@
 Customization 
 ======
 
-include:: customization.md
+.. mdinclude:: customization.md
