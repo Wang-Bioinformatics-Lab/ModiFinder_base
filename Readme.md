@@ -6,6 +6,8 @@ Welcome to ModiFinder's documentation!
 
 _This project is under active development._
 
+The documentation is available at: [https://wang-bioinformatics-lab.github.io/ModiFinder_base/](https://wang-bioinformatics-lab.github.io/ModiFinder_base/)
+
 
 Citing
 ------
