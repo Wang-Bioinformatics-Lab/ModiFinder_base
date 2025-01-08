@@ -1,4 +1,5 @@
 Customization 
-======
+=============
 
-.. mdinclude:: customization.md
+.. include:: customization.md
+    :parser: myst_parser.sphinx_
