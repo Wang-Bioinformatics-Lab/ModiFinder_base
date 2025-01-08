@@ -15,6 +15,7 @@ setup(
         'tqdm',
         'IPython',
         'furl',
+        'pandas',
         'dash-bootstrap-components',
         'pillow',
         'openpyxl',
@@ -23,8 +24,10 @@ setup(
         'seaborn',
         'pyteomics',
         'matplotlib',
+        'networkx',
     ],
     author='Reza Shahneh',
     author_email='mzare008@ucr.edu',
     description='ModiFinder package',
+    python_requires='>=3.9',
 )

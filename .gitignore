@@ -3,3 +3,4 @@ __pycache__*
 oldTests
 models/predict_modification_site.model
 docs/build
+dist
