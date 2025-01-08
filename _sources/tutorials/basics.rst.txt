@@ -1,4 +1,4 @@
 Basics 
 ======
 
-include:: basics.md
+.. mdinclude:: basics.md
