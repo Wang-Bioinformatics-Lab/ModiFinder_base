@@ -32,6 +32,12 @@ dependencies = [
     "networkx",
 ]
 requires-python = ">=3.9"
+readme = "Readme.md"
+license = {file = "LICENSE.md"}
 
 [project.optional-dependencies]
 extras = []  # Define optional dependencies here if needed
+
+[project.urls]
+Documentation = "https://wang-bioinformatics-lab.github.io/ModiFinder_base/"
+Repository = "https://github.com/Wang-Bioinformatics-Lab/ModiFinder_base"
