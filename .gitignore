@@ -1,6 +1,6 @@
 __pycache__*
 *.egg-info
 oldTests
-models/predict_modification_site.model
+modifinder/models/predict_modification_site.model
 docs/build
 dist

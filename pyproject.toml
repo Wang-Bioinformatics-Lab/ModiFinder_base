@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modifinder"
+version = "1.4-beta"
+authors = [
+    { name = "Reza Shahneh", email = "mzare008@ucr.edu" },
+]
+description = "ModiFinder package"
+dependencies = [
+    "cairosvg",
+    "rdkit",
+    "requests",
+    "xlsxwriter",
+    "prettytable",
+    "dash",
+    "numpy",
+    "tqdm",
+    "IPython",
+    "furl",
+    "pandas",
+    "dash-bootstrap-components",
+    "pillow",
+    "openpyxl",
+    "openpyxl-image-loader",
+    "msbuddy==0.2.3",
+    "seaborn",
+    "pyteomics",
+    "matplotlib",
+    "networkx",
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+extras = []  # Define optional dependencies here if needed
