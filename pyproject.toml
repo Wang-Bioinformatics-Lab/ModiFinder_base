@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "modifinder"
-version = "1.4-beta"
+version = "1.4.1-beta"
 authors = [
     { name = "Reza Shahneh", email = "mzare008@ucr.edu" },
 ]
