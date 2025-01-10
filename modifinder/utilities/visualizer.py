@@ -25,6 +25,7 @@ from PIL import ImageDraw, ImageFont, Image
 from matplotlib.patches import ConnectionPatch
 import os
 from io import BytesIO
+import re
 
 def draw_molecule(mol, output_type='png', font_size = None, label=None, label_font_size = 20, label_color = (0,0,0), label_position = 'top', **kwargs):
     """
@@ -142,9 +143,9 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
             img = np.array(img)
 
         if "show_legend" in extra_info and extra_info["show_legend"]:
-            img = _add_heatmap_legend(img, extra_info["scores"], kwargs["highlightAtomColors"],
+            legend = _generate_heatmap_legend(img, extra_info["scores"], kwargs["highlightAtomColors"],
                                x_dim, y_dim, extra_info["legend_width"], extra_info["legend_font"], output_type)
-        return img
+            img = _overlay_legend(img, legend, (0, y_dim-extra_info["legend_width"]-10), output_type)
     else:
         d2d = Chem.Draw.MolDraw2DSVG(x_dim, y_dim)
         d2d.SetFontSize(font_size)
@@ -154,8 +155,9 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
         d2d.FinishDrawing()
         svg = d2d.GetDrawingText()
         if "show_legend" in extra_info and extra_info["show_legend"]:
-            svg = _add_heatmap_legend(svg, extra_info["scores"], kwargs["highlightAtomColors"],
+            legend = _generate_heatmap_legend(svg, extra_info["scores"], kwargs["highlightAtomColors"],
                               x_dim, y_dim, extra_info["legend_width"], extra_info["legend_font"], output_type)
+            svg = _overlay_legend(svg, legend, (0, y_dim-extra_info["legend_width"]-10), output_type)
         return svg
 
 
@@ -273,7 +275,7 @@ def draw_modifications(mol1, mol2, output_type='png', show_legend = True, legend
 
     img = draw_molecule(result['merged_mol'], highlightAtoms=highlight_atoms, highlightAtomColors=highlight_atoms_colors, highlightBonds=highlight_bonds, highlightBondColors=highlight_bonds_colors, output_type=output_type, **kwargs)
     if show_legend:
-        legend = _generate_modification_legend(legend_font, output_type)
+        legend = _generate_modification_legend(legend_font, output_type, **kwargs)
         img = _overlay_legend(img, legend, legend_position, output_type)
     return img
 
@@ -726,7 +728,6 @@ def draw_frag_of_molecule(mol, fragment, output_type='png', **kwargs):
         :width: 300px
         
     """
-    print("in visualizer", fragment)
     mol = mu._get_molecule(mol)
     highlightAtoms = []
     if isinstance(fragment, int):
@@ -735,10 +736,8 @@ def draw_frag_of_molecule(mol, fragment, output_type='png', **kwargs):
                 highlightAtoms.append(i)
     elif isinstance(fragment, list):
         highlightAtoms = fragment
-    # print(highlightAtoms)
     kwargs['highlightAtoms'] = highlightAtoms
     img = draw_molecule(mol, output_type=output_type, **kwargs)
-    print(img)
     return img
 
 
@@ -753,7 +752,7 @@ def _get_heat_map_colors(val):
         return (0.95*val, 0.2*(1-val), (1-val), val*0.3 + 0.40)
 
 
-def _add_heatmap_legend(img, scores, colors, image_width, image_height, legend_span, fontSize, output_type):
+def _generate_heatmap_legend(img, scores, colors, image_width, image_height, legend_span, fontSize, output_type):
     """
     Add legend to the image
     :param img: image
@@ -778,33 +777,33 @@ def _add_heatmap_legend(img, scores, colors, image_width, image_height, legend_s
         draw.text((image_width-5, legend_span//2), "high likelihood", (255, 255, 255), font=font, anchor="rm")
 
         legend_patch = np.array(legend_image)
-
-        # if image is in RGB format, convert it to RGBA
-        if img.max() <= 1:
-            img = (img*255).astype(np.uint8)
-        if img.shape[2] == 3:
-            img = np.concatenate((img, np.ones((img.shape[0], img.shape[1], 1), dtype=np.uint8)*255), axis=2)
-        img = np.concatenate((img, legend_patch), axis=0)
-        return img
+        
+        return legend_patch
+        # # if image is in RGB format, convert it to RGBA
+        # if img.max() <= 1:
+        #     img = (img*255).astype(np.uint8)
+        # if img.shape[2] == 3:
+        #     img = np.concatenate((img, np.ones((img.shape[0], img.shape[1], 1), dtype=np.uint8)*255), axis=2)
+        # img = np.concatenate((img, legend_patch), axis=0)
+        # return img
     else:
-        svg = """<svg width="{}" height="{}" xmlns="http://www.w3.org/2000/svg">""".format(legend_span, image_width)
-        rectWidth = legend_span/steps
-        rectHeight = image_width
+        svg = """<svg width="{}" height="{}" xmlns="http://www.w3.org/2000/svg">""".format(image_width, legend_span)
+        rectWidth = image_width/steps
+        rectHeight = legend_span
 
         for i in range(steps, -1, -1):
             color = _get_heat_map_colors(i/steps)
-            svg += """<rect x="{}" y="{}" width="{}" height="{}" fill="rgba({}, {}, {}, {})"/>""".format(i*rectWidth, image_height-legend_span, rectWidth*1.01, rectHeight,
+            svg += """<rect x="{}" y="{}" width="{}" height="{}" fill="rgba({}, {}, {}, {})"/>""".format(i*rectWidth, 0, rectWidth*1.01, rectHeight,
                                                                                                           color[0]*255, color[1]*255,color[2]*255, color[3])
-            svg += """<text x="{}" y="{}" font-size="{}px" fill="white">{}</text>""".format(5, image_height-legend_span + (rectHeight+fontSize/2)/2, fontSize, "Low likelihood")
-            text = "high likelihood"
-            # add text to the right side
-            text = text[::-1]
-            svg += """<text x="{}" y="{}" font-size="{}px" fill="white", text-anchor="end">{}</text>""".format(legend_span-5, image_height-legend_span + (rectHeight+fontSize/2)/2, fontSize, text)
+        svg += """<text x="{}" y="{}" font-size="{}px" fill="white">{}</text>""".format(5, int(legend_span*0.8), fontSize, "Low likelihood")
+        text = "high likelihood"
+        # add text to the right side
+        svg += """<text x="{}" y="{}" font-size="{}px" fill="white" text-anchor="end">{}</text>""".format(image_width-5, int(legend_span*0.84), fontSize, text)
         svg += "</svg>"
         return svg
     
 
-def _generate_modification_legend(fontSize, output_type, **kwargs):
+def _generate_modification_legend(fontSize, output_type, modification_categories = ['Common', 'Added', 'Removed'], **kwargs):
     """
     generate legend for image
     :param img: image
@@ -812,14 +811,14 @@ def _generate_modification_legend(fontSize, output_type, **kwargs):
     return: numpy array of the image
 
     """
+
+    colors = {'Common':(0.1, 0.1, 0.8, 0.7), 'Added':(0.1, 0.8, 0.1, 0.7), 'Removed':(0.8, 0.1, 0.1, 0.7)}
     if output_type == "png":
         fig, ax = plt.subplots(figsize=(1, 1))
-        categories = ['Common', 'Added', 'Removed']
-        colors = [(0.1, 0.1, 0.8, 0.7), (0.1, 0.8, 0.1, 0.7), (0.8, 0.1, 0.1, 0.7)]
 
         # Plot the dummy data to create a legend
-        for color, category in zip(colors, categories):
-            ax.plot([], [], color=color, label=category, linewidth=fontSize//1.5)
+        for category in modification_categories:
+            ax.plot([], [], color=colors[category], label=category, linewidth=fontSize//1.5)
         legend_location = (1, 1)
         legend = ax.legend(fontsize=fontSize, **kwargs, loc='center', bbox_to_anchor=legend_location)
         ax.axis('off')
@@ -833,10 +832,17 @@ def _generate_modification_legend(fontSize, output_type, **kwargs):
         legend_image = np.array(legend_image)
         return legend_image
     else:
-        # return empty svg
-        return "<svg></svg>"
-        # TODO: Implement this
-        raise NotImplementedError("SVG not implemented")
+        width = int(fontSize * 7 + 20)
+        height = len(modification_categories) * fontSize + (len(modification_categories) - 1) * fontSize//2 + 10 + 10
+        svg = """<svg width="{}" height="{}" xmlns="http://www.w3.org/2000/svg">""".format(width, height)
+        # draw dashed line around the border
+        svg += """<rect x="0" y="0" width="{}" height="{}" fill="none" stroke="black" stroke-width="1" stroke-dasharray="5,5"/>""".format(width, height)
+        for i, category in enumerate(modification_categories):
+            color = colors[category]
+            svg += """<rect x="10" y="{}" width="{}" height="{}" fill="rgba({}, {}, {}, {})"/>""".format(10 + i*((fontSize*3)//2), width - 20, fontSize, color[0]*255, color[1]*255, color[2]*255, color[3])
+            svg += """<text x="{}" y="{}" font-size="{}px" fill="black" text-anchor="middle">{}</text>""".format(width//2, 10 + i*((fontSize*3)//2) + int(fontSize*0.84), fontSize, category)
+        svg += "</svg>"
+        return svg
 
 
 def _overlay_legend(img, legend, position, output_type):
@@ -868,9 +874,29 @@ def _overlay_legend(img, legend, position, output_type):
         combined_image.paste(legend, position, legend)
         return np.array(combined_image)
     else:
-        return img
-        # TODO: Implement this
-        raise NotImplementedError("SVG not implemented")
+        trimmed_img = img.split("</svg>")[0]
+        # find  first > and trim the legend
+        first_gt = legend.find(">")
+        trimmed_legend = legend[first_gt+1:]
+        # add the legend
+        
+        img_size = re.search(r'width="(\d+)" height="(\d+)"', img)
+        legend_size = re.search(r'width="(\d+)" height="(\d+)"', legend)
+        if position is None:
+            position = (max(0, img_size[0] - legend_size[0]), max(img_size[1] - legend_size[1], 0))
+        
+        if type(position) is not tuple:
+            raise ValueError("Position should be a tuple")
+        # get all the x+ and y+ values and add the position to them
+        x_values = re.findall(r'x="(\d+)"', trimmed_legend)
+        y_values = re.findall(r'y="(\d+)"', trimmed_legend)
+        x_values = [int(x) + position[0] for x in x_values]
+        y_values = [int(y) + position[1] for y in y_values]
+        trimmed_legend = re.sub(r'x="(\d+)"', lambda x: f'x="{x_values.pop(0)}"', trimmed_legend)
+        trimmed_legend = re.sub(r'y="(\d+)"', lambda x: f'y="{y_values.pop(0)}"', trimmed_legend)
+        
+        svg = trimmed_img + trimmed_legend
+        return svg
 
 def _cname2hex(cname):
     colors = dict(mpl.colors.BASE_COLORS, **mpl.colors.CSS4_COLORS) # dictionary. key: names, values: hex codes
