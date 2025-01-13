@@ -48,6 +48,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basics</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#basics-tutorial">Basics Tutorial</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-spectrum">Create Spectrum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-compound">Create Compound</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#basic-modifinder-use">Basic ModiFinder Use</a></li>
 </ul>
 </li>
@@ -89,8 +91,35 @@
 <section id="basics-tutorial">
 <h2>Basics Tutorial<a class="headerlink" href="#basics-tutorial" title="Permalink to this heading"></a></h2>
 <p>This guide tries to help you start working with ModiFinder.</p>
+<section id="create-spectrum">
+<h3>Create Spectrum<a class="headerlink" href="#create-spectrum" title="Permalink to this heading"></a></h3>
+<p>The Spectrum <a class="reference internal" href="../modifinder/classes/classes.Spectrum.html#modifinder.classes.Spectrum" title="modifinder.classes.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.Spectrum</span></code></a> is a class to represent a spectrum, you can create an instance of this object by passing the USI, or from the dictionary of data, or by passing the data for the spectrum fields. check the <a class="reference internal" href="../modifinder/classes/classes.Spectrum.html#modifinder.classes.Spectrum" title="modifinder.classes.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.Spectrum</span></code></a> for more examples and information.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
+
+<span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010113829&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>36
+</pre></div>
+</div>
+</section>
+<section id="create-compound">
+<h3>Create Compound<a class="headerlink" href="#create-compound" title="Permalink to this heading"></a></h3>
+<p>The Compound <a class="reference internal" href="../modifinder/classes/classes.Compound.html#modifinder.classes.Compound" title="modifinder.classes.Compound"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.Compound</span></code></a> is the class to represent a Compound, you can create an instance of this object by passing the USI, data in a dictionary or by passing the data for the Compound. Check the <a class="reference internal" href="../modifinder/classes/classes.Compound.html#modifinder.classes.Compound" title="modifinder.classes.Compound"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.Compound</span></code></a> for documentation and more examples.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
+
+<span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010113829&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">compound</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Compound(id: CCMSLIB00010113829, name: &quot;methyl 2-amino-4-(2-bromophenyl)-5-oxo-4H-pyrano[3,2-c]chromene-3-carboxylate CollisionEnergy:102040&quot;, usi: mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00010113829) with 36 peaks and structure COC(=O)C1=C(N)Oc2c(c(=O)oc3ccccc23)C1c1ccccc1Br
+</pre></div>
+</div>
+</section>
 <section id="basic-modifinder-use">
 <h3>Basic ModiFinder Use<a class="headerlink" href="#basic-modifinder-use" title="Permalink to this heading"></a></h3>
+<p>To use ModiFinder <a class="reference internal" href="../modifinder/classes/classes.ModiFinder.html#module-modifinder.classes.ModiFinder" title="modifinder.classes.ModiFinder"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.ModiFinder</span></code></a>, start by creating an instance of it. This requires at least two compounds: the target and its known analogs. You can create Modifinder class by using the USIs or using your own data.</p>
 <section id="create-with-usi">
 <h4>Create with USI<a class="headerlink" href="#create-with-usi" title="Permalink to this heading"></a></h4>
 <p>You can use ModiFinder in many scenarios but the main one is when you have a known and an unknown compound (with exactly one modification site) and you want to see the likelihood of location the modification. To pass the informations, you can use USI from GNPS. First, Lets Create the Compound objects</p>
@@ -129,7 +158,7 @@
 <p>ModiFinder also comes with a lot of visualizing tools, let’s visualize the alignment and the prediction</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">img_alignment</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_alignment</span><span class="p">(</span><span class="n">known_compound</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
-<span class="n">img_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">annotation_scale</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span>
+<span class="n">img_prediction</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shrink_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">annotation_scale</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_alignment</span><span class="p">)</span>
@@ -143,7 +172,7 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><img alt="png" src="../_images/basics_8_0.png" /></p>
+<p><img alt="png" src="../_images/basics_14_0.png" /></p>
 </section>
 <section id="create-with-your-data">
 <h4>Create with your data<a class="headerlink" href="#create-with-your-data" title="Permalink to this heading"></a></h4>
@@ -205,10 +234,8 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><img alt="png" src="../_images/basics_10_0.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
+<p><img alt="png" src="../_images/basics_16_0.png" /></p>
+<p>To learn how you can customize different parts of this process, check the Customization documents</p>
 </section>
 </section>
 </section>
