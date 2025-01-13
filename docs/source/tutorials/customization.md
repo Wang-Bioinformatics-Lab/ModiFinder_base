@@ -174,8 +174,8 @@ Here we show an example on how to use your alignment engine and your modificatio
 
 
 ```python
-from modifinder.engines.alignment.CosineAlignmentEngine import CosineAlignmentEngine
-from modifinder.engines.annotation.MAGMaAnnotationEngine import MAGMaAnnotationEngine
+from modifinder import CosineAlignmentEngine
+from modifinder import MAGMaAnnotationEngine
 args = {
     'mz_tolerance': 0.01,
     'ppm_tolerance': 40,

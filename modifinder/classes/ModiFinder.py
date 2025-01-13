@@ -221,7 +221,7 @@ class ModiFinder:
         smaller = u if self.network.nodes[u]["compound"].spectrum.precursor_mz <= self.network.nodes[v]["compound"].spectrum.precursor_mz else v
         larger = u if self.network.nodes[u]["compound"].spectrum.precursor_mz > self.network.nodes[v]["compound"].spectrum.precursor_mz else v
         if edgeDetail is None:
-            edgeDetail = self.alignmentEngine.single_align(self.network.nodes[smaller]["compound"].spectrum, self.network.nodes[larger]["compound"].spectrum, **kwargs)
+            edgeDetail = self.alignmentEngine.align_single(self.network.nodes[smaller]["compound"].spectrum, self.network.nodes[larger]["compound"].spectrum, **kwargs)
         
         self.update_edge(smaller, larger, edgeDetail, **kwargs)
     
@@ -365,7 +365,7 @@ class ModiFinder:
         smaller = compound if compound.spectrum.precursor_mz <= self.network.nodes[neighbor]["compound"].spectrum.precursor_mz else self.network.nodes[neighbor]["compound"]
         larger = compound if compound.spectrum.precursor_mz > self.network.nodes[neighbor]["compound"].spectrum.precursor_mz else self.network.nodes[neighbor]["compound"]
         if edgeDetail is None:
-            edgeDetail = self.alignmentEngine.single_align(smaller.spectrum, larger.spectrum, **kwargs)
+            edgeDetail = self.alignmentEngine.align_single(smaller.spectrum, larger.spectrum, **kwargs)
         
         self.update_edge(smaller.id, larger.id, edgeDetail, **kwargs)
         

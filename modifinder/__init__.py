@@ -15,3 +15,6 @@ from modifinder.classes import *
 
 from modifinder import utilities
 from modifinder.utilities import *
+
+from modifinder import engines
+from modifinder.engines import *

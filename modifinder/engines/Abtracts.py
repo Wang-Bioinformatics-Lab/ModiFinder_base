@@ -5,10 +5,15 @@ from modifinder.classes.Compound import Compound
 import networkx as nx
 from modifinder.classes.EdgeDetail import EdgeDetail
 from typing import List, Tuple
+from rdkit import Chem
 
 
 # Base class for alignment engines
 class AlignmentEngine(ABC):
+    """Base class for alignment engines
+    
+    It provides the basic structure for alignment engines in ModiFinder.
+    """
     @abstractmethod
     def __init__(self, **kwargs):
         pass
@@ -34,7 +39,7 @@ class AlignmentEngine(ABC):
         pass
     
     @abstractmethod
-    def single_align(self, SpectrumTuple1,
+    def align_single(self, SpectrumTuple1,
                       SpectrumTuple2, 
                       mz_tolerance: float = 0.02, 
                       ppm_tolerance: float = 100.0, 
@@ -57,6 +62,10 @@ class AlignmentEngine(ABC):
 
 # Base class for annotation engines
 class AnnotationEngine(ABC):
+    """Base class for annotation engines
+
+    It provides the basic structure for annotation engines in ModiFinder.
+    """
     @abstractmethod
     def __init__(self, **kwargs):
         pass
@@ -96,12 +105,42 @@ class AnnotationEngine(ABC):
         """
         pass
 
-# # Base class for prediction engines
-# class PredictionEngine(ABC):
-#     @abstractmethod
-#     def predict(self, network, **kwargs):
-#         pass
+# Base class for Evaluation engines
+class EvaluationEngine(ABC):
+    """Base class for evaluation engines
 
-#     @abstractmethod
-#     def confidence(self, network, prediction, **kwargs):
-#         pass
+    It provides the basic structure for evaluation engines in ModiFinder.
+    """
+    @abstractmethod
+    def __init__(self, **kwargs):
+        pass
+    
+    @abstractmethod
+    def evaluate(self, network, **kwargs):
+        """
+
+        Args:
+            network (_type_): _description_
+        """
+        pass
+    
+    @abstractmethod
+    def evaluate_single(self, known_compound_structure: Chem.Mol, unknonwn_compound_structure: Chem.Mol, probabilities: List[float], **kwargs):
+        """Evaluates the prediction of a single compound
+        
+        Parameters
+        ----------
+            known_compound_structure : rdkit Chem.Mol
+                The known compound structure
+            
+            unknonwn_compound_structure : rdkit Chem.Mol
+                The unknown compound structure
+            
+            probabilities : List[float]
+                The probabilities of each atom being the modification site
+            
+            kwargs : dict
+                additional arguments
+        """
+            
+        pass

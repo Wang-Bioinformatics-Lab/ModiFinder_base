@@ -171,4 +171,37 @@ plt.show()
     
 
 
+## Evaluation of the prediction
+
+To assess the accuracy of predictions, several evaluation metrics are available. First, create an instance of the `modifinder.engines.evaluation.BasicEvaluationEngine` class. Once instantiated, you can input the actual structure of the target compound, its analog, and the prediction into this engine to obtain the evaluation score. 
+
+
+```python
+from modifinder import BasicEvaluationEngine
+
+eval_engine = BasicEvaluationEngine()
+target_structure = modified_compound.structure
+analog_structure = known_compound.structure
+eval_score = eval_engine.evaluate_single(analog_structure, target_structure, probs)
+print("Evaluation score is: ", round(eval_score, 3))
+```
+
+    Evaluation score is:  0.514
+
+
+If you want to use an evaluation method other than the default, you can just pass that during initialization or when calling the evaluate_single function
+
+
+```python
+eval_engine = BasicEvaluationEngine(default_method="is_max")
+target_structure = modified_compound.structure
+analog_structure = known_compound.structure
+is_max_eval_score = eval_engine.evaluate_single(analog_structure, target_structure, probs)
+average_distance_eval_score = eval_engine.evaluate_single(analog_structure, target_structure, probs, evaluation_method="average_distance")
+print("IsMax Evaluation score is: ", round(is_max_eval_score, 3), "Average Distance Evaluation score is: ", round(average_distance_eval_score, 3))
+```
+
+    IsMax Evaluation score is:  1.0 Average Distance Evaluation score is:  0.514
+
+
 To learn how you can customize different parts of this process, check the Customization documents

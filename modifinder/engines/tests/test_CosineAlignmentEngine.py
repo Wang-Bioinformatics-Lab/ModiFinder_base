@@ -16,7 +16,7 @@ class TestCosineAlignment(unittest.TestCase):
         spectrum2 = convert.to_spectrum(theophylline_data.usi, normalize_peaks=True)
         
         cosine_engine = CosineAlignmentEngine()
-        edge_detail = cosine_engine.single_align(spectrum1, spectrum2)
+        edge_detail = cosine_engine.align_single(spectrum1, spectrum2)
         
         network_match = get_matched_peaks(caffeine_data.usi, theophylline_data.usi)
         

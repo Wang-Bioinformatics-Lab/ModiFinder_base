@@ -138,7 +138,7 @@ class CosineAlignmentEngine(AlignmentEngine):
             start_compound = network.nodes[edge[0]]["compound"]
             end_compound = network.nodes[edge[1]]["compound"]
             if "edgedetail" not in edge[2] or edge[2]["edgedetail"] is None or align_all:
-                edge[2]["edgedetail"] = self.single_align(
+                edge[2]["edgedetail"] = self.align_single(
                     start_compound.spectrum,
                     end_compound.spectrum,
                     mz_tolerance,
@@ -148,7 +148,7 @@ class CosineAlignmentEngine(AlignmentEngine):
                 
         
 
-    def single_align(
+    def align_single(
         self,
         SpectrumTuple1: Spectrum,
         SpectrumTuple2: Spectrum,
