@@ -55,7 +55,6 @@ def to_compound(data = None, use_object=None, **kwargs):
     
     # USI
     if isinstance(data, str):
-        print("in convert, data is a string", data)
         try:
             
             data = network.get_data(data)

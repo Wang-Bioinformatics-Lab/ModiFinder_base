@@ -2,7 +2,39 @@
 
 This guide tries to help you start working with ModiFinder.
 
+## Create Spectrum
+
+The Spectrum {class}`modifinder.classes.Spectrum` is a class to represent a spectrum, you can create an instance of this object by passing the USI, or from the dictionary of data, or by passing the data for the spectrum fields. check the {class}`modifinder.classes.Spectrum` for more examples and information.
+
+
+```python
+from modifinder import Spectrum
+
+spectrum = Spectrum("mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010113829")
+print(len(spectrum.mz))
+```
+
+    36
+
+
+## Create Compound
+
+The Compound {class}`modifinder.classes.Compound` is the class to represent a Compound, you can create an instance of this object by passing the USI, data in a dictionary or by passing the data for the Compound. Check the {class}`modifinder.classes.Compound` for documentation and more examples.
+
+
+```python
+from modifinder import Compound
+
+compound = Compound("mzspec:GNPS:BERKELEY-LAB:accession:CCMSLIB00010113829")
+print(compound)
+```
+
+    Compound(id: CCMSLIB00010113829, name: "methyl 2-amino-4-(2-bromophenyl)-5-oxo-4H-pyrano[3,2-c]chromene-3-carboxylate CollisionEnergy:102040", usi: mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00010113829) with 36 peaks and structure COC(=O)C1=C(N)Oc2c(c(=O)oc3ccccc23)C1c1ccccc1Br
+
+
 ## Basic ModiFinder Use
+
+To use ModiFinder {class}`modifinder.classes.ModiFinder`, start by creating an instance of it. This requires at least two compounds: the target and its known analogs. You can create Modifinder class by using the USIs or using your own data.
 
 ### Create with USI
 
@@ -51,7 +83,7 @@ ModiFinder also comes with a lot of visualizing tools, let's visualize the align
 ```python
 img_alignment = mf.draw_alignment(known_compound.id, modified_compound.id)
 
-img_prediction = mf.draw_prediction(probs, known_compound.id, show_legend=False, show_labels=True, shrink_labels=True, size=(1000, 1000), annotation_scale = 0.6)
+img_prediction = mf.draw_prediction(probs, known_compound.id, show_legend=True, show_labels=True, shrink_labels=True, size=(1000, 1000), annotation_scale = 0.6)
 
 fig, ax = plt.subplots(1, 2, figsize=(20, 10))
 ax[0].imshow(img_alignment)
@@ -67,7 +99,7 @@ plt.show()
 
 
     
-![png](basics_files/basics_8_0.png)
+![png](basics_files/basics_14_0.png)
     
 
 
@@ -135,11 +167,8 @@ plt.show()
 
 
     
-![png](basics_files/basics_10_0.png)
+![png](basics_files/basics_16_0.png)
     
 
 
-
-```python
-
-```
+To learn how you can customize different parts of this process, check the Customization documents

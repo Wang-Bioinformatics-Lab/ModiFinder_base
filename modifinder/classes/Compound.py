@@ -11,7 +11,7 @@ import math
 
 # import modifinder as mf
 from modifinder.classes.Spectrum import Spectrum
-from modifinder import convert as convert
+from modifinder import convert
 
 
 class Compound:
@@ -108,7 +108,7 @@ class Compound:
 
         See Also
         --------
-        convert.to_compound 
+        modifinder.convert 
         
         Spectrum
 

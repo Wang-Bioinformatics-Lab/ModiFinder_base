@@ -146,6 +146,8 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
             legend = _generate_heatmap_legend(img, extra_info["scores"], kwargs["highlightAtomColors"],
                                x_dim, y_dim, extra_info["legend_width"], extra_info["legend_font"], output_type)
             img = _overlay_legend(img, legend, (0, y_dim-extra_info["legend_width"]-10), output_type)
+        
+        return img
     else:
         d2d = Chem.Draw.MolDraw2DSVG(x_dim, y_dim)
         d2d.SetFontSize(font_size)
