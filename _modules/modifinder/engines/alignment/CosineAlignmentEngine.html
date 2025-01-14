@@ -211,7 +211,7 @@
             <span class="n">start_compound</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span>
             <span class="n">end_compound</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="s2">&quot;edgedetail&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">or</span> <span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">align_all</span><span class="p">:</span>
-                <span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_align</span><span class="p">(</span>
+                <span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">align_single</span><span class="p">(</span>
                     <span class="n">start_compound</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span>
                     <span class="n">end_compound</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span>
                     <span class="n">mz_tolerance</span><span class="p">,</span>
@@ -221,7 +221,7 @@
                 
         
 
-<div class="viewcode-block" id="CosineAlignmentEngine.single_align"><a class="viewcode-back" href="../../../../modifinder/engines/samples/engines.alignment.CosineAlignmentEngine.html#modifinder.engines.alignment.CosineAlignmentEngine.CosineAlignmentEngine.single_align">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">single_align</span><span class="p">(</span>
+<div class="viewcode-block" id="CosineAlignmentEngine.align_single"><a class="viewcode-back" href="../../../../modifinder/engines/samples/engines.alignment.CosineAlignmentEngine.html#modifinder.engines.alignment.CosineAlignmentEngine.CosineAlignmentEngine.align_single">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">align_single</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">SpectrumTuple1</span><span class="p">:</span> <span class="n">Spectrum</span><span class="p">,</span>
         <span class="n">SpectrumTuple2</span><span class="p">:</span> <span class="n">Spectrum</span><span class="p">,</span>

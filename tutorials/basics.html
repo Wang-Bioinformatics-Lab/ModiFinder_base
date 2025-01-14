@@ -51,6 +51,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#create-spectrum">Create Spectrum</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-compound">Create Compound</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#basic-modifinder-use">Basic ModiFinder Use</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#evaluation-of-the-prediction">Evaluation of the prediction</a></li>
 </ul>
 </li>
 </ul>
@@ -235,8 +236,36 @@
 </pre></div>
 </div>
 <p><img alt="png" src="../_images/basics_16_0.png" /></p>
-<p>To learn how you can customize different parts of this process, check the Customization documents</p>
 </section>
+</section>
+<section id="evaluation-of-the-prediction">
+<h3>Evaluation of the prediction<a class="headerlink" href="#evaluation-of-the-prediction" title="Permalink to this heading"></a></h3>
+<p>To assess the accuracy of predictions, several evaluation metrics are available. First, create an instance of the <code class="docutils literal notranslate"><span class="pre">modifinder.engines.evaluation.BasicEvaluationEngine</span></code> class. Once instantiated, you can input the actual structure of the target compound, its analog, and the prediction into this engine to obtain the evaluation score.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicEvaluationEngine</span>
+
+<span class="n">eval_engine</span> <span class="o">=</span> <span class="n">BasicEvaluationEngine</span><span class="p">()</span>
+<span class="n">target_structure</span> <span class="o">=</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">structure</span>
+<span class="n">analog_structure</span> <span class="o">=</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span>
+<span class="n">eval_score</span> <span class="o">=</span> <span class="n">eval_engine</span><span class="o">.</span><span class="n">evaluate_single</span><span class="p">(</span><span class="n">analog_structure</span><span class="p">,</span> <span class="n">target_structure</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluation score is: &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">eval_score</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Evaluation score is:  0.514
+</pre></div>
+</div>
+<p>If you want to use an evaluation method other than the default, you can just pass that during initialization or when calling the evaluate_single function</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eval_engine</span> <span class="o">=</span> <span class="n">BasicEvaluationEngine</span><span class="p">(</span><span class="n">default_method</span><span class="o">=</span><span class="s2">&quot;is_max&quot;</span><span class="p">)</span>
+<span class="n">target_structure</span> <span class="o">=</span> <span class="n">modified_compound</span><span class="o">.</span><span class="n">structure</span>
+<span class="n">analog_structure</span> <span class="o">=</span> <span class="n">known_compound</span><span class="o">.</span><span class="n">structure</span>
+<span class="n">is_max_eval_score</span> <span class="o">=</span> <span class="n">eval_engine</span><span class="o">.</span><span class="n">evaluate_single</span><span class="p">(</span><span class="n">analog_structure</span><span class="p">,</span> <span class="n">target_structure</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
+<span class="n">average_distance_eval_score</span> <span class="o">=</span> <span class="n">eval_engine</span><span class="o">.</span><span class="n">evaluate_single</span><span class="p">(</span><span class="n">analog_structure</span><span class="p">,</span> <span class="n">target_structure</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">evaluation_method</span><span class="o">=</span><span class="s2">&quot;average_distance&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IsMax Evaluation score is: &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">is_max_eval_score</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;Average Distance Evaluation score is: &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">average_distance_eval_score</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>IsMax Evaluation score is:  1.0 Average Distance Evaluation score is:  0.514
+</pre></div>
+</div>
+<p>To learn how you can customize different parts of this process, check the Customization documents</p>
 </section>
 </section>
 </section>

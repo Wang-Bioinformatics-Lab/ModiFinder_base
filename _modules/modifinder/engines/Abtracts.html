@@ -78,10 +78,16 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.classes.EdgeDetail</span><span class="w"> </span><span class="kn">import</span> <span class="n">EdgeDetail</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
 
 
 <span class="c1"># Base class for alignment engines</span>
 <div class="viewcode-block" id="AlignmentEngine"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.AlignmentEngine">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AlignmentEngine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for alignment engines</span>
+<span class="sd">    </span>
+<span class="sd">    It provides the basic structure for alignment engines in ModiFinder.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -106,8 +112,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
     
-<div class="viewcode-block" id="AlignmentEngine.single_align"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.AlignmentEngine.single_align">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">single_align</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SpectrumTuple1</span><span class="p">,</span>
+<div class="viewcode-block" id="AlignmentEngine.align_single"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.AlignmentEngine.align_single">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">align_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SpectrumTuple1</span><span class="p">,</span>
                       <span class="n">SpectrumTuple2</span><span class="p">,</span> 
                       <span class="n">mz_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">,</span> 
                       <span class="n">ppm_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> 
@@ -130,6 +136,10 @@
 
 <span class="c1"># Base class for annotation engines</span>
 <div class="viewcode-block" id="AnnotationEngine"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.AnnotationEngine">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AnnotationEngine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for annotation engines</span>
+
+<span class="sd">    It provides the basic structure for annotation engines in ModiFinder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -169,15 +179,45 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
-<span class="c1"># # Base class for prediction engines</span>
-<span class="c1"># class PredictionEngine(ABC):</span>
-<span class="c1">#     @abstractmethod</span>
-<span class="c1">#     def predict(self, network, **kwargs):</span>
-<span class="c1">#         pass</span>
+<span class="c1"># Base class for Evaluation engines</span>
+<div class="viewcode-block" id="EvaluationEngine"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.EvaluationEngine">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluationEngine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for evaluation engines</span>
 
-<span class="c1">#     @abstractmethod</span>
-<span class="c1">#     def confidence(self, network, prediction, **kwargs):</span>
-<span class="c1">#         pass</span>
+<span class="sd">    It provides the basic structure for evaluation engines in ModiFinder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+<div class="viewcode-block" id="EvaluationEngine.evaluate"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.EvaluationEngine.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            network (_type_): _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+    
+<div class="viewcode-block" id="EvaluationEngine.evaluate_single"><a class="viewcode-back" href="../../../modifinder/engines/engines.Abtracts.html#modifinder.engines.Abtracts.EvaluationEngine.evaluate_single">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known_compound_structure</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span> <span class="n">unknonwn_compound_structure</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the prediction of a single compound</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            known_compound_structure : rdkit Chem.Mol</span>
+<span class="sd">                The known compound structure</span>
+<span class="sd">            </span>
+<span class="sd">            unknonwn_compound_structure : rdkit Chem.Mol</span>
+<span class="sd">                The unknown compound structure</span>
+<span class="sd">            </span>
+<span class="sd">            probabilities : List[float]</span>
+<span class="sd">                The probabilities of each atom being the modification site</span>
+<span class="sd">            </span>
+<span class="sd">            kwargs : dict</span>
+<span class="sd">                additional arguments</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+            
+        <span class="k">pass</span></div></div>
 </pre></div>
 
            </div>

@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="engines.Abtracts.html" />
+    <link rel="next" title="AlignmentEngine" href="engines.Abtracts.html" />
     <link rel="prev" title="ModiFinder" href="../classes/classes.ModiFinder.html" /> 
 </head>
 
@@ -49,8 +49,9 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../classes/index.html">Classes</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Engines</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="engines.Abtracts.html"><code class="docutils literal notranslate"><span class="pre">AlignmentEngine</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AnnotationEngine"><code class="docutils literal notranslate"><span class="pre">AnnotationEngine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="engines.Abtracts.html">AlignmentEngine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="engines.Abtracts.html#annotationengine">AnnotationEngine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="engines.Abtracts.html#evaluationengine">EvaluationEngine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="samples/index.html">Sample Engines</a></li>
 </ul>
 </li>
@@ -88,33 +89,21 @@
              
   <section id="engines">
 <h1>Engines<a class="headerlink" href="#engines" title="Permalink to this heading"></a></h1>
+<p>ModiFinder uses modularized engines for different parts of its functionality. The abstract definition for the helper engines in ModiFinder can be found here:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="engines.Abtracts.html"><code class="docutils literal notranslate"><span class="pre">AlignmentEngine</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AlignmentEngine.align"><code class="docutils literal notranslate"><span class="pre">AlignmentEngine.align()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AlignmentEngine.single_align"><code class="docutils literal notranslate"><span class="pre">AlignmentEngine.single_align()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="engines.Abtracts.html">AlignmentEngine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engines.Abtracts.html#annotationengine">AnnotationEngine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engines.Abtracts.html#evaluationengine">EvaluationEngine</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AnnotationEngine"><code class="docutils literal notranslate"><span class="pre">AnnotationEngine</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AnnotationEngine.annotate"><code class="docutils literal notranslate"><span class="pre">AnnotationEngine.annotate()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AnnotationEngine.annotate_single"><code class="docutils literal notranslate"><span class="pre">AnnotationEngine.annotate_single()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="engines.Abtracts.html#modifinder.engines.Abtracts.AnnotationEngine.get_fragment_info"><code class="docutils literal notranslate"><span class="pre">AnnotationEngine.get_fragment_info()</span></code></a></li>
-</ul>
-</li>
+</div>
+<p>Example implementation for helper engines</p>
+<div class="toctree-wrapper compound">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="samples/index.html">Sample Engines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="samples/engines.alignment.CosineAlignmentEngine.html"><code class="docutils literal notranslate"><span class="pre">CosineAlignmentEngine</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.alignment.CosineAlignmentEngine.html#modifinder.engines.alignment.CosineAlignmentEngine.CosineAlignmentEngine.align"><code class="docutils literal notranslate"><span class="pre">CosineAlignmentEngine.align()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.alignment.CosineAlignmentEngine.html#modifinder.engines.alignment.CosineAlignmentEngine.CosineAlignmentEngine.single_align"><code class="docutils literal notranslate"><span class="pre">CosineAlignmentEngine.single_align()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html#modifinder.engines.annotation.MAGMaAnnotationEngine.MAGMaAnnotationEngine.annotate"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine.annotate()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html#modifinder.engines.annotation.MAGMaAnnotationEngine.MAGMaAnnotationEngine.annotate_single"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine.annotate_single()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html#modifinder.engines.annotation.MAGMaAnnotationEngine.MAGMaAnnotationEngine.get_fragment_info"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine.get_fragment_info()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html#modifinder.engines.annotation.MAGMaAnnotationEngine.MAGMaAnnotationEngine.refine_annotations_by_formula"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine.refine_annotations_by_formula()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html#modifinder.engines.annotation.MAGMaAnnotationEngine.MAGMaAnnotationEngine.refine_annotations_by_helper"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine.refine_annotations_by_helper()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="samples/engines.alignment.CosineAlignmentEngine.html"><code class="docutils literal notranslate"><span class="pre">CosineAlignmentEngine</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="samples/engines.annotation.MAGMaAnnotationEngine.html"><code class="docutils literal notranslate"><span class="pre">MAGMaAnnotationEngine</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="samples/engines.evaluation.BasicEvaluationEngine.html"><code class="docutils literal notranslate"><span class="pre">BasicEvaluationEngine</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -126,7 +115,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../classes/classes.ModiFinder.html" class="btn btn-neutral float-left" title="ModiFinder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="engines.Abtracts.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="engines.Abtracts.html" class="btn btn-neutral float-right" title="AlignmentEngine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

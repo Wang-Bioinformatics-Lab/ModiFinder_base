@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.engines.evaluation.BasicEvaluationEngine &mdash; ModiFinder 1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=91e4a3f0"></script>
+      <script src="../../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">modifinder.engines.evaluation.BasicEvaluationEngine</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modifinder.engines.evaluation.BasicEvaluationEngine</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.engines.Abtracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">EvaluationEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.mol_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mf_mu</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">true_index</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+        <span class="c1"># find how many times the max value appears</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="n">count</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+<span class="k">def</span><span class="w"> </span><span class="nf">dist_from_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
+    <span class="n">min_dist</span> <span class="o">=</span> <span class="mi">100000</span>
+    <span class="n">max_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">graph_diameter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_val</span><span class="p">:</span>
+            <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_dist</span><span class="o">/</span><span class="p">(</span><span class="n">graph_diameter</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">proximity</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
+    <span class="n">min_dist</span> <span class="o">=</span> <span class="mi">100000</span>
+    <span class="n">max_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">graph_diameter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_val</span><span class="p">:</span>
+            <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">graph_diameter</span> <span class="o">-</span> <span class="n">min_dist</span><span class="p">)</span><span class="o">/</span><span class="n">graph_diameter</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">average_dist_from_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
+    <span class="n">max_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">graph_diameter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_val</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">graph_diameter</span><span class="p">)</span>
+            <span class="n">dists</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">dists</span><span class="o">/</span><span class="n">count</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">average_distance</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.000001</span>
+    <span class="n">graph_diameter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">graph_diameter</span><span class="o">-</span><span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">eps</span><span class="p">))</span>
+        <span class="c1"># value  = (graph_diameter - G[true_index, i])/graph_diameter</span>
+        <span class="n">dists</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">dists</span><span class="o">/</span><span class="n">count</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ranking_loss</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">modificationSiteIdx</span><span class="p">):</span>
+    <span class="c1"># find how far the index of the true modification site is from the max probability</span>
+    <span class="c1"># sort the probabilities and keep the indices</span>
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+
+    <span class="c1"># reverse the indices</span>
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># find the index of the true modification site</span>
+    <span class="n">true_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sorted_indices</span> <span class="o">==</span> <span class="n">modificationSiteIdx</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># return the ranking loss</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">true_index</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sorted_rank</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">modificationSiteIdx</span><span class="p">):</span>
+    <span class="c1"># find how far the index of the true modification site is from the max probability</span>
+    <span class="c1"># sort the probabilities and keep the indices</span>
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+
+    <span class="c1"># find the index of the true modification site</span>
+    <span class="n">true_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sorted_indices</span> <span class="o">==</span> <span class="n">modificationSiteIdx</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># return the ranking loss</span>
+    <span class="k">return</span> <span class="n">true_index</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BasicEvaluationEngine"><a class="viewcode-back" href="../../../../modifinder/engines/samples/engines.evaluation.BasicEvaluationEngine.html#modifinder.engines.evaluation.BasicEvaluationEngine">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BasicEvaluationEngine</span><span class="p">(</span><span class="n">EvaluationEngine</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to evaluate the probabilities based on the basic evaluation engines explained in the paper</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            default_method : str or None (default = &quot;average_distance&quot;)</span>
+<span class="sd">                The default evaluation method to use. If None, the user must specify the method.</span>
+<span class="sd">                List of methods:</span>
+<span class="sd">                </span>
+<span class="sd">                    - **is_max** : returns 1 if the true modification site is the atom with the highest probability, 0 otherwise</span>
+
+<span class="sd">                    - **proximity** : returns the proximity to the atom with the highest probability</span>
+
+<span class="sd">                    - **average_distance** : returns the average distance to the atom with the highest probability normalized by the graph diameter</span>
+
+<span class="sd">                    - **sorted_rank** : returns the rank of the true modification site in the sorted probabilities</span>
+
+<span class="sd">            kwargs : dict</span>
+<span class="sd">                Additional arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_method</span> <span class="o">=</span> <span class="s2">&quot;average_distance&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the BasicEvaluationEngine</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_method</span> <span class="o">=</span> <span class="n">default_method</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="c1"># TODO: Implement the evaluate method</span>
+<div class="viewcode-block" id="BasicEvaluationEngine.evaluate"><a class="viewcode-back" href="../../../../modifinder/engines/samples/engines.evaluation.BasicEvaluationEngine.html#modifinder.engines.evaluation.BasicEvaluationEngine.evaluate">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the network.</span>
+
+<span class="sd">            .. warning::</span>
+<span class="sd">                Not implemented yet.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            network : type</span>
+<span class="sd">                Description of the `network` parameter.</span>
+<span class="sd">            **kwargs</span>
+<span class="sd">                Additional keyword arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModiFinderNotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented&quot;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="BasicEvaluationEngine.evaluate_single"><a class="viewcode-back" href="../../../../modifinder/engines/samples/engines.evaluation.BasicEvaluationEngine.html#modifinder.engines.evaluation.BasicEvaluationEngine.evaluate_single">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known_compound_structure</span><span class="p">,</span> <span class="n">unknonwn_compound_structure</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">evaluation_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Evaluates the probabilities based on the evaluation method</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            known_compound_structure : rdkit Chem.Mol</span>
+<span class="sd">                The known compound structure</span>
+<span class="sd">            </span>
+<span class="sd">            unknonwn_compound_structure : rdkit Chem.Mol</span>
+<span class="sd">                The unknown compound structure</span>
+<span class="sd">            </span>
+<span class="sd">            probabilities : List[float]</span>
+<span class="sd">                The probabilities of each atom being the modification site</span>
+<span class="sd">            </span>
+<span class="sd">            evaluation_method : str</span>
+<span class="sd">                The evaluation method to use. If None, the default method will be used.</span>
+<span class="sd">            </span>
+<span class="sd">            kwargs : dict</span>
+<span class="sd">                additional arguments</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            float</span>
+<span class="sd">                The evaluation score based on the evaluation method. The score is between 0 and 1.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">method</span> <span class="o">=</span> <span class="n">evaluation_method</span> <span class="k">if</span> <span class="n">evaluation_method</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_method</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">rdmolops</span><span class="o">.</span><span class="n">GetDistanceMatrix</span><span class="p">(</span><span class="n">known_compound_structure</span><span class="p">)</span>
+        
+        <span class="n">true_modification_site</span> <span class="o">=</span> <span class="n">mf_mu</span><span class="o">.</span><span class="n">get_modification_nodes</span><span class="p">(</span><span class="n">known_compound_structure</span><span class="p">,</span> <span class="n">unknonwn_compound_structure</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_modification_site</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Only one modification site is allowed for this evaluation method&quot;</span><span class="p">)</span>
+        
+        <span class="n">true_index</span> <span class="o">=</span> <span class="n">true_modification_site</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;is_max&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">is_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;dist_from_max&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dist_from_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;proximity&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">proximity</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;average_dist_from_max&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">average_dist_from_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;average_distance&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">average_distance</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;ranking_loss&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ranking_loss</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sorted_rank&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sorted_rank</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Evaluation method not recognized&quot;</span><span class="p">)</span></div></div>
+        
+        
+        
+        
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
