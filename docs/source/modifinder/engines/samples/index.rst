@@ -6,3 +6,4 @@ Sample Engines
 
    engines.alignment.CosineAlignmentEngine
    engines.annotation.MAGMaAnnotationEngine
+   engines.evaluation.BasicEvaluationEngine

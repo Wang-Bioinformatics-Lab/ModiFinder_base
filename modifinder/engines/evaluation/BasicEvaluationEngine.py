@@ -87,27 +87,45 @@ def sorted_rank(G, probabilities, modificationSiteIdx):
 
 class BasicEvaluationEngine(EvaluationEngine):
     """Class to evaluate the probabilities based on the basic evaluation engines explained in the paper
+    
+        Parameters
+        ----------
+            default_method : str or None (default = "average_distance")
+                The default evaluation method to use. If None, the user must specify the method.
+                List of methods:
+                
+                    - **is_max** : returns 1 if the true modification site is the atom with the highest probability, 0 otherwise
+
+                    - **proximity** : returns the proximity to the atom with the highest probability
+
+                    - **average_distance** : returns the average distance to the atom with the highest probability normalized by the graph diameter
+
+                    - **sorted_rank** : returns the rank of the true modification site in the sorted probabilities
+
+            kwargs : dict
+                Additional arguments.
     """
     def __init__(self, default_method = "average_distance", **kwargs):
         """Initializes the BasicEvaluationEngine
 
-        Parameters
-        ----------
-            default_method : str
-                The default evaluation method to use. If None, the user must specify the method.
-                List of methods:
-                - is_max: returns 1 if the true modification site is the atom with the highest probability, 0 otherwise
-                - proximity: returns the proximity to the atom with the highest probability
-                - average_distance: returns the average distance to the atom with the highest probability normalized by the graph diameter
-                - sorted_rank: returns the rank of the true modification site in the sorted probabilities
-            
-            kwargs : dict
-                additional arguments
         """
         self.default_method = default_method
         super().__init__(**kwargs)
     
+    # TODO: Implement the evaluate method
     def evaluate(self, network, **kwargs):
+        """Evaluates the network.
+
+            .. warning::
+                Not implemented yet.
+
+            Parameters
+            ----------
+            network : type
+                Description of the `network` parameter.
+            **kwargs
+                Additional keyword arguments.
+        """
         raise exceptions.ModiFinderNotImplementedError("Method not implemented")
     
     def evaluate_single(self, known_compound_structure, unknonwn_compound_structure, probabilities, evaluation_method = None, **kwargs) -> float:

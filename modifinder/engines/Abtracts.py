@@ -13,6 +13,7 @@ class AlignmentEngine(ABC):
     """Base class for alignment engines
     
     It provides the basic structure for alignment engines in ModiFinder.
+    
     """
     @abstractmethod
     def __init__(self, **kwargs):
