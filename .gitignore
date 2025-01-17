@@ -4,3 +4,4 @@ oldTests
 modifinder/models/predict_modification_site.model
 docs/build
 dist
+local_testing

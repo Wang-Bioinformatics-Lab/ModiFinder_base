@@ -44,6 +44,8 @@ def average_dist_from_max(G, probabilities, true_index):
             value = G[true_index,i]/(graph_diameter)
             dists += value * probabilities[i]
             count += probabilities[i]
+    if count == 0:
+        return 0
     return float(dists/count)
 
 def average_distance(G, probabilities, true_index):
@@ -56,6 +58,8 @@ def average_distance(G, probabilities, true_index):
         # value  = (graph_diameter - G[true_index, i])/graph_diameter
         dists += value * probabilities[i]
         count += probabilities[i]
+    if count == 0:
+        return 0
     return float(dists/count)
 
 def ranking_loss(G, probabilities, modificationSiteIdx):
