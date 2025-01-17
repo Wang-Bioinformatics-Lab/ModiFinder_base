@@ -398,7 +398,8 @@ def generate_possible_stuctures(main_struct, sub_struct):
         plt.show()
         res_mols = [x[1] for x in res]
         res_index = ["attach modification at location: " + str(x[0]) for x in res]
-        img = Draw.MolsToGridImage(res_mols, molsPerRow=2, subImgSize=(200, 200), legends=res_index)
+        img = Draw.MolsToGridImage(res_mols, molsPerRow=2, subImgSize=(200, 200), legends=res_index, returnPNG=False)
+        img.save("molgrid.png")
         display(img)
     
     .. image:: ../../_static/generate_possible_stuctures1.png
