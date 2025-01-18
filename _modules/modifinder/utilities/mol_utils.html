@@ -471,7 +471,8 @@
 <span class="sd">        plt.show()</span>
 <span class="sd">        res_mols = [x[1] for x in res]</span>
 <span class="sd">        res_index = [&quot;attach modification at location: &quot; + str(x[0]) for x in res]</span>
-<span class="sd">        img = Draw.MolsToGridImage(res_mols, molsPerRow=2, subImgSize=(200, 200), legends=res_index)</span>
+<span class="sd">        img = Draw.MolsToGridImage(res_mols, molsPerRow=2, subImgSize=(200, 200), legends=res_index, returnPNG=False)</span>
+<span class="sd">        img.save(&quot;molgrid.png&quot;)</span>
 <span class="sd">        display(img)</span>
 <span class="sd">    </span>
 <span class="sd">    .. image:: ../../_static/generate_possible_stuctures1.png</span>

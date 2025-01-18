@@ -117,6 +117,8 @@
             <span class="n">value</span> <span class="o">=</span> <span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">graph_diameter</span><span class="p">)</span>
             <span class="n">dists</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">count</span> <span class="o">+=</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">dists</span><span class="o">/</span><span class="n">count</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">average_distance</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
@@ -129,6 +131,8 @@
         <span class="c1"># value  = (graph_diameter - G[true_index, i])/graph_diameter</span>
         <span class="n">dists</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">count</span> <span class="o">+=</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">dists</span><span class="o">/</span><span class="n">count</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ranking_loss</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">modificationSiteIdx</span><span class="p">):</span>
