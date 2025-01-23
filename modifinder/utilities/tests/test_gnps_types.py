@@ -39,11 +39,11 @@ class TestGNPSTypes(unittest.TestCase):
         self.assertIsNone(convert_to_SpectrumTuple_seprated([], [], precursor_mz, precursor_charge))
 
     def test_convert_to_universal_key(self):
-        self.assertEqual(convert_to_universal_key("precursor_mz"), "Precursor_MZ")
-        self.assertEqual(convert_to_universal_key("smiles"), "Smiles")
-        self.assertEqual(convert_to_universal_key("SMILES"), "Smiles")
-        self.assertEqual(convert_to_universal_key("charge"), "Charge")
-        self.assertEqual(convert_to_universal_key("adduct"), "Adduct")
+        self.assertEqual(convert_to_universal_key("precursor_mz"), "precursor_mz")
+        self.assertEqual(convert_to_universal_key("smiles"), "smiles")
+        self.assertEqual(convert_to_universal_key("SMILES"), "smiles")
+        self.assertEqual(convert_to_universal_key("charge"), "charge")
+        self.assertEqual(convert_to_universal_key("adduct"), "adduct")
         self.assertEqual(convert_to_universal_key("unknown_key"), "unknown_key")
 
     def test_parse_data_to_universal(self):
