@@ -649,7 +649,7 @@ def _get_molecule(identifier = None, smiles=None, inchi=None, molblock=None, sma
 
             try:
                 data = get_data(identifier)
-                smiles = data.get("Smiles", None)
+                smiles = data.get("smiles", None)
                 if smiles:
                     molecule = Chem.MolFromSmiles(smiles)
                     if molecule:

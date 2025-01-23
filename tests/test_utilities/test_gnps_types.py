@@ -40,8 +40,8 @@ class TestGNPSTypes(unittest.TestCase):
 
     def test_convert_to_universal_key(self):
         self.assertEqual(convert_to_universal_key("precursor_mz"), "Precursor_MZ")
-        self.assertEqual(convert_to_universal_key("smiles"), "Smiles")
-        self.assertEqual(convert_to_universal_key("SMILES"), "Smiles")
+        self.assertEqual(convert_to_universal_key("smiles"), "smiles")
+        self.assertEqual(convert_to_universal_key("SMILES"), "smiles")
         self.assertEqual(convert_to_universal_key("charge"), "Charge")
         self.assertEqual(convert_to_universal_key("adduct"), "Adduct")
         self.assertEqual(convert_to_universal_key("unknown_key"), "unknown_key")
