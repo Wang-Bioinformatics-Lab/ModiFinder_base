@@ -87,6 +87,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.gnps_types</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.mol_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.engines.alignment.CosineAlignmentEngine</span><span class="w"> </span><span class="kn">import</span> <span class="n">_cosine_fast</span>
 <span class="c1"># import modifinder.utilities.spectra_utils as su</span>
 <span class="c1"># from modifinder.alignment import _cosine_fast</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
@@ -166,7 +167,7 @@
 <span class="sd">        :width: 300px</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: test svg</span>
-
+    
     <span class="n">molecule</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">_get_molecule</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">molecule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Molecule not found&quot;</span><span class="p">)</span>
@@ -191,6 +192,8 @@
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;highlightAtoms&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightAtomColors&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightBonds&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightBondColors&#39;</span><span class="p">,</span> <span class="s1">&#39;highlightAtomRadii&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">draw_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">draw_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">draw_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">draw_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">draw_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">])]</span>
 
     <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
         <span class="n">d2d</span> <span class="o">=</span> <span class="n">Draw</span><span class="o">.</span><span class="n">MolDraw2DCairo</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">y_dim</span><span class="p">)</span>
@@ -512,7 +515,7 @@
 <span class="sd">    .. image:: ../_static/draw_spectrum.png</span>
 <span class="sd">        :width: 300px</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">spectrum</span> <span class="o">=</span> <span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+    <span class="n">spectrum</span> <span class="o">=</span> <span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">normalize_peaks</span><span class="p">:</span>
         <span class="n">spectrum</span><span class="o">.</span><span class="n">normalize_peaks</span><span class="p">()</span>
     
@@ -535,7 +538,7 @@
         <span class="n">mz</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">intensity</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gray&#39;</span>
             <span class="k">if</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -641,7 +644,7 @@
 <span class="sd">        :width: 400px</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="n">spectrums</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span> <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">]</span>
+    <span class="n">spectrums</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">normalize_peaks</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">:</span>
             <span class="n">spectrum</span><span class="o">.</span><span class="n">normalize_peaks</span><span class="p">()</span>
@@ -660,11 +663,11 @@
         <span class="c1"># perform the alignment</span>
         <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
     
-    <span class="c1"># if matches == &#39;default&#39;:</span>
-    <span class="c1">#     matches = []</span>
-    <span class="c1">#     for i in range(len(spectrums) - 1):</span>
-    <span class="c1">#         cosine, match = _cosine_fast(spectrums[i], spectrums[i+1], 0.1, ppm, True)</span>
-    <span class="c1">#         matches.append(match)</span>
+    <span class="k">if</span> <span class="n">matches</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">cosine</span><span class="p">,</span> <span class="n">match</span> <span class="o">=</span> <span class="n">_cosine_fast</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">spectrums</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ppm</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
             
     
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
@@ -1003,10 +1006,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;draw_molecule&quot;</span><span class="p">:</span> <span class="n">draw_molecule</span><span class="p">,</span>
-        <span class="c1"># &quot;draw_modifications&quot;: draw_modifications,</span>
+        <span class="s2">&quot;draw_modifications&quot;</span><span class="p">:</span> <span class="n">draw_modifications</span><span class="p">,</span>
         <span class="s2">&quot;draw_molecule_heatmap&quot;</span><span class="p">:</span> <span class="n">draw_molecule_heatmap</span><span class="p">,</span>
-        <span class="c1"># &quot;draw_spectrum&quot;: draw_spectrum,</span>
-        <span class="c1"># &quot;draw_alignment&quot;: draw_alignment,</span>
+        <span class="s2">&quot;draw_spectrum&quot;</span><span class="p">:</span> <span class="n">draw_spectrum</span><span class="p">,</span>
+        <span class="s2">&quot;draw_alignment&quot;</span><span class="p">:</span> <span class="n">draw_alignment</span><span class="p">,</span>
         <span class="s2">&quot;draw_frag_of_molecule&quot;</span><span class="p">:</span> <span class="n">draw_frag_of_molecule</span>
     <span class="p">}</span></div>
 </pre></div>

@@ -403,7 +403,7 @@
         <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">edit_mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">note</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s1">&#39;atomNote&#39;</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">note</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">note</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">note</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;substructure&#39;</span><span class="p">):</span>
                 <span class="n">new_edit_mol</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
