@@ -330,7 +330,7 @@ def get_modification_graph(main_struct, sub_struct):
         for atom in edit_mol.GetAtoms():
             try:
                 note = atom.GetProp('atomNote')
-            except:
+            except Exception:
                 note = None
             if note is not None and note.startswith('substructure'):
                 new_edit_mol.AddAtom(Chem.Atom(0))

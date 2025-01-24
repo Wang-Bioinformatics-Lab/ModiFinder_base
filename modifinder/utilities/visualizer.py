@@ -14,6 +14,7 @@ from modifinder.utilities.network import *
 from modifinder.utilities.gnps_types import *
 from modifinder.utilities.general_utils import *
 import modifinder.utilities.mol_utils as mu
+from modifinder.engines.alignment.CosineAlignmentEngine import _cosine_fast
 # import modifinder.utilities.spectra_utils as su
 # from modifinder.alignment import _cosine_fast
 import io
@@ -93,7 +94,7 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
         :width: 300px
     """
     # TODO: test svg
-
+    
     molecule = mu._get_molecule(mol)
     if molecule is None:
         raise ValueError("Molecule not found")
@@ -118,6 +119,8 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
     for key in ['highlightAtoms', 'highlightAtomColors', 'highlightBonds', 'highlightBondColors', 'highlightAtomRadii']:
         if key in kwargs:
             draw_kwargs[key] = kwargs[key]
+            if isinstance(draw_kwargs[key], int) or isinstance(draw_kwargs[key], float):
+                draw_kwargs[key] = [int(draw_kwargs[key])]
 
     if output_type == "png":
         d2d = Draw.MolDraw2DCairo(x_dim, y_dim)
@@ -439,7 +442,7 @@ def draw_spectrum(spectrum, output_type='png', normalize_peaks = False, colors: 
     .. image:: ../_static/draw_spectrum.png
         :width: 300px
     """
-    spectrum = to_spectrum(spectrum)
+    spectrum = to_spectrum(spectrum, **kwargs)
     if normalize_peaks:
         spectrum.normalize_peaks()
     
@@ -568,7 +571,7 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
         :width: 400px
     """
     
-    spectrums = [to_spectrum(spectrum) for spectrum in spectrums]
+    spectrums = [to_spectrum(spectrum, **kwargs) for spectrum in spectrums]
     if normalize_peaks:
         for spectrum in spectrums:
             spectrum.normalize_peaks()
@@ -587,11 +590,11 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
         # perform the alignment
         matches = []
     
-    # if matches == 'default':
-    #     matches = []
-    #     for i in range(len(spectrums) - 1):
-    #         cosine, match = _cosine_fast(spectrums[i], spectrums[i+1], 0.1, ppm, True)
-    #         matches.append(match)
+    if matches == 'default':
+        matches = []
+        for i in range(len(spectrums) - 1):
+            cosine, match = _cosine_fast(spectrums[i], spectrums[i+1], 0.1, ppm, True)
+            matches.append(match)
             
     
     if len(matches) > 0 and len(matches) != len(spectrums) - 1:
@@ -930,9 +933,9 @@ def return_public_functions():
     """
     return {
         "draw_molecule": draw_molecule,
-        # "draw_modifications": draw_modifications,
+        "draw_modifications": draw_modifications,
         "draw_molecule_heatmap": draw_molecule_heatmap,
-        # "draw_spectrum": draw_spectrum,
-        # "draw_alignment": draw_alignment,
+        "draw_spectrum": draw_spectrum,
+        "draw_alignment": draw_alignment,
         "draw_frag_of_molecule": draw_frag_of_molecule
     }
