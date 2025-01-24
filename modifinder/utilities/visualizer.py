@@ -465,7 +465,7 @@ def draw_spectrum(spectrum, output_type='png', normalize_peaks = False, colors: 
         mz = spectrum.mz[i]
         intensity = spectrum.intensity[i]
         color = colors.get(i, 'gray')
-        if type(color) == list:
+        if isinstance(color, list):
             if color[0] is None:
                 color[0] = 'gray'
             if color[1] is None:
