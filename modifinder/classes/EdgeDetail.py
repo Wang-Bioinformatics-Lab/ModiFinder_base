@@ -87,3 +87,28 @@ class EdgeDetail:
         Get the matches as a list of tuples
         """
         return [(match.first_peak_index, match.second_peak_index) for match in self.matches]
+    
+    def get_single_type_matches(self, match_type: MatchType) -> List[Tuple[int, int]]:
+        """
+        Get the matches of a specific type
+        """
+        return [(match.first_peak_index, match.second_peak_index) for match in self.matches if match.match_type == match_type]
+    
+    def get_meta_data(self):
+        """
+        Get the metadata of the EdgeDetail
+        """
+        num_shifted = 0
+        num_unshifted = 0
+        for match in self.matches:
+            if match.match_type == MatchType.shifted:
+                num_shifted += 1
+            else:
+                num_unshifted += 1
+        return {
+            "number_of_modifications": self.number_of_modifications,
+            "match_score": self.match_score,
+            "num_matched": len(self.matches),
+            "num_shifted": num_shifted,
+            "num_unshifted": num_unshifted
+        }

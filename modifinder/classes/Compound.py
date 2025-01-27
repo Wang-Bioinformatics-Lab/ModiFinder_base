@@ -261,8 +261,8 @@ class Compound:
         description = {
             "num_peaks": len(self.spectrum.mz),
             "adduct": self.spectrum.adduct,
-            "precursor_mz": self.spectrum.precursor_mass,
-            "charge": self.spectrum.charge,
+            "precursor_mz": self.spectrum.precursor_mz,
+            "charge": self.spectrum.precursor_charge,
         }
 
         if self.name is not None:
@@ -428,7 +428,7 @@ class Compound:
         return updated
     
     
-    def calculate_peak_annotation_ambiguity(self, peaks: list=None):
+    def calculate_peak_annotation_ambiguity(self, peaks: list=None) -> (float, float):
         """Calculate the peak annotation ambiguity
         
         Parameters

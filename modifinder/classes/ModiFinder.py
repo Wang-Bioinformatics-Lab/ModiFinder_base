@@ -420,7 +420,7 @@ class ModiFinder:
         return probabilities
     
     
-    def get_edge_detail(self, id1, id2):
+    def get_edge_detail(self, id1, id2) -> EdgeDetail:
         """Returns the edge detail between two compounds. If the backward edge exists, the matching data is replaced
 
         Parameters
@@ -503,8 +503,6 @@ class ModiFinder:
         
         return mf_vis.draw_alignment([smallerSpectrum, largerSpectrum], [matched_peaks], **kwargs)
         
-        
-        
 
     def _get_unknown(self):
         if len(self.unknowns) > 1:
@@ -519,3 +517,44 @@ class ModiFinder:
         known_id = neighbors[0]
         
         return known_id
+    
+    
+    def get_meta_data(self, id_known, id_unknown):
+        known_compound = self.network.nodes[id_known]["compound"]
+        unknown_compound = self.network.nodes[id_unknown]["compound"]
+        
+        known_meta = known_compound.get_meta_data()
+        unknown_meta = unknown_compound.get_meta_data()
+        
+        result = {}
+        for key in known_meta:
+            result[key+"_main"] = known_meta[key]
+        
+        for key in unknown_meta:
+            result[key+"_modified"] = unknown_meta[key]
+        
+        result["delta_mass"] = unknown_compound.spectrum.precursor_mz - known_compound.spectrum.precursor_mz
+        result["num_helpers"] = len(list(self.network.predecessors(id_known)) + list(self.network.successors(id_known))) - 1
+
+        
+        try:
+            edgeDetail = self.get_edge_detail(id_known, id_unknown)
+            result.update(edgeDetail.get_meta_data())
+            shifted_peaks = edgeDetail.get_single_type_matches(MatchType.shifted)
+            unshifted_peaks = edgeDetail.get_single_type_matches(MatchType.unshifted)
+            
+            shifted_peaks = [peak[0] for peak in shifted_peaks]
+            unshifted_peaks = [peak[0] for peak in unshifted_peaks]
+            
+            shifted_annotated_ratio, shifted_annotated_ambiguity = known_compound.calculate_peak_annotation_ambiguity(shifted_peaks)
+            unshifted_annotated_ratio, unshifted_annotated_ambiguity = known_compound.calculate_peak_annotation_ambiguity(unshifted_peaks)
+            
+            result["shifted_annotated_ratio"] = shifted_annotated_ratio
+            result["shifted_annotated_ambiguity"] = shifted_annotated_ambiguity
+            result["unshifted_annotated_ratio"] = unshifted_annotated_ratio
+            result["unshifted_annotated_ambiguity"] = unshifted_annotated_ambiguity
+            
+        except Exception as e:
+            pass
+        
+        return result
