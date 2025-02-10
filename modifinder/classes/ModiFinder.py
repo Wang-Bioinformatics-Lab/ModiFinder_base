@@ -486,22 +486,20 @@ class ModiFinder:
                 raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
             else:
                 edgeDetail = self.network[id2][id1]["edgedetail"]
-                smallerSpectrum = self.network.nodes[id2]["compound"].spectrum
-                largerSpectrum = self.network.nodes[id1]["compound"].spectrum
+                edgeDetailCopy = edgeDetail.copy()
+                edgeDetailCopy.reverse_match()
                 if edgeDetail is None:
                     matched_peaks = []
                 else:
-                    matched_peaks = [(match.second_peak_index, match.first_peak_index) for match in edgeDetail.matches]
+                    matched_peaks = edgeDetailCopy.get_matches_pairs()
         else:
             edgeDetail = self.network[id1][id2]["edgedetail"]
-            smallerSpectrum = self.network.nodes[id1]["compound"].spectrum
-            largerSpectrum = self.network.nodes[id2]["compound"].spectrum
             if edgeDetail is None:
                 matched_peaks = []
             else:
-                matched_peaks = [(match.first_peak_index, match.second_peak_index) for match in edgeDetail.matches]
+                matched_peaks = edgeDetail.get_matches_pairs()
         
-        return mf_vis.draw_alignment([smallerSpectrum, largerSpectrum], [matched_peaks], **kwargs)
+        return mf_vis.draw_alignment([self.network.nodes[id1]["compound"].spectrum, self.network.nodes[id2]["compound"].spectrum], [matched_peaks], **kwargs)
         
 
     def _get_unknown(self):
@@ -555,6 +553,7 @@ class ModiFinder:
             result["unshifted_annotated_ambiguity"] = unshifted_annotated_ambiguity
             
         except Exception as e:
+            print(f"Error getting edge detail: {e}")
             pass
         
         return result

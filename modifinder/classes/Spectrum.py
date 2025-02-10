@@ -2,6 +2,7 @@ import json
 from modifinder.utilities.gnps_types import adduct_mapping
 from modifinder import convert
 import numpy as np
+import bisect
 
 class Spectrum:
     """A class to represent a spectrum.
@@ -297,11 +298,15 @@ class Spectrum:
             The indexes of the peaks within the given m/z tolerance.
         """
         
-        result = []
-        for index, peak_mz in enumerate(self.mz):
-            if abs(peak_mz - mz) <= mz_tolerance or abs(peak_mz - mz) <= mz * ppm_tolerance / 1e6:
-                result.append(index)    
-        return result
+        min_range = max(mz-mz_tolerance, mz - (mz * ppm_tolerance / 1e6))
+        max_range = min(mz+mz_tolerance, mz + (mz * ppm_tolerance / 1e6))
+        
+        # Find the leftmost index where min_val could be inserted
+        left_index = bisect.bisect_left(self.mz, min_range)
+        # Find the rightmost index where max_val could be inserted
+        right_index = bisect.bisect_right(self.mz, max_range)
+        # Return the range of indices between left_index and right_index (exclusive of right_index)
+        return list(range(left_index, right_index))
     
     
 

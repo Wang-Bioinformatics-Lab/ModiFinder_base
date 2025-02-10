@@ -1,7 +1,5 @@
-from dataclasses import dataclass, field
 from typing import List, Tuple
 from enum import Enum
-import networkx as nx
 
 class MatchType(Enum):
     shifted = 1
@@ -44,6 +42,18 @@ class Match:
 class EdgeDetail:
     """
     Class for Edge Details
+    
+    Arguments
+    ---------
+    number_of_modifications : int
+        Number of modifications, -1 for unknown
+    match_score : float
+        Match score, how well the two spectra match
+    matches : List[Match]
+        List of matches, each match is a tuple of two peak indices and the match type. It is 
+        important to note that match has directionality. The first peak index is from the first 
+        node of the edge and the second peak index is from the second node of the edge.
+    
     """
     def __init__(self, number_of_modifications: int = -1, match_score: float = 0, matches: List[Match] = None, start_spectrum_id: str = None, end_spectrum_id: str = None):
         """
@@ -71,7 +81,10 @@ class EdgeDetail:
     
     def reverse_match(self):
         """
-        Reverse the matches
+        Reverse the matches order in the EdgeDetail object
+        
+        This is useful when the reversed matches are needed from the edge in the network.
+        first_peak_index and second_peak_index are swapped in the matches.
         """
         for match in self.matches:
             match.first_peak_index, match.second_peak_index = match.second_peak_index, match.first_peak_index
@@ -79,18 +92,38 @@ class EdgeDetail:
     def copy(self):
         """
         Create a copy of the EdgeDetail object
+        
+        Returns
+        -------
+        EdgeDetail
+            A copy of the EdgeDetail object
         """
         return EdgeDetail(self.number_of_modifications, self.match_score, self.matches.copy(), self.start_spectrum_id, self.end_spectrum_id)
     
     def get_matches_pairs(self) -> List[Tuple[int, int]]:
         """
         Get the matches as a list of tuples
+        
+        Returns
+        -------
+        List[Tuple[int, int]]
+            List of tuples of peak indices
         """
         return [(match.first_peak_index, match.second_peak_index) for match in self.matches]
     
     def get_single_type_matches(self, match_type: MatchType) -> List[Tuple[int, int]]:
         """
         Get the matches of a specific type
+        
+        Parameters
+        ----------
+        match_type : MatchType
+            Type of the match
+            
+        Returns
+        -------
+        List[Tuple[int, int]]
+            List of tuples of peak indices [(first_peak_index, second_peak_index)]
         """
         return [(match.first_peak_index, match.second_peak_index) for match in self.matches if match.match_type == match_type]
     

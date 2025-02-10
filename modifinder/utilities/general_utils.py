@@ -9,7 +9,7 @@ import re
 import modifinder.utilities.gnps_types as gt
 import copy
 
-def is_shifted(val1:float, val2:float, ppm:float=None, mz_tol:float=None) -> bool:
+def is_shifted(val1:float, val2:float, ppm_tolerance:float=None, mz_tolerance:float=None) -> bool:
     """
     Determine if two values differ by more than a specified tolerance.
     
@@ -20,25 +20,25 @@ def is_shifted(val1:float, val2:float, ppm:float=None, mz_tol:float=None) -> boo
     Parameters:
         :val1 (float): The first value to compare.
         :val2 (float): The second value to compare.
-        :ppm (float, optional): The parts per million tolerance. Default is None.
-        :mz_tol (float, optional): The m/z tolerance. Default is None.
+        :ppm_tolerance (float, optional): The parts per million tolerance. Default is None.
+        :mz_tolerance (float, optional): The m/z tolerance. Default is None.
     
     Returns:
         :bool: True if the values differ by more than the specified tolerance, False otherwise.
     
     Raises:
-        :ValueError: If neither ppm nor mz_tol is provided.
+        :ValueError: If neither ppm_tolerance nor mz_tolerance is provided.
     """
     diff = abs(val1 - val2)
-    if ppm is None:
-        if mz_tol is None:
-            raise ValueError("Either ppm or mz_tol must be provided")
-        return diff > mz_tol
+    if ppm_tolerance is None:
+        if mz_tolerance is None:
+            raise ValueError("Either ppm_tolerance or mz_tolerance must be provided")
+        return diff > mz_tolerance
     else:
-        if mz_tol is None:
-            return diff > max(val1, val2) * ppm / 1e6
+        if mz_tolerance is None:
+            return diff > max(val1, val2) * ppm_tolerance / 1e6
         else:
-            return diff > mz_tol or diff > max(val1, val2) * ppm / 1e6
+            return diff > mz_tolerance or diff > max(val1, val2) * ppm_tolerance / 1e6
 
 
 def read_mgf(mgf_path: str) -> pd.DataFrame:

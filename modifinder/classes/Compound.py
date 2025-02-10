@@ -4,7 +4,6 @@ import modifinder.utilities.general_utils as general_utils
 from modifinder.utilities.mol_utils import _get_molecule
 import rdkit.Chem.rdMolDescriptors as rdMolDescriptors
 from rdkit import Chem
-from typing import Dict
 import numpy as np
 import math
 
@@ -35,6 +34,7 @@ class Compound:
         distances (dict): A dictionary of distances between every pair of atoms in the compound
         
         peak_fragments_map (dict): A dictionary mapping peaks to fragments
+         
 
     Other Attributes:
     
@@ -428,7 +428,9 @@ class Compound:
         return updated
     
     
-    def calculate_peak_annotation_ambiguity(self, peaks: list=None) -> (float, float):
+    from typing import Tuple
+
+    def calculate_peak_annotation_ambiguity(self, peaks: list=None) -> Tuple[float, float]:
         """Calculate the peak annotation ambiguity
         
         Parameters
