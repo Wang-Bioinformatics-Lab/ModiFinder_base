@@ -133,7 +133,7 @@ class ModiFinder:
         """
 
         self.network = None
-        self.unknonws = None
+        self.unknowns = None
         self.ppm_tolerance = ppm_tolerance
         self.args = kwargs
         
@@ -162,15 +162,20 @@ class ModiFinder:
 
         else:
             self.network = nx.DiGraph()
-            knownCompond = convert.to_compound(data=knownCompond, **kwargs)
-            unknownCompound = convert.to_compound(data=unknownCompound, **kwargs)
-            unknownCompound.is_known = False
-            self.network.add_node(knownCompond.id, compound=knownCompond)
-            self.network.add_node(unknownCompound.id, compound=unknownCompound)
+            if unknownCompound is not None:
+                unknownCompound = convert.to_compound(data=unknownCompound, **kwargs)
+                unknownCompound.is_known = False
+                self.network.add_node(unknownCompound.id, compound=unknownCompound)
+                self.unknowns = [unknownCompound.id]
+            
+            if knownCompond is not None:
+                self.network.add_node(knownCompond.id, compound=knownCompond)
+                knownCompond = convert.to_compound(data=knownCompond, **kwargs)
+            
+            
+            if knownCompond is not None and unknownCompound is not None:
+                self.add_adjusted_edge(knownCompond.id, unknownCompound.id, edgeDetail, **kwargs)
 
-            self.add_adjusted_edge(knownCompond.id, unknownCompound.id, edgeDetail, **kwargs)
-
-            self.unknowns = [unknownCompound.id]
         
         if helpers is not None:
             for helper in helpers:
@@ -206,7 +211,7 @@ class ModiFinder:
             The id of the second compound.
         
         edgeDetail : EdgeDetail
-            The edge detail between the compounds.
+            The edge detail between the compounds. If not passed, the method will align the spectra of the compounds.
         
         kwargs : dict
             Additional parameters to pass to the alignment engine.
@@ -370,6 +375,42 @@ class ModiFinder:
         self.update_edge(smaller.id, larger.id, edgeDetail, **kwargs)
         
     
+    def add_unknown(self, unknown: Compound, **kwargs) -> str:
+        """
+        Add an unknown compound to the network.
+        
+        The method will add an unknown compound to the network.
+        
+        Parameters
+        ----------
+        unknown : Compound
+            The unknown compound to add to the network.
+        
+        kwargs : dict
+            Additional parameters to pass for the conversion.
+        
+        Returns
+        -------
+        str
+            The id of the unknown compound.
+        """
+        
+        unknown = convert.to_compound(data=unknown, is_known = False, **kwargs)
+        
+        if unknown.is_known:
+            raise ValueError("Unknown compound must have is_known attribute set to False")
+        
+        if not self.network.has_node(unknown.id):
+            self.network.add_node(unknown.id, compound=unknown)
+        
+        if not self.unknowns:
+            self.unknowns = [unknown.id]
+        else:
+            self.unknowns.append(unknown.id)
+        
+        return unknown.id
+        
+    
     def generate_probabilities(self, known_id = None, unknown_id = None, shifted_only = False, CI = False, CPA = True, CFA = True, CPE = True):
         
         if unknown_id is None:
@@ -516,10 +557,13 @@ class ModiFinder:
         
         return known_id
     
+    def get_neighbors(self, node_id):
+        neighbors = list(self.network.predecessors(node_id)) + list(self.network.successors(node_id))
+        return neighbors
     
-    def get_meta_data(self, id_known, id_unknown):
-        known_compound = self.network.nodes[id_known]["compound"]
-        unknown_compound = self.network.nodes[id_unknown]["compound"]
+    def get_meta_data(self, known_id, unknown_id):
+        known_compound = self.network.nodes[known_id]["compound"]
+        unknown_compound = self.network.nodes[unknown_id]["compound"]
         
         known_meta = known_compound.get_meta_data()
         unknown_meta = unknown_compound.get_meta_data()
@@ -532,11 +576,12 @@ class ModiFinder:
             result[key+"_modified"] = unknown_meta[key]
         
         result["delta_mass"] = unknown_compound.spectrum.precursor_mz - known_compound.spectrum.precursor_mz
-        result["num_helpers"] = len(list(self.network.predecessors(id_known)) + list(self.network.successors(id_known))) - 1
+        result["is_addition"] = 1 if result["delta_mass"] > 0 else -1
+        result["num_helpers"] = len(list(self.network.predecessors(known_id)) + list(self.network.successors(known_id))) - 1
 
         
         try:
-            edgeDetail = self.get_edge_detail(id_known, id_unknown)
+            edgeDetail = self.get_edge_detail(known_id, unknown_id)
             result.update(edgeDetail.get_meta_data())
             shifted_peaks = edgeDetail.get_single_type_matches(MatchType.shifted)
             unshifted_peaks = edgeDetail.get_single_type_matches(MatchType.unshifted)

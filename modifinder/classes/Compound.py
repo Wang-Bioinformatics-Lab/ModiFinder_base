@@ -6,7 +6,7 @@ import rdkit.Chem.rdMolDescriptors as rdMolDescriptors
 from rdkit import Chem
 import numpy as np
 import math
-
+import uuid
 
 # import modifinder as mf
 from modifinder.classes.Spectrum import Spectrum
@@ -135,7 +135,7 @@ class Compound:
             convert.to_compound(incoming_data, use_object = self, **kwargs)
         
         # update the attributes with the provided keyword arguments
-        self.update(**kwargs)
+        # self.update(**kwargs)
 
         # TODO: write setters for spectrum, structure to warn the user to update the dependent attributes
 
@@ -198,7 +198,7 @@ class Compound:
             self.spectrum = spectrum
         self.usi = usi if usi is not None else self.usi
         self.adduct_mass = adduct_mass if adduct_mass is not None else self.adduct_mass
-        self.is_known = is_known if is_known is not None else self.is_known
+        self.is_known = is_known if (is_known is not None) else self.is_known
         self.name = name if name is not None else self.name
         if self.name is None:
             self.name = lower_kwargs.get('compound_name', None)
@@ -227,6 +227,11 @@ class Compound:
         
         if self.is_known is None and self.structure is not None:
             self.is_known = True
+            
+        # if no id is provided, generate one
+        if self.id is None:
+            self.id = str(uuid.uuid4())
+            
         
         # TODO: check for a valid compound
         # what is needed for a compound:

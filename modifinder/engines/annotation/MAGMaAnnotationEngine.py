@@ -51,8 +51,11 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                 first_compound = network.nodes[edge[0]]["compound"]
                 second_compound = network.nodes[edge[1]]["compound"]
                 if first_compound.is_known and second_compound.is_known:
-                    self.refine_annotations_by_helper(network.nodes[edge[0]]["compound"], network.nodes[edge[1]]["compound"], edge_detail, modify_compound = True)
-                    self.refine_annotations_by_helper(network.nodes[edge[1]]["compound"], network.nodes[edge[0]]["compound"], edge_detail, modify_compound = True)
+                    try:
+                        self.refine_annotations_by_helper(network.nodes[edge[0]]["compound"], network.nodes[edge[1]]["compound"], edge_detail, modify_compound = True)
+                        self.refine_annotations_by_helper(network.nodes[edge[1]]["compound"], network.nodes[edge[0]]["compound"], edge_detail, modify_compound = True)
+                    except Exception as e:
+                        pass
 
 
     def annotate_single(

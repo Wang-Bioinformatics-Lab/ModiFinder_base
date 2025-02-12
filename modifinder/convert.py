@@ -48,6 +48,8 @@ def to_compound(data = None, use_object=None, **kwargs):
                 compound.update(data_dict)
             else:
                 compound = data
+                parsed_kwargs = parse_data_to_universal(kwargs)
+                compound.update(**parsed_kwargs)
             return compound
 
         except Exception as err:
@@ -197,6 +199,8 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
             raise mf.ModiFinderError("Input data is not a valid list.") from err
     
     raise mf.ModiFinderError("Input data is not a valid object.")
+
+
     
 
 def spectrum_to_dict(spectrum):
