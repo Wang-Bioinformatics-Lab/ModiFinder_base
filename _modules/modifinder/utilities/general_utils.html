@@ -82,7 +82,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.gnps_types</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<div class="viewcode-block" id="is_shifted"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.general_utils.html#modifinder.utilities.general_utils.is_shifted">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">is_shifted</span><span class="p">(</span><span class="n">val1</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">val2</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">ppm</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mz_tol</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_shifted"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.general_utils.html#modifinder.utilities.general_utils.is_shifted">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">is_shifted</span><span class="p">(</span><span class="n">val1</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">val2</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">ppm_tolerance</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mz_tolerance</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine if two values differ by more than a specified tolerance.</span>
 <span class="sd">    </span>
@@ -93,25 +93,25 @@
 <span class="sd">    Parameters:</span>
 <span class="sd">        :val1 (float): The first value to compare.</span>
 <span class="sd">        :val2 (float): The second value to compare.</span>
-<span class="sd">        :ppm (float, optional): The parts per million tolerance. Default is None.</span>
-<span class="sd">        :mz_tol (float, optional): The m/z tolerance. Default is None.</span>
+<span class="sd">        :ppm_tolerance (float, optional): The parts per million tolerance. Default is None.</span>
+<span class="sd">        :mz_tolerance (float, optional): The m/z tolerance. Default is None.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :bool: True if the values differ by more than the specified tolerance, False otherwise.</span>
 <span class="sd">    </span>
 <span class="sd">    Raises:</span>
-<span class="sd">        :ValueError: If neither ppm nor mz_tol is provided.</span>
+<span class="sd">        :ValueError: If neither ppm_tolerance nor mz_tolerance is provided.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val1</span> <span class="o">-</span> <span class="n">val2</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ppm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">mz_tol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either ppm or mz_tol must be provided&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">mz_tol</span>
+    <span class="k">if</span> <span class="n">ppm_tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mz_tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either ppm_tolerance or mz_tolerance must be provided&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">mz_tolerance</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">mz_tol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ppm</span> <span class="o">/</span> <span class="mf">1e6</span>
+        <span class="k">if</span> <span class="n">mz_tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ppm_tolerance</span> <span class="o">/</span> <span class="mf">1e6</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">mz_tol</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ppm</span> <span class="o">/</span> <span class="mf">1e6</span></div>
+            <span class="k">return</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">mz_tolerance</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ppm_tolerance</span> <span class="o">/</span> <span class="mf">1e6</span></div>
 
 
 <div class="viewcode-block" id="read_mgf"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.general_utils.html#modifinder.utilities.general_utils.read_mgf">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">read_mgf</span><span class="p">(</span><span class="n">mgf_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>

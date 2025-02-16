@@ -55,6 +55,7 @@
 <li class="toctree-l3"><a class="reference internal" href="classes.Compound.html">Compound</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classes.EdgeDetail.html">EdgeDetail module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classes.ModiFinder.html">ModiFinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classes.StructureMeta.html">StructureMeta</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Engines</a></li>
@@ -107,11 +108,13 @@
 <li><p><strong>precursor_mz</strong> (<em>float</em>) – The precursor m/z value.</p></li>
 <li><p><strong>precursor_charge</strong> (<em>int</em>) – The precursor charge.</p></li>
 <li><p><strong>adduct</strong> (<em>str</em>) – The adduct.</p></li>
+<li><p><strong>adduct_mass</strong> (<em>float</em>) – The adduct mass.</p></li>
 <li><p><strong>ms_level</strong> (<em>int</em>) – The ms level, default is 2.</p></li>
 <li><p><strong>instrument</strong> (<em>str</em><em>, </em><em>optional</em>) – The instrument used.</p></li>
 <li><p><strong>ms_mass_analyzer</strong> (<em>str</em><em>, </em><em>optional</em>) – The mass analyzer used.</p></li>
 <li><p><strong>ms_dissociation_method</strong> (<em>str</em><em>, </em><em>optional</em>) – The dissociation method used.</p></li>
-<li><p><strong>spectrum_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The spectrum id.</p></li>
+<li><p><strong>spectrum_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The spectrum id. if not provided, it will be generated.</p></li>
+<li><p><strong>peak_fragments_map</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary mapping peaks to fragments</p></li>
 </ul>
 </dd>
 </dl>

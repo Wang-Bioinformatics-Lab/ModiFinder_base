@@ -55,6 +55,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="classes.EdgeDetail.html">EdgeDetail module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classes.ModiFinder.html">ModiFinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classes.StructureMeta.html">StructureMeta</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Engines</a></li>
@@ -102,30 +103,83 @@
 <p>The compound always has spectrum data.
 If the compound structure is known, it also has a structure property.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Known</span> <span class="pre">Compound</span> <span class="pre">Attributes</span></span></dt>
-<dd><p>id (str) : The id of the compound</p>
-<p>spectrum (Spectrum) : Spectrum Tuple representing mz, intensity, Precursor mass and Charge for mass spectrumetry data</p>
+<dt class="sig sig-object py" id="modifinder.classes.Compound.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.id" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The id of the compound</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Known</span> <span class="pre">Compound</span> <span class="pre">Attributes</span></span></dt>
-<dd><p>structure (Chem.Mol): The structure of the compound</p>
-<p>distances (dict): A dictionary of distances between every pair of atoms in the compound</p>
-<p>peak_fragments_map (dict): A dictionary mapping peaks to fragments</p>
+<dt class="sig sig-object py" id="modifinder.classes.Compound.spectrum">
+<span class="sig-name descname"><span class="pre">spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Spectrum</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.spectrum" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Spectrum Tuple representing mz, intensity, Precursor mass and Charge for mass spectrumetry data</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Other</span> <span class="pre">Attributes</span></span></dt>
-<dd><p>adduct_mass (float): The adduct mass, derived from the Adduct</p>
-<p>is_known (bool): A boolean indicating whether the compound is known, derived from the structure</p>
-<p>usi (str): The USI of the compound</p>
-<p>name (str): The name of the compound</p>
-<p>accession (str): The accession of the compound</p>
-<p>library_membership (str): The GNPS library membership of the compound</p>
-<p>exact_mass (float): The exact mass of the compound</p>
+<dt class="sig sig-object py" id="modifinder.classes.Compound.structure">
+<span class="sig-name descname"><span class="pre">structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Chem.Mol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.structure" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The structure of the compound</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.Compound.is_known">
+<span class="sig-name descname"><span class="pre">is_known</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.is_known" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A boolean indicating whether the compound is known, derived from the structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.Compound.usi">
+<span class="sig-name descname"><span class="pre">usi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.usi" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The USI of the compound</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.Compound.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.name" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The name of the compound</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.Compound.accession">
+<span class="sig-name descname"><span class="pre">accession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.accession" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The accession of the compound</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.Compound.library_membership">
+<span class="sig-name descname"><span class="pre">library_membership</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.library_membership" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The GNPS library membership of the compound</p>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Examples</p>

@@ -71,11 +71,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for modifinder.convert</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mf</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mf</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.network</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">network</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_data_to_universal</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
 <div class="viewcode-block" id="to_compound"><a class="viewcode-back" href="../../modifinder/convert.html#modifinder.convert.to_compound">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">to_compound</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_object</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -121,6 +119,8 @@
                 <span class="n">compound</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">compound</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="n">parsed_kwargs</span> <span class="o">=</span> <span class="n">parse_data_to_universal</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">compound</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">parsed_kwargs</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">compound</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
@@ -162,7 +162,10 @@
 
 <div class="viewcode-block" id="compound_to_dict"><a class="viewcode-back" href="../../modifinder/convert.html#modifinder.convert.compound_to_dict">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">compound_to_dict</span><span class="p">(</span><span class="n">compound</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a Compound object to a dictionary&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">compound</span><span class="o">.</span><span class="vm">__dict__</span></div>
+    <span class="n">compound_dict</span> <span class="o">=</span> <span class="n">compound</span><span class="o">.</span><span class="vm">__dict__</span>
+    <span class="c1"># make sure nothing is passed by reference</span>
+    <span class="n">compound_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">compound_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">compound_dict</span></div>
 
 
 <div class="viewcode-block" id="to_spectrum"><a class="viewcode-back" href="../../modifinder/convert.html#modifinder.convert.to_spectrum">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">to_spectrum</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_object</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">needs_parse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -270,11 +273,16 @@
             <span class="k">raise</span> <span class="n">mf</span><span class="o">.</span><span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid list.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
     
     <span class="k">raise</span> <span class="n">mf</span><span class="o">.</span><span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid object.&quot;</span><span class="p">)</span></div>
+
+
     
 
 <div class="viewcode-block" id="spectrum_to_dict"><a class="viewcode-back" href="../../modifinder/convert.html#modifinder.convert.spectrum_to_dict">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">spectrum_to_dict</span><span class="p">(</span><span class="n">spectrum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a Spectrum object to a dictionary&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">spectrum</span><span class="o">.</span><span class="vm">__dict__</span></div>
+    <span class="n">spectrum_dict</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="vm">__dict__</span>
+    <span class="c1"># make sure nothing is passed by reference</span>
+    <span class="n">spectrum_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">spectrum_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spectrum_dict</span></div>
 </pre></div>
 
            </div>

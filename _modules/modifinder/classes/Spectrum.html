@@ -73,8 +73,11 @@
   <h1>Source code for modifinder.classes.Spectrum</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.gnps_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">adduct_mapping</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">general_utils</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">bisect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 
 <div class="viewcode-block" id="Spectrum"><a class="viewcode-back" href="../../../modifinder/classes/classes.Spectrum.html#modifinder.classes.Spectrum">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Spectrum</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to represent a spectrum.</span>
@@ -91,6 +94,8 @@
 <span class="sd">        The precursor charge.</span>
 <span class="sd">    adduct: str</span>
 <span class="sd">        The adduct.</span>
+<span class="sd">    adduct_mass: float</span>
+<span class="sd">        The adduct mass.</span>
 <span class="sd">    ms_level: int</span>
 <span class="sd">        The ms level, default is 2.</span>
 <span class="sd">    instrument: str, optional</span>
@@ -100,7 +105,9 @@
 <span class="sd">    ms_dissociation_method: str, optional</span>
 <span class="sd">        The dissociation method used.</span>
 <span class="sd">    spectrum_id: str, optional</span>
-<span class="sd">        The spectrum id.</span>
+<span class="sd">        The spectrum id. if not provided, it will be generated.</span>
+<span class="sd">    peak_fragments_map: dict, optional</span>
+<span class="sd">        A dictionary mapping peaks to fragments</span>
 <span class="sd">    </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -123,12 +130,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span> <span class="o">=</span> <span class="p">[]</span>
         
         <span class="k">if</span> <span class="n">incoming_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
@@ -138,10 +147,26 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">normalize_peaks</span> <span class="o">=</span> <span class="n">normalize_peaks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adduct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span>
+    
+    <span class="nd">@adduct</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adduct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span> <span class="o">=</span> <span class="n">adduct_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="n">general_utils</span><span class="o">.</span><span class="n">get_adduct_mass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adduct_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span>
 
 <div class="viewcode-block" id="Spectrum.update"><a class="viewcode-back" href="../../../modifinder/classes/generated/modifinder.Spectrum.update.html#modifinder.classes.Spectrum.update">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peaks</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peaks_json</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precursor_mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precursor_charge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-               <span class="n">adduct</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_mass_analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-               <span class="n">ms_dissociation_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spectrum_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_to_base_peak</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remove_large_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+               <span class="n">adduct</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adduct_mass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ms_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_mass_analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+               <span class="n">ms_dissociation_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spectrum_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_to_base_peak</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">remove_large_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">keep_top_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peak_fragments_map</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the Spectrum object with the given values.</span>
 
 <span class="sd">        Args:</span>
@@ -160,6 +185,9 @@
 <span class="sd">            normalize_peaks (bool): If True, the intensity of the peaks will be normalized.</span>
 <span class="sd">            ratio_to_base_peak (float): If None, no filtering is done, if a float number, it removes all the peaks with intensity</span>
 <span class="sd">            less than ratio times the base peak.</span>
+<span class="sd">            remove_large_peaks (bool): If True, remove all the peaks that are larger than the precursor m/z value.</span>
+<span class="sd">            keep_top_k (int): If not None, only keep the top k peaks.</span>
+<span class="sd">            peak_fragments_map (dict): A dictionary mapping peaks to fragments</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">peaks_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">peaks</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">peaks_json</span><span class="p">)</span>
@@ -170,12 +198,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span> <span class="k">if</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">precursor_mz</span><span class="p">)</span> <span class="k">if</span> <span class="n">precursor_mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">precursor_charge</span><span class="p">))</span> <span class="k">if</span> <span class="n">precursor_charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="n">adduct_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">adduct</span><span class="p">,</span> <span class="n">adduct</span><span class="p">)</span> <span class="k">if</span> <span class="n">adduct</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="n">adduct</span> <span class="k">if</span> <span class="n">adduct</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ms_level</span><span class="p">)</span> <span class="k">if</span> <span class="n">ms_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span> <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span> <span class="o">=</span> <span class="n">ms_mass_analyzer</span> <span class="k">if</span> <span class="n">ms_mass_analyzer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span> <span class="o">=</span> <span class="n">ms_dissociation_method</span> <span class="k">if</span> <span class="n">ms_dissociation_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="n">spectrum_id</span> <span class="k">if</span> <span class="n">spectrum_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span> <span class="o">=</span> <span class="n">peak_fragments_map</span> <span class="k">if</span> <span class="n">peak_fragments_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">)))</span>
@@ -187,7 +216,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_small_peaks</span><span class="p">(</span><span class="n">ratio_to_base_peak</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">remove_large_peaks</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">remove_larger_than_precursor_peaks</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_larger_than_precursor_peaks</span><span class="p">()</span>
+            
+        <span class="k">if</span> <span class="n">keep_top_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keep_top_k</span><span class="p">(</span><span class="n">keep_top_k</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -204,12 +239,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_level</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_mass_analyzer</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ms_dissociation_method</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_fragments_map</span> <span class="o">=</span> <span class="p">[]</span></div>
     
     
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -338,7 +375,7 @@
         <span class="n">new_mz</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_intensity</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">mz</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mz</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">*</span> <span class="mf">0.99</span><span class="p">:</span>
                 <span class="n">new_mz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span>
                 <span class="n">new_intensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span>
         
@@ -370,11 +407,15 @@
 <span class="sd">            The indexes of the peaks within the given m/z tolerance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">peak_mz</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">peak_mz</span> <span class="o">-</span> <span class="n">mz</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">mz_tolerance</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">peak_mz</span> <span class="o">-</span> <span class="n">mz</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">mz</span> <span class="o">*</span> <span class="n">ppm_tolerance</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">:</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>    
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="n">min_range</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mz</span><span class="o">-</span><span class="n">mz_tolerance</span><span class="p">,</span> <span class="n">mz</span> <span class="o">-</span> <span class="p">(</span><span class="n">mz</span> <span class="o">*</span> <span class="n">ppm_tolerance</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">))</span>
+        <span class="n">max_range</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">mz</span><span class="o">+</span><span class="n">mz_tolerance</span><span class="p">,</span> <span class="n">mz</span> <span class="o">+</span> <span class="p">(</span><span class="n">mz</span> <span class="o">*</span> <span class="n">ppm_tolerance</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">))</span>
+        
+        <span class="c1"># Find the leftmost index where min_val could be inserted</span>
+        <span class="n">left_index</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect_left</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="n">min_range</span><span class="p">)</span>
+        <span class="c1"># Find the rightmost index where max_val could be inserted</span>
+        <span class="n">right_index</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect_right</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="n">max_range</span><span class="p">)</span>
+        <span class="c1"># Return the range of indices between left_index and right_index (exclusive of right_index)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">left_index</span><span class="p">,</span> <span class="n">right_index</span><span class="p">))</span></div>
     
     
 

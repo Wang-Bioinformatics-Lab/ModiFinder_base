@@ -51,12 +51,13 @@
 <li class="toctree-l3"><a class="reference internal" href="classes.Spectrum.html">Spectrum</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classes.Compound.html">Compound</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">EdgeDetail module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#modifinder.classes.EdgeDetail.EdgeDetail"><code class="docutils literal notranslate"><span class="pre">EdgeDetail</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match"><code class="docutils literal notranslate"><span class="pre">Match</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType"><code class="docutils literal notranslate"><span class="pre">MatchType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#edgedetail">EdgeDetail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#match">Match</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matchtype">MatchType</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="classes.ModiFinder.html">ModiFinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classes.StructureMeta.html">StructureMeta</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Engines</a></li>
@@ -93,38 +94,175 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-modifinder.classes.EdgeDetail">
-<span id="edgedetail-module"></span><h1>EdgeDetail module<a class="headerlink" href="#module-modifinder.classes.EdgeDetail" title="Permalink to this heading"></a></h1>
-<dl class="py class">
+  <section id="edgedetail-module">
+<h1>EdgeDetail module<a class="headerlink" href="#edgedetail-module" title="Permalink to this heading"></a></h1>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.EdgeDetail" title="modifinder.classes.EdgeDetail.EdgeDetail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EdgeDetail</span></code></a>([number_of_modifications, ...])</p></td>
+<td><p>Class for Edge Details</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Match</span></code></a>(first_peak_index, second_peak_index, ...)</p></td>
+<td><p>Class for Match</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MatchType</span></code></a>(value)</p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="edgedetail">
+<h2>EdgeDetail<a class="headerlink" href="#edgedetail" title="Permalink to this heading"></a></h2>
+<span class="target" id="id1"></span><dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">EdgeDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><span class="pre">Match</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for Edge Details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_modifications</strong> (<em>int</em>) – Number of modifications, -1 for unknown</p></li>
+<li><p><strong>match_score</strong> (<em>float</em>) – Match score, how well the two spectra match</p></li>
+<li><p><strong>matches</strong> (<em>List</em><em>[</em><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><em>Match</em></a><em>]</em>) – List of matches, each match is a tuple of two peak indices and the match type. It is
+important to note that match has directionality. The first peak index is from the first
+node of the edge and the second peak index is from the second node of the edge.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><span class="pre">Match</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the EdgeDetail object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_modifications</strong> (<em>int</em>) – Number of modifications, -1 for unknown</p></li>
+<li><p><strong>match_score</strong> (<em>float</em>) – Match score, how well the two spectra match</p></li>
+<li><p><strong>matches</strong> (<em>List</em><em>[</em><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><em>Match</em></a><em>]</em>) – List of matches, each match is a tuple of two peak indices and the match type. It is
+important to note that match has directionality. The first peak index is from the first
+node of the edge and the second peak index is from the second node of the edge.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.copy" title="Permalink to this definition"></a></dt>
 <dd><p>Create a copy of the EdgeDetail object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A copy of the EdgeDetail object</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.EdgeDetail" title="modifinder.classes.EdgeDetail.EdgeDetail">EdgeDetail</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.get_matches_pairs">
 <span class="sig-name descname"><span class="pre">get_matches_pairs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.get_matches_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.get_matches_pairs" title="Permalink to this definition"></a></dt>
 <dd><p>Get the matches as a list of tuples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of tuples of peak indices</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Tuple[int, int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.get_meta_data">
+<span class="sig-name descname"><span class="pre">get_meta_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.get_meta_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.get_meta_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get the metadata of the EdgeDetail</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.get_single_type_matches">
+<span class="sig-name descname"><span class="pre">get_single_type_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.get_single_type_matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.get_single_type_matches" title="Permalink to this definition"></a></dt>
+<dd><p>Get the matches of a specific type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>match_type</strong> (<a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><em>MatchType</em></a>) – Type of the match</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of tuples of peak indices [(first_peak_index, second_peak_index)]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Tuple[int, int]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.reverse_match">
 <span class="sig-name descname"><span class="pre">reverse_match</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.reverse_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.reverse_match" title="Permalink to this definition"></a></dt>
-<dd><p>Reverse the matches</p>
+<dd><p>Reverse the matches order in the EdgeDetail object</p>
+<p>This is useful when the reversed matches are needed from the edge in the network.
+first_peak_index and second_peak_index are swapped in the matches.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+</section>
+<section id="match">
+<h2>Match<a class="headerlink" href="#match" title="Permalink to this heading"></a></h2>
+<span class="target" id="id2"></span><dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">Match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for Match</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.first_peak_index">
+<span class="sig-name descname"><span class="pre">first_peak_index</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.first_peak_index" title="Permalink to this definition"></a></dt>
+<dd><p>Index of the peak in the first spectrum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.second_peak_index">
+<span class="sig-name descname"><span class="pre">second_peak_index</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.second_peak_index" title="Permalink to this definition"></a></dt>
+<dd><p>Index of the peak in the second spectrum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.match_type">
+<span class="sig-name descname"><span class="pre">match_type</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.match_type" title="Permalink to this definition"></a></dt>
+<dd><p>Type of the match</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType">MatchType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the Match object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_peak_index</strong> (<em>int</em>) – Index of the first peak</p></li>
+<li><p><strong>second_peak_index</strong> (<em>int</em>) – Index of the second peak</p></li>
+<li><p><strong>match_type</strong> (<a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><em>MatchType</em></a>) – Type of the match</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>if you need matches with more information, create a new class and inherit from this class.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.copy" title="Permalink to this definition"></a></dt>
@@ -133,7 +271,10 @@
 
 </dd></dl>
 
-<dl class="py class">
+</section>
+<section id="matchtype">
+<h2>MatchType<a class="headerlink" href="#matchtype" title="Permalink to this heading"></a></h2>
+<span class="target" id="id3"></span><dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.MatchType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">MatchType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#MatchType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.MatchType" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
@@ -150,6 +291,7 @@
 
 </dd></dl>
 
+</section>
 </section>
 
 
