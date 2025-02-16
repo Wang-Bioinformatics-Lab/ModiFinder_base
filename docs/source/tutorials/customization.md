@@ -60,7 +60,7 @@ First, lets check the fragmentations for the peak 133.0653
 peak_indexes = known_compound.spectrum.get_peak_indexes(133.0653, **args)
 # print(peak_indexes)
 peak_index = peak_indexes[0]
-fragments = known_compound.peak_fragments_map[peak_index]
+fragments = known_compound.spectrum.peak_fragments_map[peak_index]
 images = []
 for fragment in fragments:
     images.append((mf_vis.draw_frag_of_molecule(known_compound.structure, fragment), fragment))
@@ -89,7 +89,7 @@ So we know we want to remove the following fragments: [2747705327616, 3296387399
 
 ```python
 to_remove = [2747705327616, 3296387399680, 1030792151103]
-known_compound.peak_fragments_map[peak_index] = set([fragment for fragment in fragments if fragment not in to_remove])
+known_compound.spectrum.peak_fragments_map[peak_index] = set([fragment for fragment in fragments if fragment not in to_remove])
 ```
 
 Lets do the same for peaks 145.0649, and 147.0803
@@ -100,7 +100,7 @@ for value in [145.0649, 147.0803]:
     peak_indexes = known_compound.spectrum.get_peak_indexes(value, **args)
     print("peak_indexes", peak_indexes)
     peak_index = peak_indexes[0]
-    fragments = known_compound.peak_fragments_map[peak_index]
+    fragments = known_compound.spectrum.peak_fragments_map[peak_index]
     images = []
     for fragment in fragments:
         images.append((mf_vis.draw_frag_of_molecule(known_compound.structure, fragment), fragment))
@@ -137,8 +137,8 @@ let's remove `3297461141504` from peak `29` and `11269457313792, 3297461141504, 
 
 ```python
 
-known_compound.peak_fragments_map[29] = set([fragment for fragment in known_compound.peak_fragments_map[29] if fragment not in [3297461141504]])
-known_compound.peak_fragments_map[30] = set([fragment for fragment in known_compound.peak_fragments_map[30] if fragment not in [11269457313792, 3297461141504, 3294239916035, 1030792151167, 3281355014159, 3264175144991]])
+known_compound.spectrum.peak_fragments_map[29] = set([fragment for fragment in known_compound.spectrum.peak_fragments_map[29] if fragment not in [3297461141504]])
+known_compound.spectrum.peak_fragments_map[30] = set([fragment for fragment in known_compound.spectrum.peak_fragments_map[30] if fragment not in [11269457313792, 3297461141504, 3294239916035, 1030792151167, 3281355014159, 3264175144991]])
 ```
 
 Let's look at the new result after the adjustment of the peak to fragment map

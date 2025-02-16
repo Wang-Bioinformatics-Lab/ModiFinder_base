@@ -20,7 +20,7 @@ class TestMagmaAnnotation(unittest.TestCase):
         breaks = 4
         magma_engine = MAGMaAnnotationEngine(breaks=breaks)
         magma_engine.annotate_single(compound, modify_compound=True, ppm=45)
-        self.assertTrue(compound.peak_fragments_map is not None)    
+        self.assertTrue(compound.spectrum.peak_fragments_map is not None)    
             
                 
                 

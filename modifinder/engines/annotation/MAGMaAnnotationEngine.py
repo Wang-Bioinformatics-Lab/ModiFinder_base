@@ -41,7 +41,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         for node in network.nodes:
             compound = network.nodes[node]["compound"]
             if compound is not None and compound.is_known:
-                if annotate_all or compound.peak_fragments_map is None:
+                if annotate_all or compound.spectrum.peak_fragments_map is None:
                     self.annotate_single(compound, modify_compound=True, **kwargs)
         
         # refine by helpers
@@ -106,7 +106,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         # peak_fragments_map = self.refine_annotations_by_formula(compound, peak_fragments_map, modify_compound = False)
         
         if modify_compound:
-            compound.peak_fragments_map = peak_fragments_map
+            compound.spectrum.peak_fragments_map = peak_fragments_map
 
         return peak_fragments_map
 
@@ -204,7 +204,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                 new_peak_fragments_map[i] = possibilites
         
         if modify_compound:
-            compound.peak_fragments_map = new_peak_fragments_map
+            compound.spectrum.peak_fragments_map = new_peak_fragments_map
         
         return new_peak_fragments_map
     
@@ -239,7 +239,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         
         for peak in unshifted:
             helper_peak_fragment_map = set()
-            for fragment in helper_compound.peak_fragments_map[peak[1]]:
+            for fragment in helper_compound.spectrum.peak_fragments_map[peak[1]]:
                 new_fragment = 0
                 for i in range(len(helper_compound.structure.GetAtoms())):
                     if 1 << i & fragment:
@@ -251,9 +251,9 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                 if new_fragment != -1:
                     helper_peak_fragment_map.add(new_fragment)
             
-            main_compound.peak_fragments_map[peak[0]] = main_compound.peak_fragments_map[peak[0]].intersection(helper_peak_fragment_map)
+            main_compound.spectrum.peak_fragments_map[peak[0]] = main_compound.spectrum.peak_fragments_map[peak[0]].intersection(helper_peak_fragment_map)
         
-        return main_compound.peak_fragments_map
+        return main_compound.spectrum.peak_fragments_map
         
         
             

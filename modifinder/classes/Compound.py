@@ -22,30 +22,22 @@ class Compound:
     
     Attributes
     ----------
-    Known Compound Attributes:
     
-        id (str) : The id of the compound
-            
-        spectrum (Spectrum) : Spectrum Tuple representing mz, intensity, Precursor mass and Charge for mass spectrumetry data
+    id (str) : The id of the compound
+        
+    spectrum (Spectrum) : Spectrum Tuple representing mz, intensity, Precursor mass and Charge for mass spectrumetry data
+
+    structure (Chem.Mol): The structure of the compound
     
-    Known Compound Attributes:
-
-        structure (Chem.Mol): The structure of the compound
-        
-        peak_fragments_map (dict): A dictionary mapping peaks to fragments
-         
-
-    Other Attributes:
-        
-        is_known (bool): A boolean indicating whether the compound is known, derived from the structure
-        
-        usi (str): The USI of the compound
-        
-        name (str): The name of the compound
-        
-        accession (str): The accession of the compound
-        
-        library_membership (str): The GNPS library membership of the compound
+    is_known (bool): A boolean indicating whether the compound is known, derived from the structure
+    
+    usi (str): The USI of the compound
+    
+    name (str): The name of the compound
+    
+    accession (str): The accession of the compound
+    
+    library_membership (str): The GNPS library membership of the compound
     
     Examples
     --------
@@ -76,9 +68,7 @@ class Compound:
     >>> compound = Compound(accession)
     
     """
-
-    # def __init__(self, data = None, structure = None, id: str = None, spectrum: Spectrum = None,
-    #             is_known: bool = None, name: str = None, peak_fragments_map: dict = None, distances: dict = None, **kwargs):
+    
     def __init__(self, incoming_data=None, **kwargs):
         """Initialize the Compound class
 
@@ -116,7 +106,6 @@ class Compound:
         self.usi = None
         self.is_known = None
         self.name = None
-        self.peak_fragments_map = None
         self._distances = None
         self.additional_attributes = {}
         self._exact_mass = None
@@ -184,7 +173,6 @@ class Compound:
         self.usi = None
         self.is_known = None
         self.name = None
-        self.peak_fragments_map = None
         self._distances = None
         self.additional_attributes = {}
         self._exact_mass = None
@@ -193,7 +181,7 @@ class Compound:
 
     def update(self, structure = None, id: str = None, spectrum: Spectrum = None, usi: str = None, 
                is_known: bool = None, name: str = None,
-               peak_fragments_map: dict = None, additional_attributes: dict = {}, 
+               additional_attributes: dict = {}, 
                **kwargs):
         """Update the attributes of the class
 
@@ -205,7 +193,6 @@ class Compound:
         usi (str): The USI of the compound
         is_known (bool): A boolean indicating whether the compound is known, if set to False, annotators or other parts of the code will treat this compound as unknown, if not provided but the structure is provided, it will be set to True
         name (str): The name of the compound
-        peak_fragments_map (dict): A dictionary mapping peaks to fragments
         distances (dict): A dictionary of distances between every pair of atoms in the compound, if not provided, it will be calculated from the structure
         **kwargs: Additional data
             - A use case is for the scenarios where the *data* parameter is provided, these arguments will be used to parse and clean the data
@@ -231,7 +218,6 @@ class Compound:
         self.name = name if name is not None else self.name
         if self.name is None:
             self.name = lower_kwargs.get('compound_name', None)
-        self.peak_fragments_map = peak_fragments_map if peak_fragments_map is not None else self.peak_fragments_map
 
         # update the rest of the attributes
         self.additional_attributes.update(additional_attributes)
@@ -308,7 +294,7 @@ class Compound:
             peaks = range(len(self.spectrum.mz))
         
         for peak in peaks:
-            print(f"Peak {peak}: {self.spectrum.mz[peak]}, Fragments: {self.peak_fragments_map[peak]}")
+            print(f"Peak {peak}: {self.spectrum.mz[peak]}, Fragments: {self.spectrum.peak_fragments_map[peak]}")
         print()
         
     
@@ -328,7 +314,7 @@ class Compound:
         
         existance = [dict() for i in range(len(self.structure.GetAtoms()))]
         for peak in peakids:
-            for fragment in self.peak_fragments_map[peak]:
+            for fragment in self.spectrum.peak_fragments_map[peak]:
                 # get all the bits that are 1 in the fragment
                 bin_fragment = bin(fragment)
                 len_fragment = len(bin_fragment)
@@ -369,7 +355,7 @@ class Compound:
         if CI:
             intensity_factor = self.spectrum.intensity[peakindx]
         if CPA:
-            atom_peak_ambiguity_factor = 1/len(self.peak_fragments_map[peakindx])
+            atom_peak_ambiguity_factor = 1/len(self.spectrum.peak_fragments_map[peakindx])
 
         for frag in existance_data[atom][peakindx]:
             if CFA:
@@ -431,16 +417,16 @@ class Compound:
         updated = 0
         for i in peaks:
             updated_fragments = set()
-            for fragment in self.peak_fragments_map[i]:
+            for fragment in self.spectrum.peak_fragments_map[i]:
                 for atom in atoms:
                     if 1 << atom & fragment:
                         updated_fragments.add(fragment)
                         break
 
-            if len(updated_fragments) != len(self.peak_fragments_map[i]):
+            if len(updated_fragments) != len(self.spectrum.peak_fragments_map[i]):
                 updated += 1
             
-            self.peak_fragments_map[i] = updated_fragments
+            self.spectrum.peak_fragments_map[i] = updated_fragments
 
         return updated
     
@@ -465,9 +451,9 @@ class Compound:
         ambiguity = 0
         annotated_peaks = 0
         for peak in peaks:
-            if len(self.peak_fragments_map[peak]) > 0:
+            if len(self.spectrum.peak_fragments_map[peak]) > 0:
                 annotated_peaks += 1
-                ambiguity += len(self.peak_fragments_map[peak])
+                ambiguity += len(self.spectrum.peak_fragments_map[peak])
         if annotated_peaks == 0:
             return -1, 0
         if len(peaks) == 0:
@@ -493,14 +479,14 @@ class Compound:
         n = len(self.structure.GetAtoms())
         for peak in peaks:
             atoms_appearance = [0 for i in range(n)]
-            for fragment in self.peak_fragments_map[peak]:
+            for fragment in self.spectrum.peak_fragments_map[peak]:
                 for atom in range(n):
                     if 1 << atom & fragment:
                         atoms_appearance[atom] += 1
             entropy = 0
             for atom in range(n):
                 if atoms_appearance[atom] > 0:
-                    p = atoms_appearance[atom] / len(self.peak_fragments_map[peak])
+                    p = atoms_appearance[atom] / len(self.spectrum.peak_fragments_map[peak])
                     entropy -= p * math.log(p)
             peak_entropies[peak] = entropy
         if len(peak_entropies) == 0:
