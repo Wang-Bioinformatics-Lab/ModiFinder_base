@@ -17,3 +17,4 @@ The following classes are defined in the modifinder package:
    classes.Compound
    classes.EdgeDetail
    classes.ModiFinder
+   classes.StructureMeta

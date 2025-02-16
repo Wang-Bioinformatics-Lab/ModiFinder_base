@@ -1,8 +1,6 @@
-import warnings
 import modifinder as mf
 import modifinder.utilities.network as network
 from modifinder.utilities.general_utils import parse_data_to_universal
-import json
 from copy import deepcopy
 
 def to_compound(data = None, use_object=None, **kwargs):
@@ -48,6 +46,8 @@ def to_compound(data = None, use_object=None, **kwargs):
                 compound.update(data_dict)
             else:
                 compound = data
+                parsed_kwargs = parse_data_to_universal(kwargs)
+                compound.update(**parsed_kwargs)
             return compound
 
         except Exception as err:
@@ -89,7 +89,10 @@ def to_compound(data = None, use_object=None, **kwargs):
 
 def compound_to_dict(compound):
     """Convert a Compound object to a dictionary"""
-    return compound.__dict__
+    compound_dict = compound.__dict__
+    # make sure nothing is passed by reference
+    compound_dict = deepcopy(compound_dict)
+    return compound_dict
 
 
 def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
@@ -197,8 +200,13 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
             raise mf.ModiFinderError("Input data is not a valid list.") from err
     
     raise mf.ModiFinderError("Input data is not a valid object.")
+
+
     
 
 def spectrum_to_dict(spectrum):
     """Convert a Spectrum object to a dictionary"""
-    return spectrum.__dict__
+    spectrum_dict = spectrum.__dict__
+    # make sure nothing is passed by reference
+    spectrum_dict = deepcopy(spectrum_dict)
+    return spectrum_dict

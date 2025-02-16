@@ -11,6 +11,7 @@ import requests
 from modifinder.utilities.gnps_types import *
 from modifinder.utilities.general_utils import parse_data_to_universal
 from modifinder.exceptions import ModiFinderNetworkError
+from rdkit import Chem
 
 def usi_to_accession(usi: str) -> str:
     """
@@ -145,3 +146,50 @@ def _is_known(identifier: str) -> bool:
     return: bool
     """
     return "accession" in identifier
+
+
+def get_np_classifier(smiles):
+    """
+    Get the NP classifier data for a molecule
+    
+    Parameters
+    ----------
+    smiles : str
+        SMILES string of the molecule.
+    
+    Returns
+    -------
+    dict
+        Dictionary with keys: class_types (list), superclasses (list), pathways (list), isglycoside (bool).
+    """
+    
+    if isinstance(smiles, str):
+        smiles = smiles
+    else:
+        if isinstance(smiles, Chem.Mol):
+            smiles = Chem.MolToSmiles(smiles)
+        else:
+            raise ValueError("Invalid input for np_classifier")
+    try:
+        url = "https://npclassifier.gnps2.org/classify"
+        response = requests.get(url, params={"smiles": smiles})
+        data = json.loads(response.text)
+        for key in data:
+            if data[key] == "None":
+                data[key] = []
+        
+        final_data = {
+            "class_types": data["class"],
+            "superclasses": data["superclass"],
+            "pathways": data["pathway"],
+            "isglycoside": data["isglycoside"],
+        }
+        return final_data
+    except Exception:
+        return {
+            "class_types": [],
+            "superclasses": [],
+            "pathways": [],
+            "isglycoside": None,
+        }
+    

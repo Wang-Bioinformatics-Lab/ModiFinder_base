@@ -2,12 +2,14 @@
 
 This class is used to create a ModiFinder object.
 The object can be used to get information about unknown compounds in the network using the known compounds.
+
+This class Builds and maintains a network of compounds where the nodes are compounds (known and unknown)
 """
 
 from modifinder import convert as convert
 from modifinder.classes.Compound import Compound
 from modifinder.classes.EdgeDetail import EdgeDetail, MatchType
-from modifinder.engines.Abtracts import AlignmentEngine, AnnotationEngine
+from modifinder.engines import AlignmentEngine, AnnotationEngine
 from modifinder.engines.annotation.MAGMaAnnotationEngine import MAGMaAnnotationEngine
 from modifinder.engines.alignment.CosineAlignmentEngine import CosineAlignmentEngine
 from modifinder.utilities import visualizer as mf_vis
@@ -47,8 +49,11 @@ class ModiFinder:
     See Also
     --------
     Compound
-    EdgeDetail
-    Engines
+    EdgeDetail.EdgeDetail
+    AlignmentEngine
+    modifinder.AlignmentEngine
+    modifinder.engines.AlignmentEngine
+    modifinder.engines.Abstracts.AlignmentEngine
 
     Examples
     --------
@@ -56,7 +61,7 @@ class ModiFinder:
 
     def __init__(
         self,
-        knownCompond: Compound = None,
+        knownCompound: Compound = None,
         unknownCompound: Compound = None,
         edgeDetail: EdgeDetail = None,
         helpers: list = [],
@@ -78,7 +83,7 @@ class ModiFinder:
 
         Parameters
         ----------
-        knownCompond : known compound (not optional in Use Case 1, ignored in Use Case 2)
+        knownCompound : known compound (not optional in Use Case 1, ignored in Use Case 2)
             Data to create a known compound. The data can be a Compound object, or any data that can be converted to a Compound object.
 
         unknownCompound : unknown compound (not optional in Use Case 1, ignored in Use Case 2)
@@ -125,7 +130,7 @@ class ModiFinder:
         --------
         Compound
         EdgeDetail
-        Engines
+
 
         Examples
         --------
@@ -133,7 +138,7 @@ class ModiFinder:
         """
 
         self.network = None
-        self.unknonws = None
+        self.unknowns = None
         self.ppm_tolerance = ppm_tolerance
         self.args = kwargs
         
@@ -162,22 +167,27 @@ class ModiFinder:
 
         else:
             self.network = nx.DiGraph()
-            knownCompond = convert.to_compound(data=knownCompond, **kwargs)
-            unknownCompound = convert.to_compound(data=unknownCompound, **kwargs)
-            unknownCompound.is_known = False
-            self.network.add_node(knownCompond.id, compound=knownCompond)
-            self.network.add_node(unknownCompound.id, compound=unknownCompound)
+            if unknownCompound is not None:
+                unknownCompound = convert.to_compound(data=unknownCompound, **kwargs)
+                unknownCompound.is_known = False
+                self.network.add_node(unknownCompound.id, compound=unknownCompound)
+                self.unknowns = [unknownCompound.id]
+            
+            if knownCompound is not None:
+                knownCompound = convert.to_compound(data=knownCompound, **kwargs)
+                self.network.add_node(knownCompound.id, compound=knownCompound)
+            
+            
+            if knownCompound is not None and unknownCompound is not None:
+                self.add_adjusted_edge(knownCompound.id, unknownCompound.id, edgeDetail, **kwargs)
 
-            self.add_adjusted_edge(knownCompond.id, unknownCompound.id, edgeDetail, **kwargs)
-
-            self.unknowns = [unknownCompound.id]
         
         if helpers is not None:
             for helper in helpers:
                 try:
                     helper = convert.to_compound(data=helper)
                     self.network.add_node(helper.id, compound=helper)
-                    self.add_adjusted_edge(helper.id, knownCompond.id)
+                    self.add_adjusted_edge(helper.id, knownCompound.id)
                 except Exception as e:
                     print(f"Error adding helper compound: {e}")
                     raise e
@@ -206,7 +216,7 @@ class ModiFinder:
             The id of the second compound.
         
         edgeDetail : EdgeDetail
-            The edge detail between the compounds.
+            The edge detail between the compounds. If not passed, the method will align the spectra of the compounds.
         
         kwargs : dict
             Additional parameters to pass to the alignment engine.
@@ -370,7 +380,43 @@ class ModiFinder:
         self.update_edge(smaller.id, larger.id, edgeDetail, **kwargs)
         
     
-    def generate_probabilities(self, known_id = None, unknown_id = None, shifted_only = False, CI = False, CPA = True, CFA = True, CPE = True):
+    def add_unknown(self, unknown: Compound, **kwargs) -> str:
+        """
+        Add an unknown compound to the network.
+        
+        The method will add an unknown compound to the network.
+        
+        Parameters
+        ----------
+        unknown : Compound
+            The unknown compound to add to the network.
+        
+        kwargs : dict
+            Additional parameters to pass for the conversion.
+        
+        Returns
+        -------
+        str
+            The id of the unknown compound.
+        """
+        
+        unknown = convert.to_compound(data=unknown, is_known = False, **kwargs)
+        
+        if unknown.is_known:
+            raise ValueError("Unknown compound must have is_known attribute set to False")
+        
+        if not self.network.has_node(unknown.id):
+            self.network.add_node(unknown.id, compound=unknown)
+        
+        if not self.unknowns:
+            self.unknowns = [unknown.id]
+        else:
+            self.unknowns.append(unknown.id)
+        
+        return unknown.id
+        
+    
+    def generate_probabilities(self, known_id = None, unknown_id = None, shifted_only = False, CI = False, CPA = True, CFA = True, CPE = True, **kwargs):
         
         if unknown_id is None:
             unknown_id = self._get_unknown()
@@ -420,7 +466,7 @@ class ModiFinder:
         return probabilities
     
     
-    def get_edge_detail(self, id1, id2):
+    def get_edge_detail(self, id1, id2) -> EdgeDetail:
         """Returns the edge detail between two compounds. If the backward edge exists, the matching data is replaced
 
         Parameters
@@ -486,24 +532,20 @@ class ModiFinder:
                 raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
             else:
                 edgeDetail = self.network[id2][id1]["edgedetail"]
-                smallerSpectrum = self.network.nodes[id2]["compound"].spectrum
-                largerSpectrum = self.network.nodes[id1]["compound"].spectrum
+                edgeDetailCopy = edgeDetail.copy()
+                edgeDetailCopy.reverse_match()
                 if edgeDetail is None:
                     matched_peaks = []
                 else:
-                    matched_peaks = [(match.second_peak_index, match.first_peak_index) for match in edgeDetail.matches]
+                    matched_peaks = edgeDetailCopy.get_matches_pairs()
         else:
             edgeDetail = self.network[id1][id2]["edgedetail"]
-            smallerSpectrum = self.network.nodes[id1]["compound"].spectrum
-            largerSpectrum = self.network.nodes[id2]["compound"].spectrum
             if edgeDetail is None:
                 matched_peaks = []
             else:
-                matched_peaks = [(match.first_peak_index, match.second_peak_index) for match in edgeDetail.matches]
+                matched_peaks = edgeDetail.get_matches_pairs()
         
-        return mf_vis.draw_alignment([smallerSpectrum, largerSpectrum], [matched_peaks], **kwargs)
-        
-        
+        return mf_vis.draw_alignment([self.network.nodes[id1]["compound"].spectrum, self.network.nodes[id2]["compound"].spectrum], [matched_peaks], **kwargs)
         
 
     def _get_unknown(self):
@@ -519,3 +561,49 @@ class ModiFinder:
         known_id = neighbors[0]
         
         return known_id
+    
+    def get_neighbors(self, node_id):
+        neighbors = list(self.network.predecessors(node_id)) + list(self.network.successors(node_id))
+        return neighbors
+    
+    def get_meta_data(self, known_id, unknown_id):
+        known_compound = self.network.nodes[known_id]["compound"]
+        unknown_compound = self.network.nodes[unknown_id]["compound"]
+        
+        known_meta = known_compound.get_meta_data()
+        unknown_meta = unknown_compound.get_meta_data()
+        
+        result = {}
+        for key in known_meta:
+            result[key+"_main"] = known_meta[key]
+        
+        for key in unknown_meta:
+            result[key+"_modified"] = unknown_meta[key]
+        
+        result["delta_mass"] = unknown_compound.spectrum.precursor_mz - known_compound.spectrum.precursor_mz
+        result["is_addition"] = 1 if result["delta_mass"] > 0 else -1
+        result["num_helpers"] = len(list(self.network.predecessors(known_id)) + list(self.network.successors(known_id))) - 1
+
+        
+        try:
+            edgeDetail = self.get_edge_detail(known_id, unknown_id)
+            result.update(edgeDetail.get_meta_data())
+            shifted_peaks = edgeDetail.get_single_type_matches(MatchType.shifted)
+            unshifted_peaks = edgeDetail.get_single_type_matches(MatchType.unshifted)
+            
+            shifted_peaks = [peak[0] for peak in shifted_peaks]
+            unshifted_peaks = [peak[0] for peak in unshifted_peaks]
+            
+            shifted_annotated_ratio, shifted_annotated_ambiguity = known_compound.calculate_peak_annotation_ambiguity(shifted_peaks)
+            unshifted_annotated_ratio, unshifted_annotated_ambiguity = known_compound.calculate_peak_annotation_ambiguity(unshifted_peaks)
+            
+            result["shifted_annotated_ratio"] = shifted_annotated_ratio
+            result["shifted_annotated_ambiguity"] = shifted_annotated_ambiguity
+            result["unshifted_annotated_ratio"] = unshifted_annotated_ratio
+            result["unshifted_annotated_ambiguity"] = unshifted_annotated_ambiguity
+            
+        except Exception as e:
+            print(f"Error getting edge detail: {e}")
+            pass
+        
+        return result

@@ -1,7 +1,10 @@
 import json
 from modifinder.utilities.gnps_types import adduct_mapping
+import modifinder.utilities.general_utils as general_utils
 from modifinder import convert
 import numpy as np
+import bisect
+import uuid
 
 class Spectrum:
     """A class to represent a spectrum.
@@ -18,6 +21,8 @@ class Spectrum:
         The precursor charge.
     adduct: str
         The adduct.
+    adduct_mass: float
+        The adduct mass.
     ms_level: int
         The ms level, default is 2.
     instrument: str, optional
@@ -27,7 +32,9 @@ class Spectrum:
     ms_dissociation_method: str, optional
         The dissociation method used.
     spectrum_id: str, optional
-        The spectrum id.
+        The spectrum id. if not provided, it will be generated.
+    peak_fragments_map: dict, optional
+        A dictionary mapping peaks to fragments
     
     Examples
     --------
@@ -50,12 +57,14 @@ class Spectrum:
         self.intensity = None
         self.precursor_mz = None
         self.precursor_charge = None
-        self.adduct = None
+        self._adduct = None
+        self._adduct_mass = None
         self.ms_level = None
         self.instrument = None
         self.ms_mass_analyzer = None
         self.ms_dissociation_method = None
         self.spectrum_id = None
+        self.peak_fragments_map = []
         
         if incoming_data is None and len(kwargs) == 0:
             return
@@ -65,10 +74,26 @@ class Spectrum:
 
         self.update(normalize_peaks = normalize_peaks, **kwargs)
 
+    @property
+    def adduct(self):
+        return self._adduct
+    
+    @adduct.setter
+    def adduct(self, value):
+        self._adduct = adduct_mapping.get(value, value)
+        if self._adduct is not None:
+            self._adduct_mass = general_utils.get_adduct_mass(self._adduct)
+        else:
+            self._adduct_mass = None
+    
+    @property
+    def adduct_mass(self):
+        return self._adduct_mass
 
     def update(self, peaks = None, peaks_json = None, mz=None, intensity=None, precursor_mz=None, precursor_charge=None, 
-               adduct=None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
-               ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None, remove_large_peaks = False, **kwargs):
+               adduct=None, adduct_mass = None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
+               ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None,
+               remove_large_peaks = False, keep_top_k=None, peak_fragments_map: dict = None, **kwargs):
         """Update the Spectrum object with the given values.
 
         Args:
@@ -87,6 +112,9 @@ class Spectrum:
             normalize_peaks (bool): If True, the intensity of the peaks will be normalized.
             ratio_to_base_peak (float): If None, no filtering is done, if a float number, it removes all the peaks with intensity
             less than ratio times the base peak.
+            remove_large_peaks (bool): If True, remove all the peaks that are larger than the precursor m/z value.
+            keep_top_k (int): If not None, only keep the top k peaks.
+            peak_fragments_map (dict): A dictionary mapping peaks to fragments
         """
         if peaks_json is not None:
             peaks = json.loads(peaks_json)
@@ -97,12 +125,13 @@ class Spectrum:
         self.intensity = np.array(intensity) if intensity is not None else self.intensity
         self.precursor_mz = float(precursor_mz) if precursor_mz is not None else self.precursor_mz
         self.precursor_charge = int(float(precursor_charge)) if precursor_charge is not None else self.precursor_charge
-        self.adduct = adduct_mapping.get(adduct, adduct) if adduct is not None else self.adduct
+        self.adduct = adduct if adduct is not None else self.adduct
         self.ms_level = int(ms_level) if ms_level is not None else self.ms_level
         self.instrument = instrument if instrument is not None else self.instrument
         self.ms_mass_analyzer = ms_mass_analyzer if ms_mass_analyzer is not None else self.ms_mass_analyzer
         self.ms_dissociation_method = ms_dissociation_method if ms_dissociation_method is not None else self.ms_dissociation_method
         self.spectrum_id = spectrum_id if spectrum_id is not None else self.spectrum_id
+        self.peak_fragments_map = peak_fragments_map if peak_fragments_map is not None else self.peak_fragments_map
         
         if self.mz is not None:
             self.mz, self.intensity = zip(*sorted(zip(self.mz, self.intensity)))
@@ -115,6 +144,12 @@ class Spectrum:
         
         if remove_large_peaks:
             self.remove_larger_than_precursor_peaks()
+            
+        if keep_top_k is not None:
+            self.keep_top_k(keep_top_k)
+        
+        if self.spectrum_id is None:
+            self.spectrum_id = str(uuid.uuid4())
 
 
     def __str__(self):
@@ -131,12 +166,14 @@ class Spectrum:
         self.intensity = None
         self.precursor_mz = None
         self.precursor_charge = None
-        self.adduct = None
+        self._adduct = None
+        self._adduct_mass = None
         self.ms_level = None
         self.instrument = None
         self.ms_mass_analyzer = None
         self.ms_dissociation_method = None
         self.spectrum_id = None
+        self.peak_fragments_map = []
     
     
     def copy(self):
@@ -265,7 +302,7 @@ class Spectrum:
         new_mz = []
         new_intensity = []
         for mz, intensity in zip(self.mz, self.intensity):
-            if mz <= self.precursor_mz:
+            if mz < self.precursor_mz * 0.99:
                 new_mz.append(mz)
                 new_intensity.append(intensity)
         
@@ -297,11 +334,15 @@ class Spectrum:
             The indexes of the peaks within the given m/z tolerance.
         """
         
-        result = []
-        for index, peak_mz in enumerate(self.mz):
-            if abs(peak_mz - mz) <= mz_tolerance or abs(peak_mz - mz) <= mz * ppm_tolerance / 1e6:
-                result.append(index)    
-        return result
+        min_range = max(mz-mz_tolerance, mz - (mz * ppm_tolerance / 1e6))
+        max_range = min(mz+mz_tolerance, mz + (mz * ppm_tolerance / 1e6))
+        
+        # Find the leftmost index where min_val could be inserted
+        left_index = bisect.bisect_left(self.mz, min_range)
+        # Find the rightmost index where max_val could be inserted
+        right_index = bisect.bisect_right(self.mz, max_range)
+        # Return the range of indices between left_index and right_index (exclusive of right_index)
+        return list(range(left_index, right_index))
     
     
 

@@ -1,4 +1,7 @@
 
+
+.. currentmodule:: modifinder
+   
 .. automodule:: modifinder.engines.Abtracts
 
 AlignmentEngine

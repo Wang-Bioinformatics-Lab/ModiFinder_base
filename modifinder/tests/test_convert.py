@@ -38,7 +38,7 @@ class TestConvert(unittest.TestCase):
 
 
         # check if the compound from accession, usi and dict are the same
-        for key in ["adduct_mass", "is_known", "name"]:
+        for key in ["is_known", "name"]:
             self.assertEqual(getattr(compound_from_accession, key), getattr(compound_from_usi, key))
             self.assertEqual(getattr(compound_from_accession, key), getattr(compound_from_dict, key))
             self.assertEqual(getattr(compound_from_accession, key), getattr(compound_from_compound, key))

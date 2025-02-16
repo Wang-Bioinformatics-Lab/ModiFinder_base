@@ -1,7 +1,8 @@
 from rdkit.Chem import *
-from rdkit import Chem, Geometry
-from rdkit.Chem import AllChem, Descriptors
+from rdkit import Chem
+from rdkit.Chem import AllChem
 import modifinder.utilities.general_utils as pars
+# from modifinder.utilities.general_utils import get_adduct_mass
 import re
 bondtype2string = {v:k for (k, v,) in Chem.rdchem.BondType.names.items()}
 
@@ -112,37 +113,37 @@ def GetFormulaMass(formula):
             weight += pars.mims[element]
     return weight
 
-def get_adduct_mass(adduct):
-    weight = 0
-    # remove spaces
-    adduct = adduct.replace(' ', '')
-    acceptedAdductsFormat = re.compile(r'\[M(?:\+[A-Za-z0-9]+|\-[A-Za-z0-9]+)*\][0-9]*[+-]')
-    if not acceptedAdductsFormat.match(adduct):
-        raise ValueError('Adduct format not accepted')
+# def get_adduct_mass(adduct):
+#     weight = 0
+#     # remove spaces
+#     adduct = adduct.replace(' ', '')
+#     acceptedAdductsFormat = re.compile(r'\[M(?:\+[A-Za-z0-9]+|\-[A-Za-z0-9]+)*\][0-9]*[+-]')
+#     if not acceptedAdductsFormat.match(adduct):
+#         raise ValueError('Adduct format not accepted')
 
-    charge = adduct.split(']')[1]
-    remaining = adduct.split(']')[0]
-    remaining = remaining.replace('[','')
+#     charge = adduct.split(']')[1]
+#     remaining = adduct.split(']')[0]
+#     remaining = remaining.replace('[','')
     
-    regexPattern = re.compile(r'\+[A-Za-z0-9]+|\-[A-Za-z0-9]+')
-    subformulas = regexPattern.findall(remaining)
-    for subformula in subformulas:
-        if subformula[0] == '+':
-            weight += GetFormulaMass(subformula[1:])
-        else:
-            weight -= GetFormulaMass(subformula[1:])
+#     regexPattern = re.compile(r'\+[A-Za-z0-9]+|\-[A-Za-z0-9]+')
+#     subformulas = regexPattern.findall(remaining)
+#     for subformula in subformulas:
+#         if subformula[0] == '+':
+#             weight += GetFormulaMass(subformula[1:])
+#         else:
+#             weight -= GetFormulaMass(subformula[1:])
     
-    if charge[-1] == '+':
-        if len(charge) == 1:
-            chargeCount = 1
-        else:
-            chargeCount = int(charge[:-1])
-        weight -= pars.elmass * chargeCount
-    else:
-        if len(charge) == 1:
-            chargeCount = 1
-        else:
-            chargeCount = int(charge[:-1])
-        weight += pars.elmass * chargeCount
+#     if charge[-1] == '+':
+#         if len(charge) == 1:
+#             chargeCount = 1
+#         else:
+#             chargeCount = int(charge[:-1])
+#         weight -= pars.elmass * chargeCount
+#     else:
+#         if len(charge) == 1:
+#             chargeCount = 1
+#         else:
+#             chargeCount = int(charge[:-1])
+#         weight += pars.elmass * chargeCount
 
-    return weight
+#     return weight
