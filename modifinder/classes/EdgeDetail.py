@@ -8,6 +8,15 @@ class MatchType(Enum):
 class Match:
     """
     Class for Match
+    
+    Attributes
+    ----------
+    first_peak_index : int
+        Index of the peak in the first spectrum
+    second_peak_index : int
+        Index of the peak in the second spectrum
+    match_type : MatchType
+        Type of the match
     """
     def __init__(self, first_peak_index:int, second_peak_index:int, match_type: MatchType):
         """
@@ -17,14 +26,17 @@ class Match:
         ----------
         first_peak_index : int
             Index of the first peak
+            
         second_peak_index : int
             Index of the second peak
+            
         match_type : MatchType
             Type of the match
 
-        Customization
-        -------------
+        Notes
+        -----
         if you need matches with more information, create a new class and inherit from this class.
+        
         """
         self.first_peak_index = first_peak_index
         self.second_peak_index = second_peak_index

@@ -1,8 +1,10 @@
 import json
 from modifinder.utilities.gnps_types import adduct_mapping
+import modifinder.utilities.general_utils as general_utils
 from modifinder import convert
 import numpy as np
 import bisect
+import uuid
 
 class Spectrum:
     """A class to represent a spectrum.
@@ -19,6 +21,8 @@ class Spectrum:
         The precursor charge.
     adduct: str
         The adduct.
+    adduct_mass: float
+        The adduct mass.
     ms_level: int
         The ms level, default is 2.
     instrument: str, optional
@@ -28,7 +32,7 @@ class Spectrum:
     ms_dissociation_method: str, optional
         The dissociation method used.
     spectrum_id: str, optional
-        The spectrum id.
+        The spectrum id. if not provided, it will be generated.
     
     Examples
     --------
@@ -51,7 +55,8 @@ class Spectrum:
         self.intensity = None
         self.precursor_mz = None
         self.precursor_charge = None
-        self.adduct = None
+        self._adduct = None
+        self._adduct_mass = None
         self.ms_level = None
         self.instrument = None
         self.ms_mass_analyzer = None
@@ -66,10 +71,26 @@ class Spectrum:
 
         self.update(normalize_peaks = normalize_peaks, **kwargs)
 
+    @property
+    def adduct(self):
+        return self._adduct
+    
+    @adduct.setter
+    def adduct(self, value):
+        self._adduct = adduct_mapping.get(value, value)
+        if self._adduct is not None:
+            self._adduct_mass = general_utils.get_adduct_mass(self._adduct)
+        else:
+            self._adduct_mass = None
+    
+    @property
+    def adduct_mass(self):
+        return self._adduct_mass
 
     def update(self, peaks = None, peaks_json = None, mz=None, intensity=None, precursor_mz=None, precursor_charge=None, 
-               adduct=None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
-               ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None, remove_large_peaks = False, **kwargs):
+               adduct=None, adduct_mass = None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
+               ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None,
+               remove_large_peaks = False, keep_top_k=None, **kwargs):
         """Update the Spectrum object with the given values.
 
         Args:
@@ -88,6 +109,8 @@ class Spectrum:
             normalize_peaks (bool): If True, the intensity of the peaks will be normalized.
             ratio_to_base_peak (float): If None, no filtering is done, if a float number, it removes all the peaks with intensity
             less than ratio times the base peak.
+            remove_large_peaks (bool): If True, remove all the peaks that are larger than the precursor m/z value.
+            keep_top_k (int): If not None, only keep the top k peaks.
         """
         if peaks_json is not None:
             peaks = json.loads(peaks_json)
@@ -98,7 +121,7 @@ class Spectrum:
         self.intensity = np.array(intensity) if intensity is not None else self.intensity
         self.precursor_mz = float(precursor_mz) if precursor_mz is not None else self.precursor_mz
         self.precursor_charge = int(float(precursor_charge)) if precursor_charge is not None else self.precursor_charge
-        self.adduct = adduct_mapping.get(adduct, adduct) if adduct is not None else self.adduct
+        self.adduct = adduct if adduct is not None else self.adduct
         self.ms_level = int(ms_level) if ms_level is not None else self.ms_level
         self.instrument = instrument if instrument is not None else self.instrument
         self.ms_mass_analyzer = ms_mass_analyzer if ms_mass_analyzer is not None else self.ms_mass_analyzer
@@ -116,6 +139,12 @@ class Spectrum:
         
         if remove_large_peaks:
             self.remove_larger_than_precursor_peaks()
+            
+        if keep_top_k is not None:
+            self.keep_top_k(keep_top_k)
+        
+        if self.spectrum_id is None:
+            self.spectrum_id = str(uuid.uuid4())
 
 
     def __str__(self):
@@ -132,7 +161,8 @@ class Spectrum:
         self.intensity = None
         self.precursor_mz = None
         self.precursor_charge = None
-        self.adduct = None
+        self._adduct = None
+        self._adduct_mass = None
         self.ms_level = None
         self.instrument = None
         self.ms_mass_analyzer = None
@@ -266,7 +296,7 @@ class Spectrum:
         new_mz = []
         new_intensity = []
         for mz, intensity in zip(self.mz, self.intensity):
-            if mz <= self.precursor_mz:
+            if mz < self.precursor_mz * 0.99:
                 new_mz.append(mz)
                 new_intensity.append(intensity)
         

@@ -10,6 +10,7 @@ import uuid
 
 # import modifinder as mf
 from modifinder.classes.Spectrum import Spectrum
+from modifinder.classes.StructureMeta import StructureMeta
 from modifinder import convert
 
 
@@ -31,14 +32,10 @@ class Compound:
 
         structure (Chem.Mol): The structure of the compound
         
-        distances (dict): A dictionary of distances between every pair of atoms in the compound
-        
         peak_fragments_map (dict): A dictionary mapping peaks to fragments
          
 
     Other Attributes:
-    
-        adduct_mass (float): The adduct mass, derived from the Adduct
         
         is_known (bool): A boolean indicating whether the compound is known, derived from the structure
         
@@ -49,8 +46,6 @@ class Compound:
         accession (str): The accession of the compound
         
         library_membership (str): The GNPS library membership of the compound
-        
-        exact_mass (float): The exact mass of the compound
     
     Examples
     --------
@@ -115,17 +110,16 @@ class Compound:
         """
         
         # define the attributes of the class
+        self._structure = None
         self.id = None
-        self.spectrum = None
-        self.structure = None
+        self._spectrum = None
+        self.usi = None
         self.is_known = None
         self.name = None
         self.peak_fragments_map = None
-        self.distances = None
-        self.usi = None
-        self.adduct_mass = None
+        self._distances = None
         self.additional_attributes = {}
-        self.exact_mass = None
+        self._exact_mass = None
 
         if incoming_data is None and len(kwargs) == 0:
             return
@@ -133,37 +127,74 @@ class Compound:
         # attempt to initialize the class with the provided data
         if incoming_data is not None:
             convert.to_compound(incoming_data, use_object = self, **kwargs)
-        
-        # update the attributes with the provided keyword arguments
-        # self.update(**kwargs)
 
         # TODO: write setters for spectrum, structure to warn the user to update the dependent attributes
 
+    @property
+    def structure(self):
+        return self._structure
+
+    @structure.setter
+    def structure(self, value):
+        self._structure = value
+        # Automatically update the related attributes
+        if self._structure is not None:
+            self._exact_mass = rdMolDescriptors.CalcExactMolWt(self._structure)
+            self._distances = Chem.rdmolops.GetDistanceMatrix(self._structure)
+        if self.is_known is None:
+            self.is_known = self._structure is not None
+        
+        if self.is_known and self._structure is None:
+            self.is_known = False
+        
+    @property
+    def spectrum(self):
+        return self._spectrum
+    
+    @spectrum.setter
+    def spectrum(self, value):
+        self._spectrum = value
+            
+    @property
+    def distances(self) -> dict:
+        """Get the distances between every pair of atoms in the compound
+        
+        Returns
+        -------
+            dict: A dictionary of distances between every pair of atoms in the compound
+        """
+        return self._distances
+    
+    @property
+    def exact_mass(self) -> float:
+        """Get the exact mass of the compound
+        
+        Returns
+        -------
+            float: The exact mass of the compound
+        """
+        return self._exact_mass
+    
     
     def clear(self):
         """Clear the compound data and reset all the attributes to None"""
+        self.structure = None
         self.id = None
         self.spectrum = None
-        self.structure = None
+        self.usi = None
         self.is_known = None
         self.name = None
         self.peak_fragments_map = None
-        self.distances = None
-        self.usi = None
-        self.adduct_mass = None
+        self._distances = None
         self.additional_attributes = {}
-        
-        # # remove any additional attributes
-        # all_keys = list(self.__dict__.keys())
-        # for key in all_keys:
-        #     if key not in ['id', 'spectrum', 'structure', 'is_known', 'name', 'peak_fragments_map', 'distances', 'usi', 'adduct_mass']:
-        #         delattr(self, key)
+        self._exact_mass = None
         
     
 
     def update(self, structure = None, id: str = None, spectrum: Spectrum = None, usi: str = None, 
-               adduct_mass: float = None, is_known: bool = None, name: str = None,
-               peak_fragments_map: dict = None, distances: dict = None, **kwargs):
+               is_known: bool = None, name: str = None,
+               peak_fragments_map: dict = None, additional_attributes: dict = {}, 
+               **kwargs):
         """Update the attributes of the class
 
         Parameters
@@ -172,7 +203,6 @@ class Compound:
         id (str): The id of the compound
         spectrum (Spectrum): an instance of Spectrum containing peak information [(mz, intensity)], precursor mass, charge, and adduct for mass spectrumetry data
         usi (str): The USI of the compound
-        adduct_mass (float): The adduct mass, derived from the Adduct
         is_known (bool): A boolean indicating whether the compound is known, if set to False, annotators or other parts of the code will treat this compound as unknown, if not provided but the structure is provided, it will be set to True
         name (str): The name of the compound
         peak_fragments_map (dict): A dictionary mapping peaks to fragments
@@ -197,16 +227,14 @@ class Compound:
         if spectrum is not None and spectrum.mz is not None:
             self.spectrum = spectrum
         self.usi = usi if usi is not None else self.usi
-        self.adduct_mass = adduct_mass if adduct_mass is not None else self.adduct_mass
         self.is_known = is_known if (is_known is not None) else self.is_known
         self.name = name if name is not None else self.name
         if self.name is None:
             self.name = lower_kwargs.get('compound_name', None)
         self.peak_fragments_map = peak_fragments_map if peak_fragments_map is not None else self.peak_fragments_map
-        self.distances = distances if distances is not None else self.distances
 
         # update the rest of the attributes
-        self.additional_attributes.update(kwargs)
+        self.additional_attributes.update(additional_attributes)
         
         self._parse_data()
     
@@ -215,18 +243,6 @@ class Compound:
         """ Parse missing and verify the data of the class"""
         if self.is_known is None:
             self.is_known = (self.structure is not None)
-            
-        if self.structure is not None:
-            self.exact_mass = rdMolDescriptors.CalcExactMolWt(self.structure)
-        
-        if self.distances is None and self.structure is not None:
-            Chem.rdmolops.GetDistanceMatrix(self.structure)
-        
-        if self.adduct_mass is None and self.spectrum is not None:
-            self.adduct_mass = general_utils.get_adduct_mass(self.spectrum.adduct)
-        
-        if self.is_known is None and self.structure is not None:
-            self.is_known = True
             
         # if no id is provided, generate one
         if self.id is None:
@@ -274,12 +290,8 @@ class Compound:
             description["name"] = self.name
         
         if self.is_known:
-            description['num_aromatic_rings'] = rdMolDescriptors.CalcNumAromaticRings(self.structure)
-            description['num_atoms'] = self.structure.GetNumAtoms()
-            description['num_bonds'] = self.structure.GetNumBonds()
-            description['num_rings'] = rdMolDescriptors.CalcNumRings(self.structure)
-
-            # TODO: add peak annotation information
+            st_meta = StructureMeta(self.structure)
+            description.update(st_meta.__dict__)
         
         return description
     

@@ -2,12 +2,14 @@
 
 This class is used to create a ModiFinder object.
 The object can be used to get information about unknown compounds in the network using the known compounds.
+
+This class Builds and maintains a network of compounds where the nodes are compounds (known and unknown)
 """
 
 from modifinder import convert as convert
 from modifinder.classes.Compound import Compound
 from modifinder.classes.EdgeDetail import EdgeDetail, MatchType
-from modifinder.engines.Abtracts import AlignmentEngine, AnnotationEngine
+from modifinder.engines import AlignmentEngine, AnnotationEngine
 from modifinder.engines.annotation.MAGMaAnnotationEngine import MAGMaAnnotationEngine
 from modifinder.engines.alignment.CosineAlignmentEngine import CosineAlignmentEngine
 from modifinder.utilities import visualizer as mf_vis
@@ -47,8 +49,11 @@ class ModiFinder:
     See Also
     --------
     Compound
-    EdgeDetail
-    Engines
+    EdgeDetail.EdgeDetail
+    AlignmentEngine
+    modifinder.AlignmentEngine
+    modifinder.engines.AlignmentEngine
+    modifinder.engines.Abstracts.AlignmentEngine
 
     Examples
     --------
@@ -56,7 +61,7 @@ class ModiFinder:
 
     def __init__(
         self,
-        knownCompond: Compound = None,
+        knownCompound: Compound = None,
         unknownCompound: Compound = None,
         edgeDetail: EdgeDetail = None,
         helpers: list = [],
@@ -78,7 +83,7 @@ class ModiFinder:
 
         Parameters
         ----------
-        knownCompond : known compound (not optional in Use Case 1, ignored in Use Case 2)
+        knownCompound : known compound (not optional in Use Case 1, ignored in Use Case 2)
             Data to create a known compound. The data can be a Compound object, or any data that can be converted to a Compound object.
 
         unknownCompound : unknown compound (not optional in Use Case 1, ignored in Use Case 2)
@@ -125,7 +130,7 @@ class ModiFinder:
         --------
         Compound
         EdgeDetail
-        Engines
+
 
         Examples
         --------
@@ -168,13 +173,13 @@ class ModiFinder:
                 self.network.add_node(unknownCompound.id, compound=unknownCompound)
                 self.unknowns = [unknownCompound.id]
             
-            if knownCompond is not None:
-                self.network.add_node(knownCompond.id, compound=knownCompond)
-                knownCompond = convert.to_compound(data=knownCompond, **kwargs)
+            if knownCompound is not None:
+                knownCompound = convert.to_compound(data=knownCompound, **kwargs)
+                self.network.add_node(knownCompound.id, compound=knownCompound)
             
             
-            if knownCompond is not None and unknownCompound is not None:
-                self.add_adjusted_edge(knownCompond.id, unknownCompound.id, edgeDetail, **kwargs)
+            if knownCompound is not None and unknownCompound is not None:
+                self.add_adjusted_edge(knownCompound.id, unknownCompound.id, edgeDetail, **kwargs)
 
         
         if helpers is not None:
@@ -182,7 +187,7 @@ class ModiFinder:
                 try:
                     helper = convert.to_compound(data=helper)
                     self.network.add_node(helper.id, compound=helper)
-                    self.add_adjusted_edge(helper.id, knownCompond.id)
+                    self.add_adjusted_edge(helper.id, knownCompound.id)
                 except Exception as e:
                     print(f"Error adding helper compound: {e}")
                     raise e
@@ -411,7 +416,7 @@ class ModiFinder:
         return unknown.id
         
     
-    def generate_probabilities(self, known_id = None, unknown_id = None, shifted_only = False, CI = False, CPA = True, CFA = True, CPE = True):
+    def generate_probabilities(self, known_id = None, unknown_id = None, shifted_only = False, CI = False, CPA = True, CFA = True, CPE = True, **kwargs):
         
         if unknown_id is None:
             unknown_id = self._get_unknown()

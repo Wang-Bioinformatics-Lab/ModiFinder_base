@@ -1,3 +1,6 @@
+"""This module contains the abstract classes for the engines in ModiFinder.
+"""
+
 # from __future__ import annotations
 from abc import ABC, abstractmethod
 from modifinder.classes.Spectrum import Spectrum

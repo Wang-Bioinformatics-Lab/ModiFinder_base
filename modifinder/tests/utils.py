@@ -3,7 +3,7 @@ import unittest
 
 def compare_compounds(compound1, compound2):
     """Compares two compounds and returns True if they are the same."""
-    for key in ["adduct_mass", "is_known", "name"]:
+    for key in ["is_known", "name"]:
         if getattr(compound1, key) != getattr(compound2, key):
             print(f"Key {key} does not match", getattr(compound1, key), getattr(compound2, key))
             return False

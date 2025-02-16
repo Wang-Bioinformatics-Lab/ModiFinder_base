@@ -95,7 +95,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         base_precision = 1 + kwargs["ppm_tolerance"] / 1000000
         peak_fragments_map = [set() for i in range(len(compound.spectrum.mz))]
         for i in range(len(compound.spectrum.mz)):
-            search_weight = compound.spectrum.mz[i] - compound.adduct_mass
+            search_weight = compound.spectrum.mz[i] - compound.spectrum.adduct_mass
             annotations = fragmentation_instance.find_fragments(
                 search_weight, 0.1, base_precision, kwargs["mz_tolerance"]
             )
@@ -213,7 +213,9 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         """
         Refines the annotations of a compound by using the helper compound
         """
-        
+        if not modify_compound:
+            main_compound = main_compound.copy()
+            
         if helper_compound.exact_mass < main_compound.exact_mass:
             modification_site = get_modification_nodes(main_compound.structure, helper_compound.structure, True)
             shifted_peaks = [match.second_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
@@ -250,6 +252,8 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                     helper_peak_fragment_map.add(new_fragment)
             
             main_compound.peak_fragments_map[peak[0]] = main_compound.peak_fragments_map[peak[0]].intersection(helper_peak_fragment_map)
+        
+        return main_compound.peak_fragments_map
         
         
             
