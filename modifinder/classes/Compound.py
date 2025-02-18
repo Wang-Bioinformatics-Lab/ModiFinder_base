@@ -276,7 +276,7 @@ class Compound:
             description["name"] = self.name
         
         if self.is_known:
-            st_meta = StructureMeta(self.structure)
+            st_meta = StructureMeta.from_structure(self.structure)
             description.update(st_meta.__dict__)
         
         return description

@@ -179,9 +179,9 @@ def get_np_classifier(smiles):
                 data[key] = []
         
         final_data = {
-            "class_types": data["class"],
-            "superclasses": data["superclass"],
-            "pathways": data["pathway"],
+            "class_types": data["class_results"],
+            "superclasses": data["superclass_results"],
+            "pathways": data["pathway_results"],
             "isglycoside": data["isglycoside"],
         }
         return final_data
