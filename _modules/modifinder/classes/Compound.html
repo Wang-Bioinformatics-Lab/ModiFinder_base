@@ -203,11 +203,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_exact_mass</span> <span class="o">=</span> <span class="n">rdMolDescriptors</span><span class="o">.</span><span class="n">CalcExactMolWt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">rdmolops</span><span class="o">.</span><span class="n">GetDistanceMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="kc">True</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="kc">None</span>
         
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -305,8 +305,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Parse missing and verify the data of the class&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">is_known</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># if self.is_known is None:</span>
+        <span class="c1">#     self.is_known = (self.structure is not None)</span>
             
         <span class="c1"># if no id is provided, generate one</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
