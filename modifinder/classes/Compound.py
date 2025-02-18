@@ -130,11 +130,11 @@ class Compound:
         if self._structure is not None:
             self._exact_mass = rdMolDescriptors.CalcExactMolWt(self._structure)
             self._distances = Chem.rdmolops.GetDistanceMatrix(self._structure)
-        if self.is_known is None:
-            self.is_known = self._structure is not None
+        if self.is_known is None and self._structure is not None:
+            self.is_known = True
         
         if self.is_known and self._structure is None:
-            self.is_known = False
+            self.is_known = None
         
     @property
     def spectrum(self):
@@ -232,8 +232,8 @@ class Compound:
 
     def _parse_data(self):
         """ Parse missing and verify the data of the class"""
-        if self.is_known is None:
-            self.is_known = (self.structure is not None)
+        # if self.is_known is None:
+        #     self.is_known = (self.structure is not None)
             
         # if no id is provided, generate one
         if self.id is None:

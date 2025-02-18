@@ -41,7 +41,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         for node in network.nodes:
             compound = network.nodes[node]["compound"]
             if compound is not None and compound.is_known:
-                if annotate_all or compound.spectrum.peak_fragments_map is None:
+                if annotate_all or (compound.spectrum.peak_fragments_map is None or len(compound.spectrum.peak_fragments_map) == 0):
                     self.annotate_single(compound, modify_compound=True, **kwargs)
         
         # refine by helpers

@@ -64,7 +64,7 @@ class Spectrum:
         self.ms_mass_analyzer = None
         self.ms_dissociation_method = None
         self.spectrum_id = None
-        self.peak_fragments_map = []
+        self.peak_fragments_map = {}
         
         if incoming_data is None and len(kwargs) == 0:
             return
@@ -174,7 +174,7 @@ class Spectrum:
         self.ms_mass_analyzer = None
         self.ms_dissociation_method = None
         self.spectrum_id = None
-        self.peak_fragments_map = []
+        self.peak_fragments_map = {}
     
     
     def copy(self):
