@@ -27,7 +27,7 @@ def load_Compound_from_cache(data, cache = None, **kwargs):
     return Compound(data, **kwargs)
 
 def run_single(match_index, network = None, networkUnknowns = None, unknown_compound = None, known_compounds = None, 
-               helpers = None, cached_compounds = None, **kwargs):
+               helpers = None, cached_compounds = None, match_meta = None, **kwargs):
     """
     Run the modifinder algorithm on the given input data and return the result as a dictionary.
     """
@@ -72,6 +72,10 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
                 except Exception:
                     final_result[known_index]['unknown_id'] = str(unknown_compound)
                     pass
+                try:
+                    final_result[known_index].update(match_meta[known_index])
+                except Exception:
+                    pass
             except Exception:
                 pass
         return final_result
@@ -97,6 +101,11 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
             # add entropy of the probabilities
             result["entropy"] = entropy(probs)
             final_result[known_index] = result
+            
+            try:
+                final_result[known_index].update(match_meta[known_index])
+            except Exception:
+                pass
                     
         except Exception as err:
             final_result[known_index] = {"error": str(err), "match_index": match_index, "unknown_id": unknown_id, "known_id": node}
