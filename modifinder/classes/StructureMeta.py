@@ -27,6 +27,8 @@ class StructureMeta:
         List of pathways from the np_classifier
     isglycoside: bool
         True if the molecule is a glycoside.
+    smiles: str
+        SMILES representation of the molecule.
     """
     
     num_aromatic_rings: int
@@ -37,6 +39,7 @@ class StructureMeta:
     superclasses: list
     pathways: list
     isglycoside: bool
+    smiles: str = None
     
     
     @classmethod
@@ -59,9 +62,10 @@ class StructureMeta:
         num_atoms = structure.GetNumAtoms()
         num_bonds = structure.GetNumBonds()
         num_rings = rdMolDescriptors.CalcNumRings(structure)
-        np_data = get_np_classifier(Chem.MolToSmiles(structure))
+        smiles = Chem.MolToSmiles(structure)
+        np_data = get_np_classifier(smiles)
         class_types = np_data["class_types"]
         superclasses = np_data["superclasses"]
         pathways = np_data["pathways"]
         isglycoside = np_data["isglycoside"]
-        return cls(num_aromatic_rings, num_atoms, num_bonds, num_rings, class_types, superclasses, pathways, isglycoside)
+        return cls(num_aromatic_rings, num_atoms, num_bonds, num_rings, class_types, superclasses, pathways, isglycoside, smiles)
