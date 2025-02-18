@@ -208,8 +208,9 @@ class Compound:
         if spectrum is not None or "precursor_mz" in lower_kwargs:
             try:
                 spectrum = convert.to_spectrum(spectrum, **lower_kwargs)
-            except Exception:
+            except Exception as e:
                 spectrum = None
+                raise e
         
         if spectrum is not None and spectrum.mz is not None:
             self.spectrum = spectrum

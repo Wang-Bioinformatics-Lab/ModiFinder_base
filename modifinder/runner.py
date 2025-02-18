@@ -39,9 +39,13 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
         else:
             mf = ModiFinder()
             unknown_compound = load_Compound_from_cache(unknown_compound, cached_compounds, **kwargs)
+            if unknown_compound is None:
+                raise ValueError("Unknown compound is not found.")
             unknown_id = mf.add_unknown(unknown_compound, **kwargs)
             for known_index, known_compound in enumerate(known_compounds):
                 known_compound = load_Compound_from_cache(known_compound, cached_compounds, **kwargs)
+                if known_compound is None:
+                    raise ValueError(f"Known compound {known_index} is not found.")
                 mf.add_neighbor(known_compound, unknown_id)
                 for helper in helpers[known_index]:
                     helper = load_Compound_from_cache(helper, cached_compounds, **kwargs)
@@ -72,10 +76,11 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
                 except Exception:
                     final_result[known_index]['unknown_id'] = str(unknown_compound)
                     pass
-                try:
-                    final_result[known_index].update(match_meta[known_index])
-                except Exception:
-                    pass
+            except Exception:
+                pass
+            
+            try:
+                final_result[known_index].update(match_meta[known_index])
             except Exception:
                 pass
         return final_result
@@ -101,15 +106,19 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
             # add entropy of the probabilities
             result["entropy"] = entropy(probs)
             final_result[known_index] = result
-            
-            try:
-                final_result[known_index].update(match_meta[known_index])
-            except Exception:
-                pass
                     
         except Exception as err:
             final_result[known_index] = {"error": str(err), "match_index": match_index, "unknown_id": unknown_id, "known_id": node}
             # raise err
+    
+    try:
+        for i in range(len(known_compounds)):
+            try:
+                final_result[i].update(match_meta[i])
+            except Exception:
+                pass
+    except Exception:
+        pass
     return final_result
     
 
