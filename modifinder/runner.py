@@ -3,7 +3,9 @@ This Module is to run the modifinder algorithm on the give input data.
 """
 
 from modifinder import ModiFinder, Compound, BasicEvaluationEngine
+from modifinder.utilities import visualizer as mf_vis
 from modifinder.utilities.general_utils import entropy
+import matplotlib.pyplot as plt
 import pandas as pd
 import pickle
 import concurrent.futures
@@ -27,7 +29,7 @@ def load_Compound_from_cache(data, cache = None, **kwargs):
     return Compound(data, **kwargs)
 
 def run_single(match_index, network = None, networkUnknowns = None, unknown_compound = None, known_compounds = None, 
-               helpers = None, cached_compounds = None, match_meta = None, **kwargs):
+               helpers = None, cached_compounds = None, match_meta = None, output_dir = None, images_name = None, **kwargs):
     """
     Run the modifinder algorithm on the given input data and return the result as a dictionary.
     """
@@ -94,8 +96,20 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
     
     for known_index, node in enumerate(knowns):
         try:
+            known_compound = mf.network.nodes[node]["compound"]
             probs = mf.generate_probabilities(unknown_id=unknown_id, known_id=node, **kwargs)
             data = mf.get_meta_data(unknown_id=unknown_id, known_id=node)
+            try:
+                if images_name is not None:
+                    if isinstance(images_name, str):
+                        data['image_path'] = os.path.join(output_dir, images_name + str(match_index) + ".png")
+                    else:
+                        data['image_path'] = os.path.join(output_dir, images_name[known_index])
+                    png = mf_vis.draw_molecule(known_compound.structure)
+                    plt.imsave(data['image_path'], png)
+            except Exception as err:
+                data['image_path'] = str(err)
+                pass
             result = {
                 "match_index": match_index,
                 "unknown_id": unknown_id,
@@ -105,7 +119,6 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
             
             if unknown_compound.structure:
                 for method in ["is_max", "average_distance"]:
-                    known_compound = mf.network.nodes[node]["compound"]
                     evaluation_result = evaluation_engine.evaluate_single(known_compound.structure, unknown_compound.structure,
                                                                             probs, evaluation_method=method, **kwargs)
                     result[method] = evaluation_result
@@ -137,7 +150,7 @@ def run_batch(matches, output_dir, file_name, save_pickle = True, save_csv = Tru
     result = []
     for match in matches:
         try:
-            result.extend(run_single(**match, cached_compounds = cached_data))
+            result.extend(run_single(**match, cached_compounds = cached_data, output_dir = output_dir))
         except Exception as err:
             result.append({"error": "Error in run_single: " + str(err), "match_index": match["match_index"]})
     
