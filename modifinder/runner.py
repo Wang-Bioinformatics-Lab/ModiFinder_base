@@ -46,7 +46,7 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
         if network is not None:
             mf = ModiFinder(network = network, networkUnknowns = networkUnknowns, **kwargs)
         else:
-            mf = ModiFinder()
+            mf = ModiFinder(**kwargs)
             unknown_compound = load_Compound_from_cache(unknown_compound, cached_compounds, **kwargs)
             if unknown_compound is None:
                 raise ValueError("Unknown compound is not found.")
@@ -96,8 +96,19 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
     
     for known_index, node in enumerate(knowns):
         try:
+            result = {
+                "match_index": match_index,
+                "unknown_id": unknown_id,
+                "known_id": node,
+            }
             known_compound = mf.network.nodes[node]["compound"]
-            probs = mf.generate_probabilities(unknown_id=unknown_id, known_id=node, **kwargs)
+            if abs(known_compound.spectrum.precursor_mz - unknown_compound.spectrum.precursor_mz) < 0.1:
+                # exact match
+                probs = [0] * len(known_compounds)
+                result["entropy"] = None
+            else:
+                probs = mf.generate_probabilities(unknown_id=unknown_id, known_id=node, **kwargs)
+                result["entropy"] = entropy(probs)
             data = mf.get_meta_data(unknown_id=unknown_id, known_id=node)
             try:
                 if images_name is not None:
@@ -105,18 +116,12 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
                         data['image_path'] = os.path.join(output_dir, images_name + str(match_index) + ".png")
                     else:
                         data['image_path'] = os.path.join(output_dir, images_name[known_index])
-                    png = mf_vis.draw_molecule(known_compound.structure)
+                    png = mf_vis.draw_molecule_heatmap(known_compound.structure, probs, show_labels=True, shrink_labels=True, show_legend=False)
                     plt.imsave(data['image_path'], png)
             except Exception as err:
                 data['image_path'] = str(err)
                 pass
-            result = {
-                "match_index": match_index,
-                "unknown_id": unknown_id,
-                "known_id": node,
-            }
             result.update(data)
-            
             if unknown_compound.structure:
                 for method in ["is_max", "average_distance"]:
                     evaluation_result = evaluation_engine.evaluate_single(known_compound.structure, unknown_compound.structure,
@@ -124,7 +129,7 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
                     result[method] = evaluation_result
             
             # add entropy of the probabilities
-            result["entropy"] = entropy(probs)
+            
             result["error"] = "No Issues"
             final_result[known_index] = result
                     
