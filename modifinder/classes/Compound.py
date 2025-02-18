@@ -179,7 +179,7 @@ class Compound:
         
     
 
-    def update(self, structure = None, id: str = None, spectrum: Spectrum = None, usi: str = None, 
+    def update(self, _structure = None, structure = None, id: str = None, _spectrum: Spectrum = None, spectrum: Spectrum = None, usi: str = None, 
                is_known: bool = None, name: str = None,
                additional_attributes: dict = {}, 
                **kwargs):
@@ -187,8 +187,10 @@ class Compound:
 
         Parameters
         ----------
+        _structure (Chem.Mol): The structure of the compound
         structure (Chem.Mol, Smiles, InChi): The structure of the compound
         id (str): The id of the compound
+        _spectrum (Spectrum): an instance of Spectrum containing peak information [(mz, intensity)], precursor mass, charge, and adduct for mass spectrumetry data
         spectrum (Spectrum): an instance of Spectrum containing peak information [(mz, intensity)], precursor mass, charge, and adduct for mass spectrumetry data
         usi (str): The USI of the compound
         is_known (bool): A boolean indicating whether the compound is known, if set to False, annotators or other parts of the code will treat this compound as unknown, if not provided but the structure is provided, it will be set to True
@@ -199,12 +201,14 @@ class Compound:
         """
         # convert keys to lowercase
         lower_kwargs = {key.lower(): value for key, value in kwargs.items()}
+        self.structure = _structure if _structure is not None else self.structure
         try:
             temp_structure = _get_molecule(structure, **lower_kwargs)
             self.structure = temp_structure if temp_structure is not None else self.structure
         except Exception:
             pass
         self.id = id if id is not None else self.id
+        self.spectrum = _spectrum if _spectrum is not None else self.spectrum
         if spectrum is not None or "precursor_mz" in lower_kwargs:
             try:
                 spectrum = convert.to_spectrum(spectrum, **lower_kwargs)

@@ -91,7 +91,7 @@ class Spectrum:
         return self._adduct_mass
 
     def update(self, peaks = None, peaks_json = None, mz=None, intensity=None, precursor_mz=None, precursor_charge=None, 
-               adduct=None, adduct_mass = None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
+               _adduct = None, adduct=None, adduct_mass = None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
                ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None,
                remove_large_peaks = False, keep_top_k=None, peak_fragments_map: dict = None, **kwargs):
         """Update the Spectrum object with the given values.
@@ -125,6 +125,7 @@ class Spectrum:
         self.intensity = np.array(intensity) if intensity is not None else self.intensity
         self.precursor_mz = float(precursor_mz) if precursor_mz is not None else self.precursor_mz
         self.precursor_charge = int(float(precursor_charge)) if precursor_charge is not None else self.precursor_charge
+        self.adduct = _adduct if _adduct is not None else self.adduct
         self.adduct = adduct if adduct is not None else self.adduct
         self.ms_level = int(ms_level) if ms_level is not None else self.ms_level
         self.instrument = instrument if instrument is not None else self.instrument
