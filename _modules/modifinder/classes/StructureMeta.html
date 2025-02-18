@@ -100,6 +100,8 @@
 <span class="sd">        List of pathways from the np_classifier</span>
 <span class="sd">    isglycoside: bool</span>
 <span class="sd">        True if the molecule is a glycoside.</span>
+<span class="sd">    smiles: str</span>
+<span class="sd">        SMILES representation of the molecule.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">num_aromatic_rings</span><span class="p">:</span> <span class="nb">int</span>
@@ -110,6 +112,7 @@
     <span class="n">superclasses</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">pathways</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">isglycoside</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     
     
 <div class="viewcode-block" id="StructureMeta.from_structure"><a class="viewcode-back" href="../../../modifinder/classes/classes.StructureMeta.html#modifinder.StructureMeta.from_structure">[docs]</a>    <span class="nd">@classmethod</span>
@@ -132,12 +135,13 @@
         <span class="n">num_atoms</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
         <span class="n">num_bonds</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
         <span class="n">num_rings</span> <span class="o">=</span> <span class="n">rdMolDescriptors</span><span class="o">.</span><span class="n">CalcNumRings</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-        <span class="n">np_data</span> <span class="o">=</span> <span class="n">get_np_classifier</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">structure</span><span class="p">))</span>
+        <span class="n">smiles</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+        <span class="n">np_data</span> <span class="o">=</span> <span class="n">get_np_classifier</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="n">class_types</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">[</span><span class="s2">&quot;class_types&quot;</span><span class="p">]</span>
         <span class="n">superclasses</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">[</span><span class="s2">&quot;superclasses&quot;</span><span class="p">]</span>
         <span class="n">pathways</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">[</span><span class="s2">&quot;pathways&quot;</span><span class="p">]</span>
         <span class="n">isglycoside</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">[</span><span class="s2">&quot;isglycoside&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">num_aromatic_rings</span><span class="p">,</span> <span class="n">num_atoms</span><span class="p">,</span> <span class="n">num_bonds</span><span class="p">,</span> <span class="n">num_rings</span><span class="p">,</span> <span class="n">class_types</span><span class="p">,</span> <span class="n">superclasses</span><span class="p">,</span> <span class="n">pathways</span><span class="p">,</span> <span class="n">isglycoside</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">num_aromatic_rings</span><span class="p">,</span> <span class="n">num_atoms</span><span class="p">,</span> <span class="n">num_bonds</span><span class="p">,</span> <span class="n">num_rings</span><span class="p">,</span> <span class="n">class_types</span><span class="p">,</span> <span class="n">superclasses</span><span class="p">,</span> <span class="n">pathways</span><span class="p">,</span> <span class="n">isglycoside</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
