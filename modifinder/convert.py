@@ -43,7 +43,7 @@ def to_compound(data = None, use_object=None, **kwargs):
                 compound.clear()
                 data_dict = compound_to_dict(data)
                 data_dict.update(kwargs)
-                compound.update(data_dict)
+                compound.update(**data_dict)
             else:
                 compound = data
                 parsed_kwargs = parse_data_to_universal(kwargs)

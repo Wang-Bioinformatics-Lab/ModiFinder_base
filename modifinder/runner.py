@@ -32,6 +32,13 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
     Run the modifinder algorithm on the given input data and return the result as a dictionary.
     """
     evaluation_engine = BasicEvaluationEngine(**kwargs)
+    if known_compounds is None:
+        if match_meta is not None:
+            for match in match_meta:
+                match["match_index"] = match_index
+            return match_meta
+        else:
+            raise ValueError("No known compounds are provided.")
     final_result = [dict() for _ in range(len(known_compounds))]
     try:
         if network is not None:
@@ -105,6 +112,7 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
             
             # add entropy of the probabilities
             result["entropy"] = entropy(probs)
+            result["error"] = "No Issues"
             final_result[known_index] = result
                     
         except Exception as err:
@@ -131,10 +139,11 @@ def run_batch(matches, output_dir, file_name, save_pickle = True, save_csv = Tru
         try:
             result.extend(run_single(**match, cached_compounds = cached_data))
         except Exception as err:
-            result.append([{"error": "Error in run_single: " + str(err), "match_index": match["match_index"]}])
+            result.append({"error": "Error in run_single: " + str(err), "match_index": match["match_index"]})
     
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if output_dir is not None:
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
     
     if save_pickle:
         with open(os.path.join(output_dir, file_name + ".pkl"), "wb") as f:
