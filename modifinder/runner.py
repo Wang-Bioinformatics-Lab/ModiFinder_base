@@ -64,7 +64,7 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
         knowns = mf.get_neighbors(node_id=unknown_id)
         
     except Exception as err:
-        final_result = [{"match_index": match_index, "error": str(err)} for _ in range(len(known_compounds))]
+        final_result = [{"match_index": match_index, "error": "error in creating the network. "  + str(err)} for _ in range(len(known_compounds))]
         for known_index, node in enumerate(known_compounds):
             try:
                 try:
@@ -116,7 +116,7 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
             final_result[known_index] = result
                     
         except Exception as err:
-            final_result[known_index] = {"error": str(err), "match_index": match_index, "unknown_id": unknown_id, "known_id": node}
+            final_result[known_index] = {"error": "error when making prediction. " + str(err), "match_index": match_index, "unknown_id": unknown_id, "known_id": node}
             # raise err
     
     try:

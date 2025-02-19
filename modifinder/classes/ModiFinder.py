@@ -140,15 +140,14 @@ class ModiFinder:
         self.network = None
         self.unknowns = None
         self.ppm_tolerance = ppm_tolerance
-        self.args = kwargs
         
         if alignmentEngine is None:
-            self.alignmentEngine = CosineAlignmentEngine(**kwargs)
+            self.alignmentEngine = CosineAlignmentEngine(ppm_tolerance = self.ppm_tolerance, **kwargs)
         else:
             self.alignmentEngine = alignmentEngine
         
         if annotationEngine is None:
-            self.annotationEngine = MAGMaAnnotationEngine(**kwargs)
+            self.annotationEngine = MAGMaAnnotationEngine(ppm_tolerance = self.ppm_tolerance, **kwargs)
         else:
             self.annotationEngine = annotationEngine
 
@@ -252,6 +251,8 @@ class ModiFinder:
         
         if alignmentEngine is None:
             raise ValueError("Alignment engine is required to re-align the network")
+        ppm_tolerance = kwargs.get("ppm_tolerance", self.ppm_tolerance)
+        kwargs["ppm_tolerance"] = ppm_tolerance
         alignmentEngine.align(self.network, **kwargs)
     
     
