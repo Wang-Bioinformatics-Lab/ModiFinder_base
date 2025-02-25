@@ -116,8 +116,6 @@ class BasicEvaluationEngine(EvaluationEngine):
                     - **sorted_rank** : returns the rank of the true modification site in the sorted probabilities
                     
                     - **is_max_neighbor** : returns 1 if the true modification site is a neighbor of the atom with the highest probability, 0 otherwise
-                    
-                    - **top_k** : returns 1 if the true modification site is within k neighbors of the atom with the highest probability, 0 otherwise
 
             kwargs : dict
                 Additional arguments.
@@ -199,9 +197,5 @@ class BasicEvaluationEngine(EvaluationEngine):
             if "neighbor_count" not in kwargs:
                 raise exceptions.ModiFinderError("The neighbor count must be specified for this evaluation method")
             return is_max_neighbor(G, probabilities, true_index, kwargs["neighbor_count"])
-        elif method == "top_k":
-            if "k" not in kwargs:
-                raise exceptions.ModiFinderError("The k value must be specified for this evaluation method")
-            return top_k(G, probabilities, true_index, kwargs["k"])
         else:
             raise exceptions.ModiFinderError("Evaluation method not recognized")
