@@ -670,13 +670,12 @@
             <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
             
     
+    <span class="c1"># if matches is one dimentional, convert it to two dimentional</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">matches</span><span class="p">]</span>
+    
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of matches should be equal to the number of spectrums - 1&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># in case there is only one match, accept it as both a list of tuples or a list of lists</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">matches</span><span class="p">]</span>
 
     <span class="n">flipped</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="s2">&quot;flipped&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>

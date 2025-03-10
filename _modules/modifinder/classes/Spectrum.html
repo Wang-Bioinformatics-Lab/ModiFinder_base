@@ -143,9 +143,10 @@
             <span class="k">return</span>
         
         <span class="k">if</span> <span class="n">incoming_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">convert</span><span class="o">.</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">incoming_data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">normalize_peaks</span> <span class="o">=</span> <span class="n">normalize_peaks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;normalize_peaks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_peaks</span>
+            <span class="n">convert</span><span class="o">.</span><span class="n">to_spectrum</span><span class="p">(</span><span class="n">incoming_data</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">adduct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -155,7 +156,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">adduct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span> <span class="o">=</span> <span class="n">adduct_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="n">general_utils</span><span class="o">.</span><span class="n">get_adduct_mass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="n">general_utils</span><span class="o">.</span><span class="n">get_adduct_mass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_adduct</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_adduct_format</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_adduct_mass</span> <span class="o">=</span> <span class="mi">0</span>
     
@@ -166,7 +173,7 @@
 <div class="viewcode-block" id="Spectrum.update"><a class="viewcode-back" href="../../../modifinder/classes/generated/modifinder.Spectrum.update.html#modifinder.classes.Spectrum.update">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peaks</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peaks_json</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precursor_mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precursor_charge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
                <span class="n">_adduct</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">adduct</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ms_mass_analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
                <span class="n">ms_dissociation_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spectrum_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_to_base_peak</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">remove_large_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">keep_top_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peak_fragments_map</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+               <span class="n">remove_large_peaks</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">keep_top_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peak_fragments_map</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignore_adduct_format</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the Spectrum object with the given values.</span>
 
 <span class="sd">        Args:</span>
@@ -188,7 +195,10 @@
 <span class="sd">            remove_large_peaks (bool): If True, remove all the peaks that are larger than the precursor m/z value.</span>
 <span class="sd">            keep_top_k (int): If not None, only keep the top k peaks.</span>
 <span class="sd">            peak_fragments_map (dict): A dictionary mapping peaks to fragments</span>
+<span class="sd">            ignore_adduct_format (bool): If True, if the adduct format is not recognized, it will not throw an error.</span>
+<span class="sd">            **kwargs: Additional keyword arguments.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_adduct_format</span> <span class="o">=</span> <span class="n">ignore_adduct_format</span>
         <span class="k">if</span> <span class="n">peaks_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">peaks</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">peaks_json</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
