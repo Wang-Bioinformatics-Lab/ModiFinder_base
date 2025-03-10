@@ -116,6 +116,8 @@ class Compound:
         # attempt to initialize the class with the provided data
         if incoming_data is not None:
             convert.to_compound(incoming_data, use_object = self, **kwargs)
+        else:
+            self.update(**kwargs)
 
         # TODO: write setters for spectrum, structure to warn the user to update the dependent attributes
 
