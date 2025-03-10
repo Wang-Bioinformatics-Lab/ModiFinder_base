@@ -41,3 +41,6 @@ extras = []  # Define optional dependencies here if needed
 [project.urls]
 Documentation = "https://wang-bioinformatics-lab.github.io/ModiFinder_base/"
 Repository = "https://github.com/Wang-Bioinformatics-Lab/ModiFinder_base"
+
+[tool.setuptools.packages]
+find = {include = ["modifinder"]}

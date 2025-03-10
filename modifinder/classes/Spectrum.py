@@ -84,14 +84,14 @@ class Spectrum:
         if self._adduct is not None:
             self._adduct_mass = general_utils.get_adduct_mass(self._adduct)
         else:
-            self._adduct_mass = None
+            self._adduct_mass = 0
     
     @property
     def adduct_mass(self):
         return self._adduct_mass
 
     def update(self, peaks = None, peaks_json = None, mz=None, intensity=None, precursor_mz=None, precursor_charge=None, 
-               _adduct = None, adduct=None, adduct_mass = None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
+               _adduct = None, adduct=None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
                ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None,
                remove_large_peaks = False, keep_top_k=None, peak_fragments_map: dict = None, **kwargs):
         """Update the Spectrum object with the given values.
