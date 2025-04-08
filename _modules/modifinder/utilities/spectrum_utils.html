@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.utilities.spectrum_utils &mdash; ModiFinder 1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=c9ed3d4e"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">modifinder.utilities.spectrum_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modifinder.utilities.spectrum_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_utils</span> <span class="k">as</span> <span class="n">mf_gu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tqdm</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cluster_spectrums</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is used to cluster the peaks of the spectrums within a given tolerance</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        spectrums: list of Spectrum objects</span>
+<span class="sd">            The spectrums to be clustered</span>
+<span class="sd">        ppm_tolerance: float</span>
+<span class="sd">            The tolerance in ppm</span>
+<span class="sd">        mz_tolerance: float</span>
+<span class="sd">            The tolerance in mz</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    clusters: list of clusters of the mz values, each cluster is a list of [mz, intensity, origin_spectrum_index]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">all_points</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">spectrums</span><span class="p">),</span> <span class="n">disable</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">):</span>
+            <span class="n">all_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
+    
+    <span class="c1"># print(&quot;all points&quot;, len(all_points))</span>
+
+    <span class="c1"># 1. Sort by mz</span>
+    <span class="n">all_points</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># 2. Sweep</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_points</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">clusters</span>
+
+    <span class="c1"># Start the first cluster</span>
+    <span class="n">first_mz</span><span class="p">,</span> <span class="n">first_intensity</span><span class="p">,</span> <span class="n">first_idx</span> <span class="o">=</span> <span class="n">all_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">clusters</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">first_mz</span><span class="p">,</span> <span class="n">first_intensity</span><span class="p">,</span> <span class="n">first_idx</span><span class="p">]])</span>
+    <span class="n">ref_mz</span> <span class="o">=</span> <span class="n">first_mz</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="ow">in</span> <span class="n">all_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mf_gu</span><span class="o">.</span><span class="n">is_shifted</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">ref_mz</span><span class="p">,</span> <span class="n">ppm_tolerance</span><span class="p">,</span> <span class="n">mz_tolerance</span><span class="p">):</span>
+            <span class="c1"># Add to the last cluster</span>
+            <span class="n">clusters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">idx</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Create a new cluster</span>
+            <span class="n">clusters</span><span class="o">.</span><span class="n">append</span><span class="p">([[</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">idx</span><span class="p">]])</span>
+            <span class="n">ref_mz</span> <span class="o">=</span> <span class="n">mz</span>
+
+    <span class="k">return</span> <span class="n">clusters</span>
+
+
+<div class="viewcode-block" id="aggregate_spectrums"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.spectrum_utils.aggregate_spectrums">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">aggregate_spectrums</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">consensus_majority_ratio</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is to create a consensus spectrum from a list of spectrums of the same compound</span>
+<span class="sd">    all the other components of the generated spectrum such as the charge, ... are taken from the first spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    if the spectrums have different adducts, the adduct mass is removed from the spectrums before aggregation. The final result is reported with no adduct mass.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        spectrums: list of Spectrum objects</span>
+<span class="sd">            The spectrums to be aggregated</span>
+<span class="sd">        ppm_tolerance: float</span>
+<span class="sd">            The tolerance in ppm</span>
+<span class="sd">        mz_tolerance: float</span>
+<span class="sd">            The tolerance in mz</span>
+<span class="sd">        consensus_majority_ratio: float</span>
+<span class="sd">            The ratio of the spectrums that should have the peak to be considered in the consensus</span>
+<span class="sd">            if is 1, all the spectrums should have the peak to be considered in the consensus</span>
+<span class="sd">            if is 0, only one spectrum should have the peak to be considered in the consensus</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    result: Spectrum object</span>
+<span class="sd">        The aggregated spectrum</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">adducts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">adduct</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">])</span>
+    <span class="n">spectrums</span> <span class="o">=</span> <span class="p">[</span><span class="n">remove_adduct</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">]</span>
+    
+    <span class="n">clusters</span> <span class="o">=</span> <span class="n">_cluster_spectrums</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span><span class="p">,</span> <span class="n">mz_tolerance</span><span class="p">)</span>
+    <span class="c1"># print(&quot;clustering done&quot;, len(clusters))</span>
+    
+    <span class="n">aggregate_mz</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aggregate_intensity</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+        <span class="n">sum_intensity</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">sum_mz</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">consensus</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">:</span>
+            <span class="n">sum_intensity</span> <span class="o">+=</span> <span class="n">intensity</span>
+            <span class="n">sum_mz</span> <span class="o">+=</span> <span class="n">mz</span>
+            <span class="n">consensus</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">consensus</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">consensus_majority_ratio</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">aggregate_mz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_mz</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">))</span>
+        <span class="n">aggregate_intensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_intensity</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">))</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">mz</span> <span class="o">=</span> <span class="n">aggregate_mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">aggregate_intensity</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">adducts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">add_adduct</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">adducts</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+    
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="refine_consensus"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.spectrum_utils.refine_consensus">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">refine_consensus</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">consensus_majority_ratio</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is used to refine a spectrum based on the consensus of the other spectrums</span>
+<span class="sd">    any peak that is not in the consensus of the other spectrums is removed.</span>
+<span class="sd">    </span>
+<span class="sd">    If the spectrums are with different adducts, the spectrums are adjusted to remove the adduct mass. The final spectrum is adjusted to have the correct adduct mass.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        spectrum: Spectrum object</span>
+<span class="sd">            The spectrum to be refined</span>
+<span class="sd">        spectrums: list of Spectrum objects</span>
+<span class="sd">            The spectrums to be used to refine the spectrum</span>
+<span class="sd">        ppm_tolerance: float</span>
+<span class="sd">            The tolerance in ppm</span>
+<span class="sd">        mz_tolerance: float</span>
+<span class="sd">            The tolerance in mz</span>
+<span class="sd">        consensus_majority_ratio: float (0-1) [default: 0]</span>
+<span class="sd">            The ratio of the spectrums that should have the peak in order to keep it, 0 means none of the spectrums need to have it</span>
+<span class="sd">            1 means all of the spectrums need to have it.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple of two elements:</span>
+<span class="sd">    result: Spectrum object</span>
+<span class="sd">        The refined spectrum</span>
+<span class="sd">    appearances: tuple of lists</span>
+<span class="sd">        The first list contains the number of spectrums that have the peak after refining</span>
+<span class="sd">        The second list contains the number of spectrums that have the peak before refining</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Create an empty list to store the refined consensus</span>
+    
+    <span class="n">refined_mz</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">refined_intensity</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_appearances</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">old_appearances</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">adduct</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">adduct</span>
+    <span class="n">spectrum</span> <span class="o">=</span> <span class="n">remove_adduct</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+    <span class="n">spectrums</span> <span class="o">=</span> <span class="p">[</span><span class="n">remove_adduct</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">):</span>
+        <span class="n">found_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">other_spectrum</span> <span class="ow">in</span> <span class="n">spectrums</span><span class="p">:</span>
+            <span class="n">peak_indexes</span> <span class="o">=</span> <span class="n">other_spectrum</span><span class="o">.</span><span class="n">get_peak_indexes</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="n">ppm_tolerance</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="n">mz_tolerance</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_indexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">found_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="n">old_appearances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">found_count</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">found_count</span> <span class="o">&gt;=</span> <span class="n">consensus_majority_ratio</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">):</span>
+            <span class="n">refined_mz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span>
+            <span class="n">refined_intensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span>
+            <span class="n">new_appearances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">found_count</span><span class="p">)</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">mz</span> <span class="o">=</span> <span class="n">refined_mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">refined_intensity</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">add_adduct</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">adduct</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="p">(</span><span class="n">new_appearances</span><span class="p">,</span> <span class="n">old_appearances</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_adduct"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.spectrum_utils.remove_adduct">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">remove_adduct</span><span class="p">(</span><span class="n">spectrum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is used to remove the adduct mass from the spectrum</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        spectrum: Spectrum object</span>
+<span class="sd">            The spectrum to remove the adduct mass from its mz values</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    result: Spectrum object</span>
+<span class="sd">        The spectrum without the adduct mass</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">adduct_mass</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="p">[</span><span class="n">mz</span> <span class="o">-</span> <span class="n">adduct_mass</span> <span class="k">for</span> <span class="n">mz</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">mz</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">-=</span> <span class="n">adduct_mass</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="add_adduct"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.spectrum_utils.add_adduct">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">add_adduct</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">adduct</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is used to add the adduct mass to the spectrum</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        spectrum: Spectrum object</span>
+<span class="sd">            The spectrum to add the adduct mass to</span>
+<span class="sd">        adduct: str</span>
+<span class="sd">            The adduct to add to the spectrum, should be in the supported adducts list.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    result: Spectrum object</span>
+<span class="sd">        The spectrum with the adduct mass</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">mf_gu</span><span class="o">.</span><span class="n">get_adduct_mass</span><span class="p">(</span><span class="n">adduct</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="p">[</span><span class="n">mz</span> <span class="o">+</span> <span class="n">adduct_mass</span> <span class="k">for</span> <span class="n">mz</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">mz</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">+=</span> <span class="n">adduct_mass</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">adduct</span> <span class="o">=</span> <span class="n">adduct</span>
+    
+    <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
