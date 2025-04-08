@@ -1,7 +1,7 @@
-Molecule utilities
+Spectrum utilities
 ===========================
 
-.. currentmodule:: modifinder.utilities.mol_utils
+.. currentmodule:: modifinder.utilities.spectrum_utils
 .. autosummary::
    :nosignatures:
 
@@ -10,7 +10,7 @@ Molecule utilities
    remove_adduct
    add_adduct
 
-.. automodule:: modifinder.utilities.mol_utils
+.. automodule:: modifinder.utilities.spectrum_utils
    :members:
    :undoc-members:
    :show-inheritance:
