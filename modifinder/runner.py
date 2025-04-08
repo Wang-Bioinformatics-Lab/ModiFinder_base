@@ -183,6 +183,7 @@ def runner(matches, output_dir = None, file_name = None, save_pickle = True, sav
     
     if number_of_cores > 1:
         batches = list(chunkify(matches, batch_size))
+        number_of_cores = min(number_of_cores, len(batches))
         
         # create a temporary directory to save the results
         if output_dir is None:
