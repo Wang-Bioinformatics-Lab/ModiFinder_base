@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Molecule utilities" href="utilities.spectrum_utils.html" />
-    <link rel="prev" title="GNPS types module" href="utilities.gnps_types.html" /> 
+    <link rel="next" title="Network module" href="utilities.network.html" />
+    <link rel="prev" title="Molecule utilities" href="utilities.mol_utils.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,6 +52,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Utilities</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="utilities.general_utils.html">General utilities module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="utilities.gnps_types.html">GNPS types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utilities.mol_utils.html">Molecule utilities</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Molecule utilities</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#gnps-utils-molecule-utils">GNPS Utils - Molecule Utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.mol_utils.attach_mols"><code class="docutils literal notranslate"><span class="pre">attach_mols()</span></code></a></li>
@@ -64,7 +65,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.mol_utils.get_transition"><code class="docutils literal notranslate"><span class="pre">get_transition()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="utilities.spectrum_utils.html">Molecule utilities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="utilities.network.html">Network module</a></li>
 </ul>
 </li>
@@ -92,7 +92,7 @@
           <li class="breadcrumb-item"><a href="index.html">Utilities</a></li>
       <li class="breadcrumb-item active">Molecule utilities</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/modifinder/utilities/utilities.mol_utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/modifinder/utilities/utilities.spectrum_utils.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -104,30 +104,6 @@
 <h1>Molecule utilities<a class="headerlink" href="#molecule-utilities" title="Permalink to this heading"></a></h1>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_modification_nodes" title="modifinder.utilities.mol_utils.get_modification_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_modification_nodes</span></code></a></p></td>
-<td><p>Calculates the modification sites between two molecules when one molecule is a substructure of the other molecule</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_modification_edges" title="modifinder.utilities.mol_utils.get_modification_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_modification_edges</span></code></a></p></td>
-<td><p>Calculates the modification edges between two molecules when one molecule is a substructure of the other molecule</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_edit_distance" title="modifinder.utilities.mol_utils.get_edit_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_edit_distance</span></code></a></p></td>
-<td><p>Calculates the edit distance between mol1 and mol2.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_edit_distance_detailed" title="modifinder.utilities.mol_utils.get_edit_distance_detailed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_edit_distance_detailed</span></code></a></p></td>
-<td><p>Calculates the edit distance between mol1 and mol2.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_transition" title="modifinder.utilities.mol_utils.get_transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transition</span></code></a></p></td>
-<td><p>Calculates the transition between mol1 and mol2.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_modification_graph" title="modifinder.utilities.mol_utils.get_modification_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_modification_graph</span></code></a></p></td>
-<td><p>Calculates the substructure difference between main_struct and sub_struct when there is exactly one modification edge,</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.attach_mols" title="modifinder.utilities.mol_utils.attach_mols"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attach_mols</span></code></a></p></td>
-<td><p>Attaches the attachment structure to main molecule at the attach_location_main and attach_location_attachment with bond_type.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="utilities.spectrum_utils.html#modifinder.utilities.mol_utils.generate_possible_stuctures" title="modifinder.utilities.mol_utils.generate_possible_stuctures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_possible_stuctures</span></code></a></p></td>
-<td><p>Generates all possible structures after attaching the difference between sub_struct and main_struct to main_struct.</p></td>
-</tr>
 </tbody>
 </table>
 <span class="target" id="module-modifinder.utilities.mol_utils"></span><section id="gnps-utils-molecule-utils">
@@ -404,8 +380,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="utilities.gnps_types.html" class="btn btn-neutral float-left" title="GNPS types module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="utilities.spectrum_utils.html" class="btn btn-neutral float-right" title="Molecule utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="utilities.mol_utils.html" class="btn btn-neutral float-left" title="Molecule utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utilities.network.html" class="btn btn-neutral float-right" title="Network module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

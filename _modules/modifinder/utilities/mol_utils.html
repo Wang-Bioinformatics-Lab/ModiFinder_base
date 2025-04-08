@@ -88,7 +88,7 @@
 <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">rkl</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 <span class="n">rkrb</span><span class="o">.</span><span class="n">DisableLog</span><span class="p">(</span><span class="s1">&#39;rdApp.error&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="get_modification_nodes"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.get_modification_nodes">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_modification_nodes</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">in_mol1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="get_modification_nodes"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_modification_nodes">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_modification_nodes</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">in_mol1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the modification sites between two molecules when one molecule is a substructure of the other molecule</span>
 
@@ -142,7 +142,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One molecule should be a substructure of the other molecule&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_modification_edges"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.get_modification_edges">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_modification_edges</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">only_outward_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="get_modification_edges"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_modification_edges">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_modification_edges</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">only_outward_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the modification edges between two molecules when one molecule is a substructure of the other molecule</span>
 
@@ -172,7 +172,7 @@
         <span class="k">return</span> <span class="n">modificationEdgesOutward</span> <span class="o">+</span> <span class="n">modificationEdgesInside</span></div>
 
 
-<div class="viewcode-block" id="get_edit_distance"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.get_edit_distance">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_edit_distance</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">):</span>
+<div class="viewcode-block" id="get_edit_distance"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_edit_distance">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_edit_distance</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the edit distance between mol1 and mol2.</span>
 
@@ -191,7 +191,7 @@
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_edit_distance_detailed"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.get_edit_distance_detailed">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_edit_distance_detailed</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">mcs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="get_edit_distance_detailed"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_edit_distance_detailed">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_edit_distance_detailed</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">mcs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the edit distance between mol1 and mol2.</span>
 
@@ -215,7 +215,7 @@
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_transition"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.get_transition">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_transition</span><span class="p">(</span><span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">):</span>
+<div class="viewcode-block" id="get_transition"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_transition">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_transition</span><span class="p">(</span><span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the transition between mol1 and mol2.</span>
 
@@ -338,7 +338,7 @@
     <span class="k">return</span> <span class="n">result</span></div>
 
 
-<div class="viewcode-block" id="get_modification_graph"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.get_modification_graph">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_modification_graph</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">):</span>
+<div class="viewcode-block" id="get_modification_graph"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.get_modification_graph">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_modification_graph</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the substructure difference between main_struct and sub_struct when there is exactly one modification edge,</span>
 <span class="sd">          if there are multiple modification edges, one of the modifications is returned randomly.</span>
@@ -420,7 +420,7 @@
     <span class="k">return</span> <span class="n">all_modifications</span></div>
 
 
-<div class="viewcode-block" id="attach_mols"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.attach_mols">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">attach_mols</span><span class="p">(</span><span class="n">main_mol</span><span class="p">,</span> <span class="n">attachment_mol</span><span class="p">,</span> <span class="n">attach_location_main</span><span class="p">,</span> <span class="n">attach_location_attachment</span><span class="p">,</span> <span class="n">bond_type</span><span class="p">):</span>
+<div class="viewcode-block" id="attach_mols"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.attach_mols">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">attach_mols</span><span class="p">(</span><span class="n">main_mol</span><span class="p">,</span> <span class="n">attachment_mol</span><span class="p">,</span> <span class="n">attach_location_main</span><span class="p">,</span> <span class="n">attach_location_attachment</span><span class="p">,</span> <span class="n">bond_type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attaches the attachment structure to main molecule at the attach_location_main and attach_location_attachment with bond_type.</span>
 
@@ -442,7 +442,7 @@
     <span class="k">return</span> <span class="n">new_mol</span></div>
 
 
-<div class="viewcode-block" id="generate_possible_stuctures"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.mol_utils.html#modifinder.utilities.mol_utils.generate_possible_stuctures">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">generate_possible_stuctures</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">):</span>
+<div class="viewcode-block" id="generate_possible_stuctures"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.mol_utils.generate_possible_stuctures">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">generate_possible_stuctures</span><span class="p">(</span><span class="n">main_struct</span><span class="p">,</span> <span class="n">sub_struct</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates all possible structures after attaching the difference between sub_struct and main_struct to main_struct.</span>
 
