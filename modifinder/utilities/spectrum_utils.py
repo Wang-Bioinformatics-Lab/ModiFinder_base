@@ -172,7 +172,7 @@ def remove_adduct(spectrum):
     Parameters
     ----------
         spectrum: Spectrum object
-            The spectrum to remove the adduct mass from
+            The spectrum to remove the adduct mass from its mz values
     
     Returns:
     result: Spectrum object
@@ -197,6 +197,8 @@ def add_adduct(spectrum, adduct):
     ----------
         spectrum: Spectrum object
             The spectrum to add the adduct mass to
+        adduct: str
+            The adduct to add to the spectrum, should be in the supported adducts list.
     
     Returns:
     result: Spectrum object
