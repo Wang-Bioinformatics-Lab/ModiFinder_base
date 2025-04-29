@@ -35,7 +35,7 @@ def _cosine_fast(
     if mz_tolerance is None and ppm_tolerance is None:
         raise ModiFinderError("At least one of mz_tolerance or ppm_tolerance must be provided.")
     
-    precursor_charge = max(spec.precursor_charge, 1)
+    precursor_charge = spec.precursor_charge if spec.precursor_charge is not None else 1
     precursor_mass_diff = (
         spec.precursor_mz - spec_other.precursor_mz
     ) * precursor_charge
