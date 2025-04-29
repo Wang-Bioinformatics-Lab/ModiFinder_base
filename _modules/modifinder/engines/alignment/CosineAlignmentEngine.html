@@ -108,7 +108,7 @@
     <span class="k">if</span> <span class="n">mz_tolerance</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ppm_tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;At least one of mz_tolerance or ppm_tolerance must be provided.&quot;</span><span class="p">)</span>
     
-    <span class="n">precursor_charge</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">precursor_charge</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">precursor_charge</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
     <span class="n">precursor_mass_diff</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">spec</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">-</span> <span class="n">spec_other</span><span class="o">.</span><span class="n">precursor_mz</span>
     <span class="p">)</span> <span class="o">*</span> <span class="n">precursor_charge</span>
