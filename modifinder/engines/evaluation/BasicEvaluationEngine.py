@@ -13,6 +13,15 @@ def is_max_neighbor(G, probabilities, true_index, neighbor_count):
     
     return count/len(max_indices)
 
+def is_max_neighbor(G, probabilities, true_index, neighbor_count):
+    max_indices = np.where(probabilities == probabilities.max())[0]
+    count = 0
+    for i in max_indices:
+        if G[true_index, i] <= neighbor_count:
+            count += 1
+    
+    return count/len(max_indices)
+
 def is_max(G, probabilities, true_index):
     if probabilities[true_index] == max(probabilities):
         # find how many times the max value appears
