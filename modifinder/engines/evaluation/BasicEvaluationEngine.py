@@ -4,14 +4,6 @@ from modifinder import exceptions
 import modifinder.utilities.mol_utils as mf_mu
 import numpy as np
 
-def is_max_neighbor(G, probabilities, true_index, neighbor_count):
-    max_indices = np.where(probabilities == probabilities.max())[0]
-    count = 0
-    for i in max_indices:
-        if G[true_index, i] <= neighbor_count:
-            count += 1
-    
-    return count/len(max_indices)
 
 def is_max_neighbor(G, probabilities, true_index, neighbor_count):
     max_indices = np.where(probabilities == probabilities.max())[0]
