@@ -172,7 +172,7 @@ def get_np_classifier(smiles):
             raise ValueError("Invalid input for np_classifier")
     try:
         url = "https://npclassifier.gnps2.org/classify"
-        response = requests.get(url, params={"smiles": smiles})
+        response = requests.get(url, params={"smiles": smiles}, timeout=1)
         data = json.loads(response.text)
         for key in data:
             if data[key] == "None":

@@ -25,7 +25,7 @@ dependencies = [
     "pillow",
     "openpyxl",
     "openpyxl-image-loader",
-    "msbuddy==0.2.3",
+    "msbuddy",
     "seaborn",
     "pyteomics",
     "matplotlib",
@@ -41,3 +41,6 @@ extras = []  # Define optional dependencies here if needed
 [project.urls]
 Documentation = "https://wang-bioinformatics-lab.github.io/ModiFinder_base/"
 Repository = "https://github.com/Wang-Bioinformatics-Lab/ModiFinder_base"
+
+[tool.setuptools.packages]
+find = {include = ["modifinder"]}

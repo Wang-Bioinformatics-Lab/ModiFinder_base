@@ -56,9 +56,10 @@ def run_single(match_index, network = None, networkUnknowns = None, unknown_comp
                 if known_compound is None:
                     raise ValueError(f"Known compound {known_index} is not found.")
                 mf.add_neighbor(known_compound, unknown_id)
-                for helper in helpers[known_index]:
-                    helper = load_Compound_from_cache(helper, cached_compounds, **kwargs)
-                    mf.add_neighbor(helper, known_compound.id)
+                if helpers is not None and known_index in helpers:
+                    for helper in helpers[known_index]:
+                        helper = load_Compound_from_cache(helper, cached_compounds, **kwargs)
+                        mf.add_neighbor(helper, known_compound.id)
                     
         mf.re_annotate(mf.annotationEngine, **kwargs)
         mf.re_align(mf.alignmentEngine, **kwargs)
@@ -182,6 +183,7 @@ def runner(matches, output_dir = None, file_name = None, save_pickle = True, sav
     
     if number_of_cores > 1:
         batches = list(chunkify(matches, batch_size))
+        number_of_cores = min(number_of_cores, len(batches))
         
         # create a temporary directory to save the results
         if output_dir is None:

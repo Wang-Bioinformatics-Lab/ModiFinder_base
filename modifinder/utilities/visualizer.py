@@ -121,6 +121,8 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
             draw_kwargs[key] = kwargs[key]
             if isinstance(draw_kwargs[key], int) or isinstance(draw_kwargs[key], float):
                 draw_kwargs[key] = [int(draw_kwargs[key])]
+        else:
+            draw_kwargs[key] = []
 
     if output_type == "png":
         d2d = Draw.MolDraw2DCairo(x_dim, y_dim)
@@ -597,13 +599,12 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
             matches.append(match)
             
     
+    # if matches is one dimentional, convert it to two dimentional
+    if len(matches) > 0 and isinstance(matches[0], int):
+            matches = [matches]
+    
     if len(matches) > 0 and len(matches) != len(spectrums) - 1:
         raise ValueError("Number of matches should be equal to the number of spectrums - 1")
-    
-    # in case there is only one match, accept it as both a list of tuples or a list of lists
-    if len(matches) == 1:
-        if type(matches[0][0]) == int:
-            matches = [matches]
 
     flipped = False
     if "flipped" in kwargs:

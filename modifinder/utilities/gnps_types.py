@@ -169,10 +169,17 @@ gnps_keys_mapping = {
     ## name
     "name": "name",
     "compound_name": "name",
-    ## spectrun_id
+    ## spectrum_id
     "spectrum_id": "spectrum_id",
     "spectrumid": "spectrum_id",
     ## exact mass
     "exact_mass": "exact_mass",
     "exactmass": "exact_mass",
+    ## mz
+    "fragment_mz": "mz",
+    "mz": "mz",
+    "mzs": "mz",
+    ## intensity
+    "fragment_intensities": "intensity",
+    "intensities": "intensity",
 }

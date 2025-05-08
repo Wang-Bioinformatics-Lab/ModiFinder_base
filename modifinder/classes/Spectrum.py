@@ -70,9 +70,10 @@ class Spectrum:
             return
         
         if incoming_data is not None:
-            convert.to_spectrum(incoming_data, self)
-
-        self.update(normalize_peaks = normalize_peaks, **kwargs)
+            kwargs['normalize_peaks'] = normalize_peaks
+            convert.to_spectrum(incoming_data, self, **kwargs)
+        else:
+            self.update(**kwargs)
 
     @property
     def adduct(self):
@@ -82,18 +83,24 @@ class Spectrum:
     def adduct(self, value):
         self._adduct = adduct_mapping.get(value, value)
         if self._adduct is not None:
-            self._adduct_mass = general_utils.get_adduct_mass(self._adduct)
+            try:
+                self._adduct_mass = general_utils.get_adduct_mass(self._adduct)
+            except Exception as e:
+                if not self.ignore_adduct_format:
+                    raise e
+                else:
+                    self._adduct_mass = None
         else:
-            self._adduct_mass = None
+            self._adduct_mass = 0
     
     @property
     def adduct_mass(self):
         return self._adduct_mass
 
     def update(self, peaks = None, peaks_json = None, mz=None, intensity=None, precursor_mz=None, precursor_charge=None, 
-               _adduct = None, adduct=None, adduct_mass = None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
+               _adduct = None, adduct=None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
                ms_dissociation_method=None, spectrum_id=None, normalize_peaks = False, ratio_to_base_peak = None,
-               remove_large_peaks = False, keep_top_k=None, peak_fragments_map: dict = None, **kwargs):
+               remove_large_peaks = False, keep_top_k=None, peak_fragments_map: dict = None, ignore_adduct_format = False, **kwargs):
         """Update the Spectrum object with the given values.
 
         Args:
@@ -115,7 +122,10 @@ class Spectrum:
             remove_large_peaks (bool): If True, remove all the peaks that are larger than the precursor m/z value.
             keep_top_k (int): If not None, only keep the top k peaks.
             peak_fragments_map (dict): A dictionary mapping peaks to fragments
+            ignore_adduct_format (bool): If True, if the adduct format is not recognized, it will not throw an error.
+            **kwargs: Additional keyword arguments.
         """
+        self.ignore_adduct_format = ignore_adduct_format
         if peaks_json is not None:
             peaks = json.loads(peaks_json)
         if peaks is not None:
