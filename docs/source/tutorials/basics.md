@@ -103,6 +103,38 @@ plt.show()
     
 
 
+### Oracle
+
+to use ModiFinder in the oracle mode, you can just set the is_known variable of your target compound to True and reannotate the network, this way, the annotation engine will use the structure of the unknown to further refine the peak annotations
+
+
+```python
+oracle_sample_known = Compound("CCMSLIB00011906190", id="known", **args)
+oracle_sample_modified = Compound("CCMSLIB00011906105", id="modified", **args)
+mf = ModiFinder(oracle_sample_known, oracle_sample_modified, helpers=helpers_array, **args)
+probs = mf.generate_probabilities()
+img_prediction1 = mf.draw_prediction(probs, oracle_sample_known.id, show_legend=True, show_labels=True, shrink_labels=True, size=(1000, 1000), annotation_scale = 0.6)
+mf.network.nodes[oracle_sample_modified.id]["compound"].is_known = True
+mf.re_annotate(mf.annotationEngine)
+probs = mf.generate_probabilities()
+img_prediction2 = mf.draw_prediction(probs, oracle_sample_known.id, show_legend=True, show_labels=True, shrink_labels=True, size=(1000, 1000), annotation_scale = 0.6)
+fig, ax = plt.subplots(1, 2, figsize=(20, 10))
+ax[0].imshow(img_prediction1)
+ax[0].set_title('ModiFinder', fontsize=20)
+ax[1].imshow(img_prediction2)
+ax[1].set_title('ModiFinder Oracle', fontsize=20)
+for a in ax:
+    a.axis('off')
+plt.show()
+
+```
+
+
+    
+![png](basics_files/basics_17_0.png)
+    
+
+
 ### Create with your data
 You can also create your compounds by passing a dictionary
 
@@ -167,7 +199,7 @@ plt.show()
 
 
     
-![png](basics_files/basics_16_0.png)
+![png](basics_files/basics_19_0.png)
     
 
 
