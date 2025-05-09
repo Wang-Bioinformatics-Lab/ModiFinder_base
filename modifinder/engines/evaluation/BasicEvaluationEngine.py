@@ -4,6 +4,16 @@ from modifinder import exceptions
 import modifinder.utilities.mol_utils as mf_mu
 import numpy as np
 
+
+def is_max_neighbor(G, probabilities, true_index, neighbor_count):
+    max_indices = np.where(probabilities == probabilities.max())[0]
+    count = 0
+    for i in max_indices:
+        if G[true_index, i] <= neighbor_count:
+            count += 1
+    
+    return count/len(max_indices)
+
 def is_max(G, probabilities, true_index):
     if probabilities[true_index] == max(probabilities):
         # find how many times the max value appears
@@ -105,6 +115,8 @@ class BasicEvaluationEngine(EvaluationEngine):
                     - **average_distance** : returns the average distance to the atom with the highest probability normalized by the graph diameter
 
                     - **sorted_rank** : returns the rank of the true modification site in the sorted probabilities
+                    
+                    - **is_max_neighbor** : returns 1 if the true modification site is a neighbor of the atom with the highest probability, 0 otherwise
 
             kwargs : dict
                 Additional arguments.
@@ -182,10 +194,9 @@ class BasicEvaluationEngine(EvaluationEngine):
             return ranking_loss(G, probabilities, true_index)
         elif method == "sorted_rank":
             return sorted_rank(G, probabilities, true_index)
+        elif method == "is_max_neighbor":
+            if "neighbor_count" not in kwargs:
+                raise exceptions.ModiFinderError("The neighbor count must be specified for this evaluation method")
+            return is_max_neighbor(G, probabilities, true_index, kwargs["neighbor_count"])
         else:
             raise exceptions.ModiFinderError("Evaluation method not recognized")
-        
-        
-        
-        
-        
