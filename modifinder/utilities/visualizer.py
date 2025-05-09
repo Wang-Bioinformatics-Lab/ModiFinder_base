@@ -121,6 +121,8 @@ def draw_molecule(mol, output_type='png', font_size = None, label=None, label_fo
             draw_kwargs[key] = kwargs[key]
             if isinstance(draw_kwargs[key], int) or isinstance(draw_kwargs[key], float):
                 draw_kwargs[key] = [int(draw_kwargs[key])]
+        else:
+            draw_kwargs[key] = []
 
     if output_type == "png":
         d2d = Draw.MolDraw2DCairo(x_dim, y_dim)
