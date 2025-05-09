@@ -77,6 +77,16 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.mol_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mf_mu</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_max_neighbor</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">,</span> <span class="n">neighbor_count</span><span class="p">):</span>
+    <span class="n">max_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">==</span> <span class="n">probabilities</span><span class="o">.</span><span class="n">max</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">max_indices</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">G</span><span class="p">[</span><span class="n">true_index</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">neighbor_count</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="k">return</span> <span class="n">count</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">max_indices</span><span class="p">)</span>
+
 <span class="k">def</span><span class="w"> </span><span class="nf">is_max</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">probabilities</span><span class="p">[</span><span class="n">true_index</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
         <span class="c1"># find how many times the max value appears</span>
@@ -178,6 +188,8 @@
 <span class="sd">                    - **average_distance** : returns the average distance to the atom with the highest probability normalized by the graph diameter</span>
 
 <span class="sd">                    - **sorted_rank** : returns the rank of the true modification site in the sorted probabilities</span>
+<span class="sd">                    </span>
+<span class="sd">                    - **is_max_neighbor** : returns 1 if the true modification site is a neighbor of the atom with the highest probability, 0 otherwise</span>
 
 <span class="sd">            kwargs : dict</span>
 <span class="sd">                Additional arguments.</span>
@@ -255,13 +267,12 @@
             <span class="k">return</span> <span class="n">ranking_loss</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sorted_rank&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">sorted_rank</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;is_max_neighbor&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;neighbor_count&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;The neighbor count must be specified for this evaluation method&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">is_max_neighbor</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">true_index</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;neighbor_count&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Evaluation method not recognized&quot;</span><span class="p">)</span></div></div>
-        
-        
-        
-        
-        
 </pre></div>
 
            </div>
