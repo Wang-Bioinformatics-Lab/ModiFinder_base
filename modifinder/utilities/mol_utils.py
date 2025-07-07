@@ -586,6 +586,8 @@ def _calculateModificationSites(mol, substructure, inParent = True):
                 subMatches = list(matches)
                 idx = subMatches.index(atom) # based on rdkit library, the value in matches array are sorted by index
                 res.append(idx)
+        
+        res = list(set(res))  # remove duplicates
         return res
 
 
