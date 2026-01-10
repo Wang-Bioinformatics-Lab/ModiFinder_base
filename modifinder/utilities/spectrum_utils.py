@@ -52,7 +52,7 @@ def _cluster_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, verbos
     return clusters
 
 
-def aggregate_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, consensus_majority_ratio = 0, **kwargs):
+def aggregate_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, consensus_majority_ratio = 1, **kwargs):
     '''
     This function is to create a consensus spectrum from a list of spectrums of the same compound
     all the other components of the generated spectrum such as the charge, ... are taken from the first spectrum.

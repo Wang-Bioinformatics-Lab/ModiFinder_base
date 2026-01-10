@@ -5,6 +5,8 @@ ModiFinder
 ModiFinder is a Python package for the identification of modifications in mass spectrometry data.
 """
 
+__version__ = "1.4.62beta"
+
 from modifinder import convert
 from modifinder.convert import *
 
