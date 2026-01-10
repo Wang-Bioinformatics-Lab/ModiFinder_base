@@ -1,7 +1,7 @@
 import json
 from modifinder.utilities.gnps_types import adduct_mapping
 import modifinder.utilities.general_utils as general_utils
-from modifinder import convert
+from .. import convert
 import numpy as np
 import bisect
 import uuid
@@ -356,4 +356,3 @@ class Spectrum:
         return list(range(left_index, right_index))
     
     
-

@@ -1,5 +1,5 @@
 from modifinder.utilities import general_utils as mf_gu
-from modifinder import Spectrum
+from modifinder.classes.Spectrum import Spectrum
 import tqdm
 
 def _cluster_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, verbose = False):
