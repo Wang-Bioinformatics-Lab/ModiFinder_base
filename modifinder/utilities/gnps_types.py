@@ -12,6 +12,45 @@ SpectrumTuple = collections.namedtuple(
 )
 
 
+def convert_to_SpectrumTuple(peaks, precursor_mz, precursor_charge):
+    if peaks is None or len(peaks) == 0:
+        return None
+    if not all(isinstance(peak, (list, tuple)) and len(peak) == 2 for peak in peaks):
+        raise ValueError("Peaks must be a list of (mz, intensity) pairs")
+    mz = [peak[0] for peak in peaks]
+    intensity = [peak[1] for peak in peaks]
+    return SpectrumTuple(
+        precursor_mz=float(precursor_mz),
+        precursor_charge=int(precursor_charge),
+        mz=mz,
+        intensity=intensity,
+    )
+
+
+def convert_to_SpectrumTuple_seprated(mz, intensity, precursor_mz, precursor_charge):
+    if mz is None or intensity is None or len(mz) == 0:
+        return None
+    if len(mz) != len(intensity):
+        raise ValueError("mz and intensity must have the same length")
+    return SpectrumTuple(
+        precursor_mz=float(precursor_mz),
+        precursor_charge=int(precursor_charge),
+        mz=list(mz),
+        intensity=list(intensity),
+    )
+
+
+def Convert_SpectrumTuple_to_peaks(spectrum):
+    return list(zip(spectrum.mz, spectrum.intensity))
+
+
+def convert_to_universal_key(key: str) -> str:
+    key = key.lower()
+    key = key.replace(" ", "_")
+    return gnps_keys_mapping.get(key, key)
+
+
+
 adduct_mapping = {'M+H': '[M+H]+',
 '[M+H]': '[M+H]+',
 '[M+H]+': '[M+H]+',

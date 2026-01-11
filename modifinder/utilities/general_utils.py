@@ -321,9 +321,9 @@ def parse_data_to_universal(data):
             res[converted_key] = gt.adduct_mapping.get(value, value)
         else:
             try:
-                if key in ["precursor_charge", "precursor_charge", "ms_level", "scan", "exact_mass"]:
+                if converted_key in ["precursor_charge", "precursor_mz", "ms_level", "scan", "exact_mass"]:
                     value = float(value)
-                if key in ["precursor_charge", "charge", "ms_level"]:
+                if converted_key in ["precursor_charge", "charge", "ms_level"]:
                         value = int(value)
             except Exception:
                 raise ValueError(f"Could not convert {key} to number")

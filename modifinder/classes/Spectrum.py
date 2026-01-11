@@ -162,6 +162,12 @@ class Spectrum:
         if self.spectrum_id is None:
             self.spectrum_id = str(uuid.uuid4())
 
+        # make sure types are correct
+        if self.precursor_mz is not None:
+            self.precursor_mz = float(self.precursor_mz)
+        if self.precursor_charge is not None:
+            self.precursor_charge = int(self.precursor_charge)
+
 
     def __str__(self):
         object_dict = self.__dict__
