@@ -1,7 +1,7 @@
 import json
 from modifinder.utilities.gnps_types import adduct_mapping
 import modifinder.utilities.general_utils as general_utils
-from modifinder import convert
+from .. import convert
 import numpy as np
 import bisect
 import uuid
@@ -161,6 +161,12 @@ class Spectrum:
         
         if self.spectrum_id is None:
             self.spectrum_id = str(uuid.uuid4())
+
+        # make sure types are correct
+        if self.precursor_mz is not None:
+            self.precursor_mz = float(self.precursor_mz)
+        if self.precursor_charge is not None:
+            self.precursor_charge = int(self.precursor_charge)
 
 
     def __str__(self):
@@ -356,4 +362,3 @@ class Spectrum:
         return list(range(left_index, right_index))
     
     
-

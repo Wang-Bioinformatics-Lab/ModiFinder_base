@@ -42,7 +42,7 @@ class TestGNPSTypes(unittest.TestCase):
         self.assertEqual(convert_to_universal_key("precursor_mz"), "precursor_mz")
         self.assertEqual(convert_to_universal_key("smiles"), "smiles")
         self.assertEqual(convert_to_universal_key("SMILES"), "smiles")
-        self.assertEqual(convert_to_universal_key("charge"), "charge")
+        self.assertEqual(convert_to_universal_key("charge"), "precursor_charge")
         self.assertEqual(convert_to_universal_key("adduct"), "adduct")
         self.assertEqual(convert_to_universal_key("unknown_key"), "unknown_key")
 
@@ -54,8 +54,8 @@ class TestGNPSTypes(unittest.TestCase):
         }
         expected = {
             "peaks": [{"mz": 100.0, "intensity": 200.0}, {"mz": 150.0, "intensity": 300.0}],
-            "Precursor_MZ": 500.0,
-            "Charge": 2
+            "precursor_mz": 500.0,
+            "precursor_charge": 2
         }
         result = parse_data_to_universal(data)
         self.assertEqual(result, expected)

@@ -11,7 +11,7 @@ import uuid
 # import modifinder as mf
 from modifinder.classes.Spectrum import Spectrum
 from modifinder.classes.StructureMeta import StructureMeta
-from modifinder import convert
+from .. import convert
 
 
 class Compound:

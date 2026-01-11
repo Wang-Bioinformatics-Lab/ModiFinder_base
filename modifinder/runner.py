@@ -2,7 +2,8 @@
 This Module is to run the modifinder algorithm on the give input data.
 """
 
-from modifinder import ModiFinder, Compound, BasicEvaluationEngine
+from modifinder import ModiFinder, Compound
+from modifinder.engines.evaluation.BasicEvaluationEngine import BasicEvaluationEngine
 from modifinder.utilities import visualizer as mf_vis
 from modifinder.utilities.general_utils import entropy
 import matplotlib.pyplot as plt

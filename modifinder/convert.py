@@ -1,7 +1,15 @@
-import modifinder as mf
 import modifinder.utilities.network as network
 from modifinder.utilities.general_utils import parse_data_to_universal
+from modifinder.exceptions import ModiFinderError
 from copy import deepcopy
+
+def _get_compound_class():
+    from modifinder.classes.Compound import Compound
+    return Compound
+
+def _get_spectrum_class():
+    from modifinder.classes.Spectrum import Spectrum
+    return Spectrum
 
 def to_compound(data = None, use_object=None, **kwargs):
     """Make a Compound object from the data
@@ -24,16 +32,17 @@ def to_compound(data = None, use_object=None, **kwargs):
     if data is None:
         data = parse_data_to_universal(kwargs)
         try:
+            Compound = _get_compound_class()
             if use_object:
                 compound = use_object
                 compound.clear()
                 compound.update(**data)
             else:
-                compound = mf.Compound()
+                compound = Compound()
                 compound.update(**data)
             return compound
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
 
     # Compound Object
     if hasattr(data, "spectrum"):
@@ -51,7 +60,7 @@ def to_compound(data = None, use_object=None, **kwargs):
             return compound
 
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid Compound object. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid Compound object. " + str(err)) from err
     
     # USI
     if isinstance(data, str):
@@ -59,32 +68,34 @@ def to_compound(data = None, use_object=None, **kwargs):
             
             data = network.get_data(data)
             data.update(kwargs)
+            Compound = _get_compound_class()
             if use_object:
                 compound = use_object
                 compound.clear()
                 compound.update(**data)
             else:
-                compound = mf.Compound()
+                compound = Compound()
                 compound.update(**data)
             return compound
 
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid USI string. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid USI string. " + str(err)) from err
     
     # Dictionary
     if isinstance(data, dict):
         data = parse_data_to_universal(data)
         data.update(kwargs)
         try:
+            Compound = _get_compound_class()
             if use_object:
                 compound = use_object
                 compound.clear()
                 compound.update(**data)
             else:
-                compound = mf.Compound(**data)
+                compound = Compound(**data)
             return compound
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
         
 
 def compound_to_dict(compound):
@@ -119,15 +130,16 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
         else:
             data = kwargs
         try:
+            Spectrum = _get_spectrum_class()
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
                 spectrum.update(**data)
             else:
-                spectrum = mf.Spectrum(incoming_data=data)
+                spectrum = Spectrum(incoming_data=data)
             return spectrum
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
 
     # Spectrum Object
     if hasattr(data, "mz"):
@@ -147,7 +159,7 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
             return spectrum
 
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid Spectrum object. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid Spectrum object. " + str(err)) from err
     
     # USI
     if isinstance(data, str):
@@ -156,16 +168,17 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
             data = parse_data_to_universal(data)
             data.update(kwargs)
             data = parse_data_to_universal(data)
+            Spectrum = _get_spectrum_class()
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
                 spectrum.update(**data)
             else:
-                spectrum = mf.Spectrum(**data)
+                spectrum = Spectrum(**data)
             return spectrum
 
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid USI string. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid USI string. " + str(err)) from err
     
     # Dictionary
     if isinstance(data, dict):
@@ -174,32 +187,34 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
         try:
             # add kwargs to data
             data.update(kwargs)
+            Spectrum = _get_spectrum_class()
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
                 spectrum.update(**data)
             else:
-                spectrum = mf.Spectrum(**data)
+                spectrum = Spectrum(**data)
             return spectrum
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
     
     if isinstance(data, list):
         new_data = dict()
         new_data["mz"] = [x[0] for x in data]
         new_data["intensity"] = [x[1] for x in data]
         try:
+            Spectrum = _get_spectrum_class()
             if use_object:
                 spectrum = use_object
                 spectrum.clear()
                 spectrum.update(**new_data)
             else:
-                spectrum = mf.Spectrum(**new_data)
+                spectrum = Spectrum(**new_data)
             return spectrum
         except Exception as err:
-            raise mf.ModiFinderError("Input data is not a valid list. " + str(err)) from err
+            raise ModiFinderError("Input data is not a valid list. " + str(err)) from err
     
-    raise mf.ModiFinderError("Input data is not a valid object.")
+    raise ModiFinderError("Input data is not a valid object.")
 
 
     

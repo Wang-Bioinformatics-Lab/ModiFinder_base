@@ -43,17 +43,38 @@ def is_shifted(val1:float, val2:float, ppm_tolerance:float=None, mz_tolerance:fl
 
 def read_mgf(mgf_path: str) -> pd.DataFrame:
     """
-    Read an MGF file into a pandas DataFrame
-    
+    Read an MGF file into a pandas DataFrame.
+
+    This function reads a Mass Spectrometry data file in MGF format and returns it as a pandas DataFrame.
+    Each row in the DataFrame represents a spectrum, with metadata as columns and the spectrum data
+    (m/z and intensity arrays) stored in the 'spectrum' column.
+
     Parameters
     ----------
-        mgf_path : str
-            The path to the MGF file to be read
-    
+    mgf_path : str
+        The file path to the MGF file to be read.
+
     Returns
     -------
-        pd.DataFrame
-                pandas DataFrame with columns as metadata and 'spectrum' as the m/z and intensity values
+    pd.DataFrame
+        A pandas DataFrame where each row corresponds to a spectrum.
+        Common columns include:
+        - 'spectrum': A numpy array of shape (2, N) containing m/z (row 0) and intensity (row 1) values.
+        - 'precursor_mz': The m/z of the precursor ion.
+        - 'charge': The charge state of the precursor ion (if available).
+        - 'scans': The scan number (if available).
+        - Any other metadata fields present in the MGF file.
+
+    Example
+    -------
+    .. code-block:: python
+
+        import modifinder.utilities.general_utils as gu
+        df = gu.read_mgf("path/to/file.mgf")
+        print(df.head())
+        # Access the first spectrum's m/z and intensity
+        mz_array = df.iloc[0]['spectrum'][0]
+        intensity_array = df.iloc[0]['spectrum'][1]
     """
 
     msms_df = []
@@ -321,9 +342,9 @@ def parse_data_to_universal(data):
             res[converted_key] = gt.adduct_mapping.get(value, value)
         else:
             try:
-                if key in ["precursor_charge", "precursor_charge", "ms_level", "scan", "exact_mass"]:
+                if converted_key in ["precursor_charge", "precursor_mz", "ms_level", "scan", "exact_mass"]:
                     value = float(value)
-                if key in ["precursor_charge", "charge", "ms_level"]:
+                if converted_key in ["precursor_charge", "charge", "ms_level"]:
                         value = int(value)
             except Exception:
                 raise ValueError(f"Could not convert {key} to number")

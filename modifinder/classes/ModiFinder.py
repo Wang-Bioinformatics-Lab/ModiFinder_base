@@ -6,7 +6,7 @@ The object can be used to get information about unknown compounds in the network
 This class Builds and maintains a network of compounds where the nodes are compounds (known and unknown)
 """
 
-from modifinder import convert as convert
+from .. import convert as convert
 from modifinder.classes.Compound import Compound
 from modifinder.classes.EdgeDetail import EdgeDetail, MatchType
 from modifinder.engines import AlignmentEngine, AnnotationEngine

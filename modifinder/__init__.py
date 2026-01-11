@@ -5,16 +5,46 @@ ModiFinder
 ModiFinder is a Python package for the identification of modifications in mass spectrometry data.
 """
 
-from modifinder import convert
-from modifinder.convert import *
+__version__ = "1.5.0"
 
-from modifinder.exceptions import *
+import modifinder.convert as convert
+from modifinder.classes import Compound, Spectrum, ModiFinder, EdgeDetail, MatchType, StructureMeta
+from modifinder.convert import (
+    to_compound,
+    to_spectrum,
+    compound_to_dict,
+    spectrum_to_dict,
+)
+from modifinder.exceptions import (
+    ModiFinderError,
+    ModiFinderException,
+    ModiFinderNetworkError,
+    ModiFinderNotImplementedError,
+    ModiFinderNotSolvableError,
+)
+from modifinder.engines.alignment.CosineAlignmentEngine import CosineAlignmentEngine
+from modifinder.engines.annotation.MAGMaAnnotationEngine import MAGMaAnnotationEngine
+from modifinder.engines.evaluation.BasicEvaluationEngine import BasicEvaluationEngine
 
-from modifinder import classes
-from modifinder.classes import *
-
-from modifinder import utilities
-from modifinder.utilities import *
-
-from modifinder import engines
-from modifinder.engines import *
+__all__ = [
+    "__version__",
+    "Compound",
+    "Spectrum",
+    "ModiFinder",
+    "EdgeDetail",
+    "MatchType",
+    "StructureMeta",
+    "convert",
+    "to_compound",
+    "to_spectrum",
+    "compound_to_dict",
+    "spectrum_to_dict",
+    "ModiFinderException",
+    "ModiFinderError",
+    "ModiFinderNetworkError",
+    "ModiFinderNotImplementedError",
+    "ModiFinderNotSolvableError",
+    "CosineAlignmentEngine",
+    "MAGMaAnnotationEngine",
+    "BasicEvaluationEngine",
+]
