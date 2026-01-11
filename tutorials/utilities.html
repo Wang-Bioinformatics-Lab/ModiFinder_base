@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utilities and Helper Functions &mdash; ModiFinder 0.1.dev1+g55fd5cb28 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=0a19ec63"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Visualization and Drawing" href="visualization.html" />
+    <link rel="prev" title="Customization" href="customization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basics.html">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html">Customization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utilities and Helper Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#modifinder-utilities-essential-tools-for-ms-data-processing">ModiFinder Utilities: Essential Tools for MS Data Processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#working-with-network-data">Working with Network Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#consensus-spectra-creation">Consensus Spectra Creation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#working-with-mgf-files">Working with MGF Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#molecular-formula-utilities">Molecular Formula Utilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#molecule-utilities">Molecule Utilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tolerance-and-comparison-utilities">Tolerance and Comparison Utilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html">Visualization and Drawing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorial.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Utilities and Helper Functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/utilities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="utilities-and-helper-functions">
+<h1>Utilities and Helper Functions<a class="headerlink" href="#utilities-and-helper-functions" title="Permalink to this heading"></a></h1>
+<section id="modifinder-utilities-essential-tools-for-ms-data-processing">
+<h2>ModiFinder Utilities: Essential Tools for MS Data Processing<a class="headerlink" href="#modifinder-utilities-essential-tools-for-ms-data-processing" title="Permalink to this heading"></a></h2>
+<p>ModiFinder includes powerful utility functions for common mass spectrometry data tasks. This tutorial covers the most useful tools for spectrum processing, network data retrieval, and molecule manipulation.</p>
+<section id="working-with-network-data">
+<h3>Working with Network Data<a class="headerlink" href="#working-with-network-data" title="Permalink to this heading"></a></h3>
+<p>ModiFinder can fetch spectral data directly from GNPS using USI or accession numbers.</p>
+<section id="fetching-spectrum-data">
+<h4>Fetching Spectrum Data<a class="headerlink" href="#fetching-spectrum-data" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_data</span>
+
+<span class="c1"># Using GNPS accession</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00005436077&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Precursor m/z: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Charge: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;precursor_charge&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of peaks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mz&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Using USI</span>
+<span class="n">usi</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005436077&quot;</span>
+<span class="n">data_from_usi</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">(</span><span class="n">usi</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-matched-peaks">
+<h4>Getting Matched Peaks<a class="headerlink" href="#getting-matched-peaks" title="Permalink to this heading"></a></h4>
+<p>Compare two spectra and get their matched peaks using the modified cosine algorithm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_matched_peaks</span>
+
+<span class="c1"># Compare two spectra</span>
+<span class="n">identifier1</span> <span class="o">=</span> <span class="s2">&quot;CCMSLIB00005436077&quot;</span>
+<span class="n">identifier2</span> <span class="o">=</span> <span class="s2">&quot;CCMSLIB00005436078&quot;</span>
+
+<span class="n">matches</span> <span class="o">=</span> <span class="n">get_matched_peaks</span><span class="p">(</span><span class="n">identifier1</span><span class="p">,</span> <span class="n">identifier2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cosine score: </span><span class="si">{</span><span class="n">matches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cosine&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="natural-product-classification">
+<h4>Natural Product Classification<a class="headerlink" href="#natural-product-classification" title="Permalink to this heading"></a></h4>
+<p>Get chemical classification information for a molecule:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_np_classifier</span>
+
+<span class="n">smiles</span> <span class="o">=</span> <span class="s2">&quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;</span>  <span class="c1"># caffeine</span>
+<span class="n">classification</span> <span class="o">=</span> <span class="n">get_np_classifier</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pathways: </span><span class="si">{</span><span class="n">classification</span><span class="p">[</span><span class="s1">&#39;pathways&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Superclasses: </span><span class="si">{</span><span class="n">classification</span><span class="p">[</span><span class="s1">&#39;superclasses&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is glycoside: </span><span class="si">{</span><span class="n">classification</span><span class="p">[</span><span class="s1">&#39;isglycoside&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="consensus-spectra-creation">
+<h3>Consensus Spectra Creation<a class="headerlink" href="#consensus-spectra-creation" title="Permalink to this heading"></a></h3>
+<p>When you have multiple spectra of the same compound, create a consensus spectrum to reduce noise and improve quality.</p>
+<section id="aggregating-multiple-spectra">
+<h4>Aggregating Multiple Spectra<a class="headerlink" href="#aggregating-multiple-spectra" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.spectrum_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">aggregate_spectrums</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
+
+<span class="c1"># Load multiple spectra of the same compound</span>
+<span class="n">spectrums</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Spectrum</span><span class="p">(</span><span class="s2">&quot;mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005436077&quot;</span><span class="p">),</span>
+    <span class="n">Spectrum</span><span class="p">(</span><span class="s2">&quot;mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005436078&quot;</span><span class="p">),</span>
+    <span class="c1"># Add more spectra...</span>
+<span class="p">]</span>
+
+<span class="c1"># Create consensus spectrum</span>
+<span class="n">consensus</span> <span class="o">=</span> <span class="n">aggregate_spectrums</span><span class="p">(</span>
+    <span class="n">spectrums</span><span class="p">,</span>
+    <span class="n">ppm_tolerance</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">mz_tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">consensus_majority_ratio</span><span class="o">=</span><span class="mf">0.5</span>  <span class="c1"># Peak must appear in 50% of spectra</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original peaks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Consensus peaks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">consensus</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="refining-a-spectrum">
+<h4>Refining a Spectrum<a class="headerlink" href="#refining-a-spectrum" title="Permalink to this heading"></a></h4>
+<p>Remove noisy peaks from a spectrum by comparing against reference spectra:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.spectrum_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">refine_consensus</span>
+
+<span class="c1"># Refine a spectrum based on consensus from other spectra</span>
+<span class="n">refined</span><span class="p">,</span> <span class="p">(</span><span class="n">new_appearances</span><span class="p">,</span> <span class="n">old_appearances</span><span class="p">)</span> <span class="o">=</span> <span class="n">refine_consensus</span><span class="p">(</span>
+    <span class="n">spectrum</span><span class="o">=</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">spectrums</span><span class="o">=</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+    <span class="n">ppm_tolerance</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">mz_tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">consensus_majority_ratio</span><span class="o">=</span><span class="mf">0.3</span>  <span class="c1"># Keep peaks appearing in 30% of references</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peaks before refinement: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peaks after refinement: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">refined</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="working-with-mgf-files">
+<h3>Working with MGF Files<a class="headerlink" href="#working-with-mgf-files" title="Permalink to this heading"></a></h3>
+<p>Read and write MGF (Mascot Generic Format) files easily:</p>
+<section id="reading-mgf-files">
+<h4>Reading MGF Files<a class="headerlink" href="#reading-mgf-files" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_mgf</span>
+
+<span class="c1"># Read MGF file into DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">read_mgf</span><span class="p">(</span><span class="s2">&quot;path/to/spectra.mgf&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access spectrum data</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">mz_array</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;spectrum&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">intensity_array</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;spectrum&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">precursor</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mz_array</span><span class="p">)</span><span class="si">}</span><span class="s2"> peaks, precursor=</span><span class="si">{</span><span class="n">precursor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="writing-mgf-files">
+<h4>Writing MGF Files<a class="headerlink" href="#writing-mgf-files" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_mgf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Create or modify DataFrame</span>
+<span class="n">msms_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;precursor_mz&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">500.123</span><span class="p">,</span> <span class="mf">600.456</span><span class="p">],</span>
+    <span class="s1">&#39;charge&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="s1">&#39;spectrum&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]]),</span>  <span class="c1"># [mz_array, intensity_array]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">150</span><span class="p">,</span> <span class="mi">250</span><span class="p">],</span> <span class="p">[</span><span class="mi">75</span><span class="p">,</span> <span class="mi">125</span><span class="p">]])</span>
+    <span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">write_mgf</span><span class="p">(</span><span class="n">msms_df</span><span class="p">,</span> <span class="s2">&quot;output.mgf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="molecular-formula-utilities">
+<h3>Molecular Formula Utilities<a class="headerlink" href="#molecular-formula-utilities" title="Permalink to this heading"></a></h3>
+<section id="getting-formula-mass">
+<h4>Getting Formula Mass<a class="headerlink" href="#getting-formula-mass" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_formula_mass</span>
+
+<span class="n">mass</span> <span class="o">=</span> <span class="n">get_formula_mass</span><span class="p">(</span><span class="s2">&quot;C8H10N4O2&quot;</span><span class="p">)</span>  <span class="c1"># caffeine</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecular mass: </span><span class="si">{</span><span class="n">mass</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-adduct-mass">
+<h4>Getting Adduct Mass<a class="headerlink" href="#getting-adduct-mass" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_adduct_mass</span>
+
+<span class="c1"># Standard adducts</span>
+<span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">get_adduct_mass</span><span class="p">(</span><span class="s2">&quot;[M+H]+&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[M+H]+ mass shift: </span><span class="si">{</span><span class="n">adduct_mass</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">get_adduct_mass</span><span class="p">(</span><span class="s2">&quot;[M+Na]+&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[M+Na]+ mass shift: </span><span class="si">{</span><span class="n">adduct_mass</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># More complex adducts</span>
+<span class="n">adduct_mass</span> <span class="o">=</span> <span class="n">get_adduct_mass</span><span class="p">(</span><span class="s2">&quot;[2M+H]+&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[2M+H]+ mass shift: </span><span class="si">{</span><span class="n">adduct_mass</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="parsing-molecular-formulas">
+<h4>Parsing Molecular Formulas<a class="headerlink" href="#parsing-molecular-formulas" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_molecular_formula</span>
+
+<span class="n">formula_dict</span> <span class="o">=</span> <span class="n">parse_molecular_formula</span><span class="p">(</span><span class="s2">&quot;C8H10N4O2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">formula_dict</span><span class="p">)</span>  <span class="c1"># {&#39;C&#39;: 8, &#39;H&#39;: 10, &#39;N&#39;: 4, &#39;O&#39;: 2}</span>
+</pre></div>
+</div>
+</section>
+<section id="checking-substructures">
+<h4>Checking Substructures<a class="headerlink" href="#checking-substructures" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_submolecule</span>
+
+<span class="c1"># Check if one formula is a substructure of another</span>
+<span class="n">is_sub</span> <span class="o">=</span> <span class="n">is_submolecule</span><span class="p">(</span><span class="s2">&quot;C6H12O6&quot;</span><span class="p">,</span> <span class="s2">&quot;C12H22O11&quot;</span><span class="p">,</span> <span class="n">ignore_H</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is glucose part of sucrose? </span><span class="si">{</span><span class="n">is_sub</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="molecule-utilities">
+<h3>Molecule Utilities<a class="headerlink" href="#molecule-utilities" title="Permalink to this heading"></a></h3>
+<section id="calculating-edit-distance">
+<h4>Calculating Edit Distance<a class="headerlink" href="#calculating-edit-distance" title="Permalink to this heading"></a></h4>
+<p>Measure structural similarity between two molecules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.mol_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_edit_distance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+
+<span class="n">mol1</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s2">&quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;</span><span class="p">)</span>  <span class="c1"># caffeine</span>
+<span class="n">mol2</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s2">&quot;CN1C=NC2=C1C(=O)NC(=O)N2C&quot;</span><span class="p">)</span>     <span class="c1"># theophylline</span>
+
+<span class="n">distance</span> <span class="o">=</span> <span class="n">get_edit_distance</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Edit distance: </span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="finding-modification-sites">
+<h4>Finding Modification Sites<a class="headerlink" href="#finding-modification-sites" title="Permalink to this heading"></a></h4>
+<p>Identify which atoms differ between two molecules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.mol_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_modification_nodes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+
+<span class="n">mol1</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s2">&quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;</span><span class="p">)</span>
+<span class="n">mol2</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s2">&quot;CN1C=NC2=C1C(=O)NC(=O)N2C&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get modification sites in mol1</span>
+<span class="n">mod_sites_mol1</span> <span class="o">=</span> <span class="n">get_modification_nodes</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">in_mol1</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modified atoms in mol1: </span><span class="si">{</span><span class="n">mod_sites_mol1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get modification sites in mol2</span>
+<span class="n">mod_sites_mol2</span> <span class="o">=</span> <span class="n">get_modification_nodes</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">,</span> <span class="n">in_mol1</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modified atoms in mol2: </span><span class="si">{</span><span class="n">mod_sites_mol2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-transition-details">
+<h4>Getting Transition Details<a class="headerlink" href="#getting-transition-details" title="Permalink to this heading"></a></h4>
+<p>Get comprehensive information about the structural changes between two molecules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.mol_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_transition</span>
+
+<span class="n">transition</span> <span class="o">=</span> <span class="n">get_transition</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Common atoms: </span><span class="si">{</span><span class="n">transition</span><span class="p">[</span><span class="s1">&#39;common_atoms&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed atoms: </span><span class="si">{</span><span class="n">transition</span><span class="p">[</span><span class="s1">&#39;removed_atoms&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added atoms: </span><span class="si">{</span><span class="n">transition</span><span class="p">[</span><span class="s1">&#39;added_atoms&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modified bonds (added): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transition</span><span class="p">[</span><span class="s1">&#39;modified_added_edges_inside&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modified bonds (removed): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transition</span><span class="p">[</span><span class="s1">&#39;modified_removed_edges_inside&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tolerance-and-comparison-utilities">
+<h3>Tolerance and Comparison Utilities<a class="headerlink" href="#tolerance-and-comparison-utilities" title="Permalink to this heading"></a></h3>
+<section id="checking-if-values-are-shifted">
+<h4>Checking if Values are Shifted<a class="headerlink" href="#checking-if-values-are-shifted" title="Permalink to this heading"></a></h4>
+<p>Determine if two m/z values differ beyond tolerance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_shifted</span>
+
+<span class="c1"># Using ppm tolerance</span>
+<span class="n">shifted</span> <span class="o">=</span> <span class="n">is_shifted</span><span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.01</span><span class="p">,</span> <span class="n">ppm_tolerance</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values shifted (10 ppm)? </span><span class="si">{</span><span class="n">shifted</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Using absolute m/z tolerance</span>
+<span class="n">shifted</span> <span class="o">=</span> <span class="n">is_shifted</span><span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.15</span><span class="p">,</span> <span class="n">mz_tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values shifted (0.1 Da)? </span><span class="si">{</span><span class="n">shifted</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Using both (returns True if either condition is met)</span>
+<span class="n">shifted</span> <span class="o">=</span> <span class="n">is_shifted</span><span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.15</span><span class="p">,</span> <span class="n">ppm_tolerance</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values shifted (either condition)? </span><span class="si">{</span><span class="n">shifted</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="summary">
+<h3>Summary<a class="headerlink" href="#summary" title="Permalink to this heading"></a></h3>
+<p>These utilities make ModiFinder a comprehensive toolkit for MS data analysis:</p>
+<ul class="simple">
+<li><p><strong>Network utilities</strong>: Fetch data from GNPS, get spectral matches, classify natural products</p></li>
+<li><p><strong>Spectrum utilities</strong>: Create consensus spectra, refine spectra, handle adducts</p></li>
+<li><p><strong>File I/O</strong>: Read and write MGF files efficiently</p></li>
+<li><p><strong>Formula utilities</strong>: Calculate masses, parse formulas, check substructures</p></li>
+<li><p><strong>Molecule utilities</strong>: Calculate edit distances, find modification sites, analyze transitions</p></li>
+<li><p><strong>Comparison utilities</strong>: Handle m/z tolerance checking with ppm or absolute values</p></li>
+</ul>
+<p>These tools work seamlessly with ModiFinder’s core functionality and can be used independently for various MS data processing tasks.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="customization.html" class="btn btn-neutral float-left" title="Customization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="visualization.html" class="btn btn-neutral float-right" title="Visualization and Drawing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

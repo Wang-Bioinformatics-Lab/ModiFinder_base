@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to ModiFinder’s documentation! &mdash; ModiFinder 0.1.dev1+gddca8c0ef documentation</title>
+  <title>Welcome to ModiFinder’s documentation! &mdash; ModiFinder 0.1.dev1+g55fd5cb28 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -14,13 +14,13 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=9d83cd5d"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0a19ec63"></script>
       <script src="_static/doctools.js?v=888ff710"></script>
       <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Install" href="install.html" /> 
+    <link rel="next" title="Getting Started" href="getting_started.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,7 +43,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modifinder/index.html">Documentation</a></li>
 </ul>
@@ -74,11 +74,59 @@
              
   <section id="welcome-to-modifinder-s-documentation">
 <h1>Welcome to ModiFinder’s documentation!<a class="headerlink" href="#welcome-to-modifinder-s-documentation" title="Permalink to this heading"></a></h1>
-<p><strong>ModiFinder</strong> is a tool for site localization of structural modifications using MS/MS data.</p>
+<p><strong>ModiFinder</strong> is a powerful Python toolkit for mass spectrometry data analysis, specializing in site localization of structural modifications using MS/MS data.</p>
+<section id="beyond-modification-finding">
+<h2>Beyond Modification Finding<a class="headerlink" href="#beyond-modification-finding" title="Permalink to this heading"></a></h2>
+<p>While ModiFinder excels at pinpointing where structural modifications occur in molecules, it’s also a comprehensive toolkit for:</p>
+<ul class="simple">
+<li><p><strong>Working with Mass Spectra</strong>: Parse USIs, fetch data from GNPS, and manipulate spectrum objects</p></li>
+<li><p><strong>Molecular Visualization</strong>: Draw molecules, spectra, structural comparisons, and modification heatmaps</p></li>
+<li><p><strong>Data Processing</strong>: Read/write MGF files, normalize spectra, and batch process MS data</p></li>
+<li><p><strong>Compound Management</strong>: Create and manipulate compound objects from SMILES, InChI, or GNPS identifiers</p></li>
+<li><p><strong>Network Analysis</strong>: Retrieve and compare spectra from public repositories</p></li>
+</ul>
+<p>Whether you’re analyzing a single modification site or building a large-scale MS data processing pipeline, ModiFinder’s utilities can help streamline your workflow.</p>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
+<p>Install ModiFinder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>modifinder
+</pre></div>
+</div>
+<p>Get started with a simple example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualizer</span> <span class="k">as</span> <span class="n">viz</span>
+
+<span class="c1"># Fetch compound from GNPS</span>
+<span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">)</span>
+
+<span class="c1"># Draw the structure</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">draw_molecule</span><span class="p">(</span><span class="n">compound</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>
+
+<span class="c1"># Access spectrum data</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">compound</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2"> peaks&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>🎯 <strong>Modification Site Prediction</strong></dt><dd><p>Identify the most likely modification sites in unknown compounds using MS/MS data</p>
+</dd>
+<dt>🔬 <strong>Spectrum Analysis</strong></dt><dd><p>Parse, normalize, and compare mass spectra from various sources</p>
+</dd>
+<dt>🎨 <strong>Rich Visualization</strong></dt><dd><p>Create publication-quality figures of molecules, spectra, and structural comparisons</p>
+</dd>
+<dt>📊 <strong>Data Integration</strong></dt><dd><p>Seamlessly work with GNPS data, MGF files, and USIs</p>
+</dd>
+<dt>🧪 <strong>Flexible Objects</strong></dt><dd><p>Compound and Spectrum classes that work with your existing data formats</p>
+</dd>
+</dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This project is under active development.</p>
 </div>
+</section>
 <section id="citing">
 <h2>Citing<a class="headerlink" href="#citing" title="Permalink to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ModiFinder</span><span class="p">:</span> <span class="n">Tandem</span> <span class="n">Mass</span> <span class="n">Spectral</span> <span class="n">Alignment</span> <span class="n">Enables</span> <span class="n">Structural</span> <span class="n">Modification</span> <span class="n">Site</span> <span class="n">Localization</span>
@@ -120,7 +168,7 @@ Commercial entities: please contact mingxun.wang@cs.ucr.edu or tp@ucr.edu for li
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="install.html" class="btn btn-neutral float-right" title="Install" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; ModiFinder 0.1.dev1+g55fd5cb28 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0a19ec63"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Welcome to ModiFinder’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-with-modifinder">Getting Started with ModiFinder</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#using-pip-recommended">Using pip (Recommended)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#from-source">From Source</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#verify-installation">Verify Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#core-concepts">Core Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#your-first-steps">Your First Steps</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fetch-and-visualize-a-compound">1. Fetch and Visualize a Compound</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#work-with-spectra">2. Work with Spectra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-mgf-files">3. Process MGF Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compare-structures">4. Compare Structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#find-modification-sites">5. Find Modification Sites</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#common-use-cases">Common Use Cases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#extract-data-from-gnps">Extract Data from GNPS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#batch-process-multiple-compounds">Batch Process Multiple Compounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-publication-quality-figures">Create Publication-Quality Figures</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#what-s-next">What’s Next?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#need-help">Need Help?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tips-for-success">Tips for Success</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<section id="getting-started-with-modifinder">
+<h2>Getting Started with ModiFinder<a class="headerlink" href="#getting-started-with-modifinder" title="Permalink to this heading"></a></h2>
+<p>ModiFinder is your Swiss Army knife for mass spectrometry data analysis in Python. This guide will get you up and running quickly.</p>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h3>
+<p>ModiFinder requires Python 3.9 or above.</p>
+<p>This turorial assumes you have already setup the Python environment you want to work in and intend to install <code class="docutils literal notranslate"><span class="pre">modifinder</span></code> inside of it.  If you want
+to create and work with Python virtual environments, please follow instructions
+on <code class="docutils literal notranslate"><span class="pre">venv</span> <span class="pre">&lt;https://docs.python.org/3/library/venv.html&gt;</span></code>_ and <code class="docutils literal notranslate"><span class="pre">virtual</span> <span class="pre">environments</span> <span class="pre">&lt;http://docs.python-guide.org/en/latest/dev/virtualenvs/&gt;</span></code>_ or use <code class="docutils literal notranslate"><span class="pre">Conda/Mamba</span> <span class="pre">&lt;https://github.com/mamba-org/mamba&gt;</span></code>_ to create a new environment.</p>
+<p>First, make sure you have the latest version of <code class="docutils literal notranslate"><span class="pre">pip</span></code> installed. `Pip documentation</p>
+<p><a class="reference external" href="https://pip.pypa.io/en/stable/installing/">https://pip.pypa.io/en/stable/installing/</a>`_</p>
+<section id="using-pip-recommended">
+<h4>Using pip (Recommended)<a class="headerlink" href="#using-pip-recommended" title="Permalink to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>modifinder
+</pre></div>
+</div>
+</section>
+<section id="from-source">
+<h4>From Source<a class="headerlink" href="#from-source" title="Permalink to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/your-repo/modifinder.git
+<span class="nb">cd</span><span class="w"> </span>modifinder
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="verify-installation">
+<h4>Verify Installation<a class="headerlink" href="#verify-installation" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">modifinder</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">modifinder</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="core-concepts">
+<h3>Core Concepts<a class="headerlink" href="#core-concepts" title="Permalink to this heading"></a></h3>
+<p>ModiFinder revolves around two main classes:</p>
+<ul class="simple">
+<li><p><strong>Spectrum</strong>: Represents MS/MS spectral data</p></li>
+<li><p><strong>Compound</strong>: Represents a chemical compound with its structure and spectrum</p></li>
+</ul>
+<p>These classes can be created from various sources: GNPS identifiers, raw data arrays, MGF files, SMILES strings, and more.</p>
+</section>
+<section id="your-first-steps">
+<h3>Your First Steps<a class="headerlink" href="#your-first-steps" title="Permalink to this heading"></a></h3>
+<section id="fetch-and-visualize-a-compound">
+<h4>1. Fetch and Visualize a Compound<a class="headerlink" href="#fetch-and-visualize-a-compound" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualizer</span> <span class="k">as</span> <span class="n">viz</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Get compound from GNPS</span>
+<span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">)</span>
+
+<span class="c1"># Draw the molecule</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">draw_molecule</span><span class="p">(</span><span class="n">compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">compound</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compound: </span><span class="si">{</span><span class="n">compound</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Formula: </span><span class="si">{</span><span class="n">compound</span><span class="o">.</span><span class="n">formula</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">compound</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;formula&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peaks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">compound</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="work-with-spectra">
+<h4>2. Work with Spectra<a class="headerlink" href="#work-with-spectra" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
+
+<span class="c1"># Create from GNPS</span>
+<span class="n">spectrum</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="s2">&quot;mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00010113829&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access data</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Precursor m/z: </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of peaks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base peak m/z: </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Normalize</span>
+<span class="n">spectrum</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max intensity after normalization: </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="process-mgf-files">
+<h4>3. Process MGF Files<a class="headerlink" href="#process-mgf-files" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_utils</span> <span class="k">as</span> <span class="n">gu</span>
+
+<span class="c1"># Read MGF file</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">gu</span><span class="o">.</span><span class="n">read_mgf</span><span class="p">(</span><span class="s2">&quot;data.mgf&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2"> spectra&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Columns: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Filter by precursor mass</span>
+<span class="n">filtered</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">200</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">500</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtered to </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span><span class="si">}</span><span class="s2"> spectra&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="compare-structures">
+<h4>4. Compare Structures<a class="headerlink" href="#compare-structures" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualizer</span> <span class="k">as</span> <span class="n">viz</span>
+
+<span class="c1"># Two related compounds</span>
+<span class="n">compound1</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">)</span>
+<span class="n">compound2</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010125628&quot;</span><span class="p">)</span>
+
+<span class="c1"># Visualize the difference</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">draw_modifications</span><span class="p">(</span>
+    <span class="n">compound1</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+    <span class="n">compound2</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+    <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Structural Comparison&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="find-modification-sites">
+<h4>5. Find Modification Sites<a class="headerlink" href="#find-modification-sites" title="Permalink to this heading"></a></h4>
+<p>Now for ModiFinder’s main purpose:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModiFinder</span><span class="p">,</span> <span class="n">Compound</span>
+
+<span class="c1"># Known and modified compounds</span>
+<span class="n">known</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">)</span>
+<span class="n">modified</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010125628&quot;</span><span class="p">)</span>
+
+<span class="c1"># Run ModiFinder</span>
+<span class="n">mf</span> <span class="o">=</span> <span class="n">ModiFinder</span><span class="p">(</span><span class="n">known</span><span class="p">,</span> <span class="n">modified</span><span class="p">,</span> <span class="n">mz_tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">ppm_tolerance</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">probabilities</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">generate_probabilities</span><span class="p">()</span>
+
+<span class="c1"># Visualize prediction</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">draw_prediction</span><span class="p">(</span>
+    <span class="n">probabilities</span><span class="p">,</span>
+    <span class="n">known</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Predicted Modification Sites&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-use-cases">
+<h3>Common Use Cases<a class="headerlink" href="#common-use-cases" title="Permalink to this heading"></a></h3>
+<section id="extract-data-from-gnps">
+<h4>Extract Data from GNPS<a class="headerlink" href="#extract-data-from-gnps" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">network</span>
+
+<span class="c1"># Fetch data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;compound_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SMILES: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;smiles&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Precursor: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;precursor_mz&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="batch-process-multiple-compounds">
+<h4>Batch Process Multiple Compounds<a class="headerlink" href="#batch-process-multiple-compounds" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
+
+<span class="n">accessions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">,</span> <span class="s2">&quot;CCMSLIB00010125628&quot;</span><span class="p">,</span> <span class="s2">&quot;CCMSLIB00010114304&quot;</span><span class="p">]</span>
+
+<span class="n">compounds</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">acc</span> <span class="ow">in</span> <span class="n">accessions</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+        <span class="n">compounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compound</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ </span><span class="si">{</span><span class="n">acc</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">compound</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✗ </span><span class="si">{</span><span class="n">acc</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Successfully loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">compounds</span><span class="p">)</span><span class="si">}</span><span class="s2"> compounds&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="create-publication-quality-figures">
+<h4>Create Publication-Quality Figures<a class="headerlink" href="#create-publication-quality-figures" title="Permalink to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualizer</span> <span class="k">as</span> <span class="n">viz</span>
+
+<span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="s2">&quot;CCMSLIB00010113829&quot;</span><span class="p">)</span>
+
+<span class="c1"># High-resolution molecule image</span>
+<span class="n">img_mol</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">draw_molecule</span><span class="p">(</span>
+    <span class="n">compound</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">1200</span><span class="p">),</span>
+    <span class="n">label</span><span class="o">=</span><span class="n">compound</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+    <span class="n">label_font_size</span><span class="o">=</span><span class="mi">48</span>
+<span class="p">)</span>
+
+<span class="c1"># High-resolution spectrum</span>
+<span class="n">img_spec</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">draw_spectrum</span><span class="p">(</span>
+    <span class="n">compound</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MS/MS Spectrum - m/z </span><span class="si">{</span><span class="n">compound</span><span class="o">.</span><span class="n">precursor_mz</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Save high-DPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_mol</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_spec</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;publication_figure.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="what-s-next">
+<h3>What’s Next?<a class="headerlink" href="#what-s-next" title="Permalink to this heading"></a></h3>
+<p>Explore the detailed tutorials:</p>
+<ul class="simple">
+<li><p><strong><a class="reference internal" href="#tutorials/working_with_usi.md"><span class="xref myst">Working with USIs</span></a></strong>: Fetch and process data from GNPS</p></li>
+<li><p><strong><a class="reference internal" href="#tutorials/working_with_mgf.md"><span class="xref myst">Working with MGF Files</span></a></strong>: Read, filter, and batch process MGF files</p></li>
+<li><p><strong><a class="reference internal" href="tutorials/visualization.html"><span class="std std-doc">Visualization</span></a></strong>: Create beautiful figures of molecules and spectra</p></li>
+<li><p><strong><a class="reference internal" href="tutorials/basics.html"><span class="std std-doc">ModiFinder Basics</span></a></strong>: Deep dive into modification site prediction</p></li>
+<li><p><strong><a class="reference internal" href="tutorials/customization.html"><span class="std std-doc">Customization</span></a></strong>: Advanced ModiFinder configuration</p></li>
+</ul>
+</section>
+<section id="need-help">
+<h3>Need Help?<a class="headerlink" href="#need-help" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Check the <a class="reference internal" href="modifinder/index.html"><span class="std std-doc">API Reference</span></a> for detailed function documentation</p></li>
+<li><p>See example notebooks in the <code class="docutils literal notranslate"><span class="pre">docs/source/tutorials/</span></code> directory</p></li>
+<li><p>Report issues on GitHub</p></li>
+</ul>
+</section>
+<section id="tips-for-success">
+<h3>Tips for Success<a class="headerlink" href="#tips-for-success" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Start Simple</strong>: Begin with GNPS identifiers before working with custom data</p></li>
+<li><p><strong>Validate Data</strong>: Always check that objects were created successfully</p></li>
+<li><p><strong>Visualize Often</strong>: Use the drawing tools to understand your data</p></li>
+<li><p><strong>Process in Batches</strong>: For large datasets, process data in manageable chunks</p></li>
+<li><p><strong>Preserve Metadata</strong>: Keep track of IDs and other metadata throughout your workflow</p></li>
+</ol>
+<p>Happy analyzing! 🚀</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ModiFinder’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

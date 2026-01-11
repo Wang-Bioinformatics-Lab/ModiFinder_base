@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; ModiFinder 0.1.dev1+gddca8c0ef documentation</title>
+  <title>Tutorial &mdash; ModiFinder 0.1.dev1+g55fd5cb28 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -14,14 +14,14 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=9d83cd5d"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0a19ec63"></script>
       <script src="_static/doctools.js?v=888ff710"></script>
       <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Basics" href="tutorials/basics.html" />
-    <link rel="prev" title="Install" href="install.html" /> 
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,10 +44,12 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/basics.html">Basics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/customization.html">Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/utilities.html">Utilities and Helper Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/visualization.html">Visualization and Drawing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modifinder/index.html">Documentation</a></li>
@@ -79,29 +81,28 @@
              
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
+<p>ModiFinder is a powerful toolkit for mass spectrometry data analysis. While it excels at finding structural modification sites, its utilities are valuable for any MS data analysis workflow. This tutorial covers both the core ModiFinder functionality and the visualization and data processing tools available in the package.</p>
+<p>The following tutorials guide you through different aspects of ModiFinder:</p>
+<p><strong>Basics</strong> - Start here to learn ModiFinder’s core functionality: comparing MS/MS spectra to predict modification sites in molecules. You’ll learn how to create Spectrum and Compound objects, use USI identifiers, and run site localization analysis.</p>
+<p><strong>Customization</strong> - Dive deeper into customizing ModiFinder’s behavior. Learn how to adjust scoring parameters, tolerance settings, and prediction strategies to optimize results for your specific compounds and experimental conditions.</p>
+<p><strong>Utilities</strong> - Discover ModiFinder’s essential data processing tools: fetching data from GNPS, creating consensus spectra from replicates, reading/writing MGF files, calculating molecular properties, and measuring structural similarity between molecules.</p>
+<p><strong>Visualization</strong> - Learn how to visualize your results effectively: draw molecules with highlighted modification sites, create annotated spectra plots, generate mirror plots for spectral comparison, and produce publication-ready figures.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/basics.html">Basics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/basics.html#basics-tutorial">Basics Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/basics.html#create-spectrum">Create Spectrum</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/basics.html#create-compound">Create Compound</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/basics.html#basic-modifinder-use">Basic ModiFinder Use</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tutorials/basics.html#create-with-usi">Create with USI</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorials/basics.html#oracle">Oracle</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tutorials/basics.html#create-with-your-data">Create with your data</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/basics.html#evaluation-of-the-prediction">Evaluation of the prediction</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/basics.html#modifinder-basics-finding-modification-sites">ModiFinder Basics: Finding Modification Sites</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/customization.html">Customization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/customization.html#customization-tutorial">Customization Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/customization.html#minor-adjustments">Minor Adjustments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/customization.html#customization-with-alignment-engine-and-annotation-engine">Customization with alignment engine and annotation engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/customization.html#customization-tutorial">Customization Tutorial</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utilities and Helper Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/utilities.html#modifinder-utilities-essential-tools-for-ms-data-processing">ModiFinder Utilities: Essential Tools for MS Data Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/visualization.html">Visualization and Drawing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/visualization.html#visualization-and-drawing">Visualization and Drawing</a></li>
 </ul>
 </li>
 </ul>
@@ -112,7 +113,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="install.html" class="btn btn-neutral float-left" title="Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="tutorials/basics.html" class="btn btn-neutral float-right" title="Basics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Basics &mdash; ModiFinder 0.1.dev1+gddca8c0ef documentation</title>
+  <title>Basics &mdash; ModiFinder 0.1.dev1+g55fd5cb28 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=9d83cd5d"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=0a19ec63"></script>
       <script src="../_static/doctools.js?v=888ff710"></script>
       <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/js/theme.js"></script>
@@ -44,10 +44,12 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basics</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#basics-tutorial">Basics Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#modifinder-basics-finding-modification-sites">ModiFinder Basics: Finding Modification Sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-modifinder">What is ModiFinder?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-spectrum">Create Spectrum</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-compound">Create Compound</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#basic-modifinder-use">Basic ModiFinder Use</a></li>
@@ -57,6 +59,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="customization.html">Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">Utilities and Helper Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html">Visualization and Drawing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modifinder/index.html">Documentation</a></li>
@@ -89,9 +93,27 @@
              
   <section id="basics">
 <h1>Basics<a class="headerlink" href="#basics" title="Permalink to this heading"></a></h1>
-<section id="basics-tutorial">
-<h2>Basics Tutorial<a class="headerlink" href="#basics-tutorial" title="Permalink to this heading"></a></h2>
-<p>This guide tries to help you start working with ModiFinder.</p>
+<section id="modifinder-basics-finding-modification-sites">
+<h2>ModiFinder Basics: Finding Modification Sites<a class="headerlink" href="#modifinder-basics-finding-modification-sites" title="Permalink to this heading"></a></h2>
+<p>This guide shows you how to use ModiFinder’s core functionality: predicting where structural modifications occur in molecules using MS/MS data.</p>
+<section id="what-is-modifinder">
+<h3>What is ModiFinder?<a class="headerlink" href="#what-is-modifinder" title="Permalink to this heading"></a></h3>
+<p>ModiFinder compares MS/MS spectra of a known compound and its modified analog to predict the most likely modification sites. It’s particularly useful when you:</p>
+<ul class="simple">
+<li><p>Have a known reference compound</p></li>
+<li><p>Have identified a structurally similar unknown compound</p></li>
+<li><p>Want to know where the modification occurred</p></li>
+</ul>
+</section>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h3>
+<p>Before diving into ModiFinder, you might want to familiarize yourself with:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#creating_objects.md"><span class="xref myst">Creating Spectrum and Compound objects</span></a></p></li>
+<li><p><a class="reference internal" href="#working_with_usi.md"><span class="xref myst">Working with GNPS data and USIs</span></a></p></li>
+<li><p><a class="reference internal" href="visualization.html"><span class="std std-doc">Visualization tools</span></a></p></li>
+</ul>
+</section>
 <section id="create-spectrum">
 <h3>Create Spectrum<a class="headerlink" href="#create-spectrum" title="Permalink to this heading"></a></h3>
 <p>The Spectrum <a class="reference internal" href="../modifinder/classes/classes.Spectrum.html#modifinder.classes.Spectrum" title="modifinder.classes.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.Spectrum</span></code></a> is a class to represent a spectrum, you can create an instance of this object by passing the USI, or from the dictionary of data, or by passing the data for the spectrum fields. check the <a class="reference internal" href="../modifinder/classes/classes.Spectrum.html#modifinder.classes.Spectrum" title="modifinder.classes.Spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">modifinder.classes.Spectrum</span></code></a> for more examples and information.</p>
