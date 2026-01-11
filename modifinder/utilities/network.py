@@ -12,6 +12,7 @@ from modifinder.utilities.gnps_types import *
 from modifinder.utilities.general_utils import parse_data_to_universal
 from modifinder.exceptions import ModiFinderNetworkError
 from rdkit import Chem
+from copy import deepcopy
 
 def usi_to_accession(usi: str) -> str:
     """
@@ -54,6 +55,7 @@ def get_data(identifier: str) -> dict:
     data = dict()
     if _is_usi(identifier):
         if _is_known(identifier):
+            original_identifier = deepcopy(identifier)
             identifier = usi_to_accession(identifier)
         else:
             data = _get_partial_data(identifier)
@@ -66,8 +68,15 @@ def get_data(identifier: str) -> dict:
     try:
         res = requests.get(link)
         parsed = res.json()
-    except:
-        raise ModiFinderNetworkError("Error in retrieving data from GNPS for identifier: {}, link: {}".format(identifier, link))
+    except Exception:
+        try:
+            data = _get_partial_data(original_identifier)
+            data['usi'] = original_identifier
+            data['id'] = identifier
+            data = parse_data_to_universal(data)
+            return data
+        except Exception as e:
+            raise ModiFinderNetworkError("Error in retrieving data from GNPS for identifier: {}, link: {}. \n with exception: {}".format(identifier, link, str(e)))
 
     try:
         data.update(parsed['annotations'][0])
