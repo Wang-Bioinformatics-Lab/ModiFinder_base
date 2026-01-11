@@ -16,7 +16,8 @@ def _cluster_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, verbos
             The tolerance in mz
     
     
-    Returns:
+    Returns
+    -------
     clusters: list of clusters of the mz values, each cluster is a list of [mz, intensity, origin_spectrum_index]
     '''
     
@@ -67,11 +68,12 @@ def aggregate_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, conse
         mz_tolerance: float
             The tolerance in mz
         consensus_majority_ratio: float
-            The ratio of the spectrums that should have the peak to be considered in the consensus
-            if is 1, all the spectrums should have the peak to be considered in the consensus
-            if is 0, only one spectrum should have the peak to be considered in the consensus
+        The ratio of the spectrums that should have the peak to be considered in the consensus.
+        If is 1, all the spectrums should have the peak to be considered in the consensus.
+        If is 0, only one spectrum should have the peak to be considered in the consensus.
     
-    Returns:
+    Returns
+    -------
     result: Spectrum object
         The aggregated spectrum
     '''
@@ -126,13 +128,13 @@ def refine_consensus(spectrum, spectrums, ppm_tolerance = 10, mz_tolerance = 0.1
             The ratio of the spectrums that should have the peak in order to keep it, 0 means none of the spectrums need to have it
             1 means all of the spectrums need to have it.
             
-    Returns:
-        A tuple of two elements:
+    Returns
+    -------
     result: Spectrum object
         The refined spectrum
     appearances: tuple of lists
-        The first list contains the number of spectrums that have the peak after refining
-        The second list contains the number of spectrums that have the peak before refining
+        The first list contains the number of spectrums that have the peak after refining.
+        The second list contains the number of spectrums that have the peak before refining.
     '''
     # Create an empty list to store the refined consensus
     
@@ -174,7 +176,8 @@ def remove_adduct(spectrum):
         spectrum: Spectrum object
             The spectrum to remove the adduct mass from its mz values
     
-    Returns:
+    Returns
+    -------
     result: Spectrum object
         The spectrum without the adduct mass
     '''
@@ -200,7 +203,8 @@ def add_adduct(spectrum, adduct):
         adduct: str
             The adduct to add to the spectrum, should be in the supported adducts list.
     
-    Returns:
+    Returns
+    -------
     result: Spectrum object
         The spectrum with the adduct mass
     '''
