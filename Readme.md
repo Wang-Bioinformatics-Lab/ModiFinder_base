@@ -32,3 +32,69 @@ License
     4. Any academic or scholarly publication arising from the use of this Software or any derivative works thereof will include the following acknowledgment:  The Software used in this research was created by [INSERT AUTHOR NAMES] of UC Riverside. © 2024 UCR.
 
     Commercial entities: please contact mingxun.wang@cs.ucr.edu or tp@ucr.edu for licensing opportunities.
+
+Useful Utility Functions
+------------------------
+ModiFinder includes several useful utility functions for mass spectrometry data analysis and visualization, exposed under `modifinder.utilities`.
+
+**Reading MGF Files**
+You can easily read MGF files into a pandas DataFrame using `read_mgf`.
+
+```python
+from modifinder.utilities import read_mgf
+
+# Read MGF file
+df = read_mgf("path/to/your/spectrum.mgf")
+print(df.head())
+```
+
+**Visualization**
+The `vis` module provides powerful visualization tools.
+
+```python
+from modifinder.utilities import vis
+import matplotlib.pyplot as plt
+
+# Draw a molecule
+img = vis.draw_molecule("C1=CC=C(C=C1)O", output_type="png")
+plt.imshow(img)
+plt.show()
+
+# Draw a spectrum
+# spectrum_data is a list of (mz, intensity) tuples
+spectrum_data = df.iloc[0]['spectrum'].T.tolist()
+vis.draw_spectrum(spectrum_data)
+plt.show()
+```
+
+Developer Guide
+---------------
+
+### Running Tests
+To run the automated tests, ensure you have `pytest` installed. Then run:
+
+```bash
+pytest
+```
+or specifically for utilities:
+```bash
+pytest modifinder/utilities/tests/
+```
+
+### Release Process
+ModiFinder uses GitHub Actions for automated releases and documentation deployment.
+
+**Creating a New Release (PyPI)**
+1. Update the version number in `modifinder/__init__.py`, `pyproject.toml` and `docs/source/conf.py`.
+2. Create and push a new tag starting with `v` (e.g., `v1.2.3`).
+   ```bash
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+3. This triggers the `pypi_publish.yml` workflow, which:
+   - Builds the package.
+   - Publishes it to PyPI (and TestPyPI).
+   - Creates a GitHub Release.
+
+**Updating Documentation**
+Documentation is automatically rebuilt and deployed to GitHub Pages whenever changes are pushed to the `main` branch (via `documentation.yml`).
