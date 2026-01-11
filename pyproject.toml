@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = ["setuptools >= 61.0", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "modifinder"
-version = "1.5.0"
+dynamic = ["version"]
 authors = [
     { name = "Reza Shahneh", email = "mzare008@ucr.edu" },
 ]
@@ -44,3 +44,6 @@ Repository = "https://github.com/Wang-Bioinformatics-Lab/ModiFinder_base"
 
 [tool.setuptools.packages]
 find = {include = ["modifinder"]}
+
+[tool.setuptools_scm]
+write_to = "modifinder/_version.py"

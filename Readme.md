@@ -85,13 +85,13 @@ pytest modifinder/utilities/tests/
 ModiFinder uses GitHub Actions for automated releases and documentation deployment.
 
 **Creating a New Release (PyPI)**
-1. Update the version number in `modifinder/__init__.py`, `pyproject.toml` and `docs/source/conf.py`.
-2. Create and push a new tag starting with `v` (e.g., `v1.2.3`).
+1. Create and push a new tag starting with `v` (e.g., `v1.2.3`).
    ```bash
    git tag v1.2.3
    git push origin v1.2.3
    ```
-3. This triggers the `pypi_publish.yml` workflow, which:
+   The version is automatically derived from the tag using `setuptools_scm`.
+2. This triggers the `pypi_publish.yml` workflow, which:
    - Builds the package.
    - Publishes it to PyPI (and TestPyPI).
    - Creates a GitHub Release.
