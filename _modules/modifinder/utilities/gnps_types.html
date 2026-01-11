@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modifinder.utilities.gnps_types &mdash; ModiFinder 1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=6d95b957"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ModiFinder
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modifinder/index.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ModiFinder</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">modifinder.utilities.gnps_types</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modifinder.utilities.gnps_types</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="n">SpectrumTuple</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;SpectrumTuple&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;precursor_mz&quot;</span><span class="p">,</span> <span class="s2">&quot;precursor_charge&quot;</span><span class="p">,</span> <span class="s2">&quot;mz&quot;</span><span class="p">,</span> <span class="s2">&quot;intensity&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="convert_to_SpectrumTuple"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.gnps_types.html#modifinder.utilities.gnps_types.convert_to_SpectrumTuple">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">convert_to_SpectrumTuple</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">precursor_mz</span><span class="p">,</span> <span class="n">precursor_charge</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">peak</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Peaks must be a list of (mz, intensity) pairs&quot;</span><span class="p">)</span>
+    <span class="n">mz</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+    <span class="n">intensity</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">SpectrumTuple</span><span class="p">(</span>
+        <span class="n">precursor_mz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">precursor_mz</span><span class="p">),</span>
+        <span class="n">precursor_charge</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">precursor_charge</span><span class="p">),</span>
+        <span class="n">mz</span><span class="o">=</span><span class="n">mz</span><span class="p">,</span>
+        <span class="n">intensity</span><span class="o">=</span><span class="n">intensity</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_to_SpectrumTuple_seprated"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.gnps_types.html#modifinder.utilities.gnps_types.convert_to_SpectrumTuple_seprated">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">convert_to_SpectrumTuple_seprated</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">precursor_mz</span><span class="p">,</span> <span class="n">precursor_charge</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">mz</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intensity</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mz and intensity must have the same length&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">SpectrumTuple</span><span class="p">(</span>
+        <span class="n">precursor_mz</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">precursor_mz</span><span class="p">),</span>
+        <span class="n">precursor_charge</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">precursor_charge</span><span class="p">),</span>
+        <span class="n">mz</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">mz</span><span class="p">),</span>
+        <span class="n">intensity</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">intensity</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Convert_SpectrumTuple_to_peaks"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.gnps_types.html#modifinder.utilities.gnps_types.Convert_SpectrumTuple_to_peaks">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">Convert_SpectrumTuple_to_peaks</span><span class="p">(</span><span class="n">spectrum</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">intensity</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="convert_to_universal_key"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.gnps_types.html#modifinder.utilities.gnps_types.convert_to_universal_key">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">convert_to_universal_key</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gnps_keys_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
+
+
+
+<span class="n">adduct_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;M+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+Na]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+Na]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M2+Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+Na]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+Na]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+K&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+K]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+K]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+K]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+K&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+K]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+H-H20&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+H-H2O&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H20+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H-H2O]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H2O+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+H-2H2O&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-2H2O+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-2H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-2(H2O)+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+Na-2H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-2H+Na]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M-2H+Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-2H+Na]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H]-&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H-&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H1&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;3M+Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M+Na]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-e&#39;</span><span class="p">:</span> <span class="s1">&#39;[M]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M2+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+2H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+2H]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+2H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+2H+2&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+2H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+acetate&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3COOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+CH3COOH-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3COOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+CH3COO&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3COOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+ACN+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3CN+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+ACN+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3CN+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H+CH3CN]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3CN+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+2Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2Na]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+2Na]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+2Na]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+HCOO&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H+HCOOH]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+FA-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+formate&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H+HCOOH]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+FA-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-H+HCOOH]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+HCOOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+NH4&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+NH4]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+NH4]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+Hac-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+CH3COOH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+NH4&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+NH4]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+NH4]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+Ca]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+Ca]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+Ca]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Ca]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M+Ca]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+Ca]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+Ca-H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-H+Ca]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[4M+Ca]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[4M+Ca]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M+NH4]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;3M+NH4&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-2H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-2H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+ACN+NH4]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3CN+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[5M+Ca]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[5M+Ca]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M+K]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+K]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M+Ca-H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M-H+Ca]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H+2Na]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H+2Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H+2Na&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H+2Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-3H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-3H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-3H2O+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-3H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-3H2O+2H]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-3H2O+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-2H2O+2H]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H2O+2H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-4H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-4H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-5H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-5H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+Ca-H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Ca-H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-H+2Na]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-H+2Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-3H2O+H]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-3H2O+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H+Na]2+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Na+H]2+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-2H2O+NH4]+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H2O+NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-2H+Na]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-2H+Na]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H+CH3OH]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3OH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+MeOH-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3OH-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H2O-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-H-H2O]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2O-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+Cl-&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Cl]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+Cl&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Cl]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+Cl]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Cl]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+K-2H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H+K]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-2H+K]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H+K]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-2H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H]2-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-2H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H]2-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-2H-&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H]2-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+Na-2H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H+Na]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M-2H+Na]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-2H+Na]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+Br&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+Br]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;3M-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M-H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+H+CH3OH]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3OH+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+CH3OH+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3OH+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M+H+CH3CN]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M+CH3CN+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-CO2-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-CO2-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[2M-2H+K]&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-2H+K]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;2M+K-2H&#39;</span><span class="p">:</span> <span class="s1">&#39;[2M-2H+K]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M+Na+CH3CN]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH3CN+Na]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H2+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H2+H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H+Cl]&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H+Cl]2-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H+Cl&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-H+Cl]2-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;3M+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[3M+H]&#39;</span><span class="p">:</span> <span class="s1">&#39;[3M+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+H-NH3&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-NH3+H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M-NH3+H]+&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H+C2H2O&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+C2H2O-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+H-C2H2O&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+C2H2O-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-H+CH2O2&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH2O2-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+CH2O2-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+CH2O2-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M+TFA-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+C2HF3O2-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;M-C2HF3O2-H&#39;</span><span class="p">:</span> <span class="s1">&#39;[M+C2HF3O2-H]-&#39;</span><span class="p">,</span>
+<span class="s1">&#39;[M]1+&#39;</span><span class="p">:</span> <span class="s1">&#39;[M]1+&#39;</span><span class="p">}</span>
+
+
+<span class="n">gnps_keys_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1">## precursor</span>
+    <span class="s2">&quot;precursor_mz&quot;</span><span class="p">:</span> <span class="s2">&quot;precursor_mz&quot;</span><span class="p">,</span>
+    <span class="c1">## charge</span>
+    <span class="s2">&quot;precursor_charge&quot;</span><span class="p">:</span> <span class="s2">&quot;precursor_charge&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="s2">&quot;precursor_charge&quot;</span><span class="p">,</span> 
+    <span class="c1">## smiles</span>
+    <span class="s2">&quot;smiles&quot;</span><span class="p">:</span> <span class="s2">&quot;smiles&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;smile&quot;</span><span class="p">:</span> <span class="s2">&quot;smiles&quot;</span><span class="p">,</span>
+    <span class="c1">## adduct</span>
+    <span class="s2">&quot;adduct&quot;</span><span class="p">:</span> <span class="s2">&quot;adduct&quot;</span><span class="p">,</span>
+    <span class="c1">## peaks</span>
+    <span class="s2">&quot;peaks&quot;</span><span class="p">:</span> <span class="s2">&quot;peaks&quot;</span><span class="p">,</span>
+    <span class="c1">## instrument</span>
+    <span class="s2">&quot;instrument&quot;</span><span class="p">:</span> <span class="s2">&quot;instrument&quot;</span><span class="p">,</span>
+    <span class="c1">## name</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;compound_name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+    <span class="c1">## spectrum_id</span>
+    <span class="s2">&quot;spectrum_id&quot;</span><span class="p">:</span> <span class="s2">&quot;spectrum_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;spectrumid&quot;</span><span class="p">:</span> <span class="s2">&quot;spectrum_id&quot;</span><span class="p">,</span>
+    <span class="c1">## exact mass</span>
+    <span class="s2">&quot;exact_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;exact_mass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exactmass&quot;</span><span class="p">:</span> <span class="s2">&quot;exact_mass&quot;</span><span class="p">,</span>
+    <span class="c1">## mz</span>
+    <span class="s2">&quot;fragment_mz&quot;</span><span class="p">:</span> <span class="s2">&quot;mz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mz&quot;</span><span class="p">:</span> <span class="s2">&quot;mz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mzs&quot;</span><span class="p">:</span> <span class="s2">&quot;mz&quot;</span><span class="p">,</span>
+    <span class="c1">## intensity</span>
+    <span class="s2">&quot;fragment_intensities&quot;</span><span class="p">:</span> <span class="s2">&quot;intensity&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;intensities&quot;</span><span class="p">:</span> <span class="s2">&quot;intensity&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

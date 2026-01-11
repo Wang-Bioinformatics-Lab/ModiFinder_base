@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>General utilities module &mdash; ModiFinder 1.4 documentation</title>
+  <title>General utilities module &mdash; ModiFinder 1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=c9ed3d4e"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=6d95b957"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -112,7 +112,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#modifinder.utilities.general_utils.read_mgf" title="modifinder.utilities.general_utils.read_mgf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_mgf</span></code></a></p></td>
-<td><p>Read an MGF file into a pandas DataFrame</p></td>
+<td><p>Read an MGF file into a pandas DataFrame.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#modifinder.utilities.general_utils.write_mgf" title="modifinder.utilities.general_utils.write_mgf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_mgf</span></code></a></p></td>
 <td><p>Writes a pandas DataFrame to an MGF file</p></td>
@@ -265,18 +265,36 @@ key is “Charge”, it further converts the value to an integer.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="modifinder.utilities.general_utils.read_mgf">
 <span class="sig-prename descclassname"><span class="pre">modifinder.utilities.general_utils.</span></span><span class="sig-name descname"><span class="pre">read_mgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mgf_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/modifinder/utilities/general_utils.html#read_mgf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.utilities.general_utils.read_mgf" title="Permalink to this definition"></a></dt>
-<dd><p>Read an MGF file into a pandas DataFrame</p>
+<dd><p>Read an MGF file into a pandas DataFrame.</p>
+<p>This function reads a Mass Spectrometry data file in MGF format and returns it as a pandas DataFrame.
+Each row in the DataFrame represents a spectrum, with metadata as columns and the spectrum data
+(m/z and intensity arrays) stored in the ‘spectrum’ column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mgf_path</strong> (<em>str</em>) – The path to the MGF file to be read</p>
+<dd class="field-odd"><p><strong>mgf_path</strong> (<em>str</em>) – The file path to the MGF file to be read.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>pandas DataFrame with columns as metadata and ‘spectrum’ as the m/z and intensity values</p>
+<dd class="field-even"><p>A pandas DataFrame where each row corresponds to a spectrum.
+Common columns include:
+- ‘spectrum’: A numpy array of shape (2, N) containing m/z (row 0) and intensity (row 1) values.
+- ‘precursor_mz’: The m/z of the precursor ion.
+- ‘charge’: The charge state of the precursor ion (if available).
+- ‘scans’: The scan number (if available).
+- Any other metadata fields present in the MGF file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gu</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">gu</span><span class="o">.</span><span class="n">read_mgf</span><span class="p">(</span><span class="s2">&quot;path/to/file.mgf&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="c1"># Access the first spectrum&#39;s m/z and intensity</span>
+<span class="n">mz_array</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;spectrum&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">intensity_array</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;spectrum&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.classes.Spectrum &mdash; ModiFinder 1.4 documentation</title>
+  <title>modifinder.classes.Spectrum &mdash; ModiFinder 1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=c9ed3d4e"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=6d95b957"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -74,7 +74,7 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities.gnps_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">adduct_mapping</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">modifinder.utilities.general_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">general_utils</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">bisect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
@@ -233,7 +233,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">keep_top_k</span><span class="p">(</span><span class="n">keep_top_k</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spectrum_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+        <span class="c1"># make sure types are correct</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precursor_mz</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precursor_charge</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -429,7 +435,6 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">left_index</span><span class="p">,</span> <span class="n">right_index</span><span class="p">))</span></div>
     
     
-
 </pre></div>
 
            </div>

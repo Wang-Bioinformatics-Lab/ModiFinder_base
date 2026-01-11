@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GNPS types module &mdash; ModiFinder 1.4 documentation</title>
+  <title>GNPS types module &mdash; ModiFinder 1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=c9ed3d4e"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=6d95b957"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -52,7 +52,11 @@
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Utilities</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="utilities.general_utils.html">General utilities module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">GNPS types module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.gnps_types.Convert_SpectrumTuple_to_peaks"><code class="docutils literal notranslate"><span class="pre">Convert_SpectrumTuple_to_peaks()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.gnps_types.SpectrumTuple"><code class="docutils literal notranslate"><span class="pre">SpectrumTuple</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.gnps_types.convert_to_SpectrumTuple"><code class="docutils literal notranslate"><span class="pre">convert_to_SpectrumTuple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.gnps_types.convert_to_SpectrumTuple_seprated"><code class="docutils literal notranslate"><span class="pre">convert_to_SpectrumTuple_seprated()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modifinder.utilities.gnps_types.convert_to_universal_key"><code class="docutils literal notranslate"><span class="pre">convert_to_universal_key()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="utilities.mol_utils.html">Molecule utilities</a></li>
@@ -95,7 +99,12 @@
   <section id="gnps-types-module">
 <h1>GNPS types module<a class="headerlink" href="#gnps-types-module" title="Permalink to this heading"></a></h1>
 <p>Holds the mapping for the adducts abd the acceptable keys for gnps.</p>
-<span class="target" id="module-modifinder.utilities.gnps_types"></span><dl class="py class">
+<span class="target" id="module-modifinder.utilities.gnps_types"></span><dl class="py function">
+<dt class="sig sig-object py" id="modifinder.utilities.gnps_types.Convert_SpectrumTuple_to_peaks">
+<span class="sig-prename descclassname"><span class="pre">modifinder.utilities.gnps_types.</span></span><span class="sig-name descname"><span class="pre">Convert_SpectrumTuple_to_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/utilities/gnps_types.html#Convert_SpectrumTuple_to_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.utilities.gnps_types.Convert_SpectrumTuple_to_peaks" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="modifinder.utilities.gnps_types.SpectrumTuple">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.utilities.gnps_types.</span></span><span class="sig-name descname"><span class="pre">SpectrumTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precursor_mz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.utilities.gnps_types.SpectrumTuple" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
@@ -124,6 +133,21 @@
 </dd></dl>
 
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modifinder.utilities.gnps_types.convert_to_SpectrumTuple">
+<span class="sig-prename descclassname"><span class="pre">modifinder.utilities.gnps_types.</span></span><span class="sig-name descname"><span class="pre">convert_to_SpectrumTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_mz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_charge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/utilities/gnps_types.html#convert_to_SpectrumTuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.utilities.gnps_types.convert_to_SpectrumTuple" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modifinder.utilities.gnps_types.convert_to_SpectrumTuple_seprated">
+<span class="sig-prename descclassname"><span class="pre">modifinder.utilities.gnps_types.</span></span><span class="sig-name descname"><span class="pre">convert_to_SpectrumTuple_seprated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_mz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_charge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/utilities/gnps_types.html#convert_to_SpectrumTuple_seprated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.utilities.gnps_types.convert_to_SpectrumTuple_seprated" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modifinder.utilities.gnps_types.convert_to_universal_key">
+<span class="sig-prename descclassname"><span class="pre">modifinder.utilities.gnps_types.</span></span><span class="sig-name descname"><span class="pre">convert_to_universal_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/modifinder/utilities/gnps_types.html#convert_to_universal_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.utilities.gnps_types.convert_to_universal_key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 

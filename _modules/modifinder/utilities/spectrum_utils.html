@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.utilities.spectrum_utils &mdash; ModiFinder 1.4 documentation</title>
+  <title>modifinder.utilities.spectrum_utils &mdash; ModiFinder 1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=c9ed3d4e"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=6d95b957"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -72,7 +72,7 @@
              
   <h1>Source code for modifinder.utilities.spectrum_utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_utils</span> <span class="k">as</span> <span class="n">mf_gu</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.classes.Spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tqdm</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cluster_spectrums</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -89,7 +89,8 @@
 <span class="sd">            The tolerance in mz</span>
 <span class="sd">    </span>
 <span class="sd">    </span>
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    clusters: list of clusters of the mz values, each cluster is a list of [mz, intensity, origin_spectrum_index]</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
@@ -125,7 +126,7 @@
     <span class="k">return</span> <span class="n">clusters</span>
 
 
-<div class="viewcode-block" id="aggregate_spectrums"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.spectrum_utils.aggregate_spectrums">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">aggregate_spectrums</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">consensus_majority_ratio</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="aggregate_spectrums"><a class="viewcode-back" href="../../../modifinder/utilities/utilities.spectrum_utils.html#modifinder.utilities.spectrum_utils.aggregate_spectrums">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">aggregate_spectrums</span><span class="p">(</span><span class="n">spectrums</span><span class="p">,</span> <span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mz_tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">consensus_majority_ratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function is to create a consensus spectrum from a list of spectrums of the same compound</span>
 <span class="sd">    all the other components of the generated spectrum such as the charge, ... are taken from the first spectrum.</span>
@@ -140,11 +141,12 @@
 <span class="sd">        mz_tolerance: float</span>
 <span class="sd">            The tolerance in mz</span>
 <span class="sd">        consensus_majority_ratio: float</span>
-<span class="sd">            The ratio of the spectrums that should have the peak to be considered in the consensus</span>
-<span class="sd">            if is 1, all the spectrums should have the peak to be considered in the consensus</span>
-<span class="sd">            if is 0, only one spectrum should have the peak to be considered in the consensus</span>
+<span class="sd">        The ratio of the spectrums that should have the peak to be considered in the consensus.</span>
+<span class="sd">        If is 1, all the spectrums should have the peak to be considered in the consensus.</span>
+<span class="sd">        If is 0, only one spectrum should have the peak to be considered in the consensus.</span>
 <span class="sd">    </span>
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    result: Spectrum object</span>
 <span class="sd">        The aggregated spectrum</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -199,13 +201,13 @@
 <span class="sd">            The ratio of the spectrums that should have the peak in order to keep it, 0 means none of the spectrums need to have it</span>
 <span class="sd">            1 means all of the spectrums need to have it.</span>
 <span class="sd">            </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        A tuple of two elements:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    result: Spectrum object</span>
 <span class="sd">        The refined spectrum</span>
 <span class="sd">    appearances: tuple of lists</span>
-<span class="sd">        The first list contains the number of spectrums that have the peak after refining</span>
-<span class="sd">        The second list contains the number of spectrums that have the peak before refining</span>
+<span class="sd">        The first list contains the number of spectrums that have the peak after refining.</span>
+<span class="sd">        The second list contains the number of spectrums that have the peak before refining.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Create an empty list to store the refined consensus</span>
     
@@ -247,7 +249,8 @@
 <span class="sd">        spectrum: Spectrum object</span>
 <span class="sd">            The spectrum to remove the adduct mass from its mz values</span>
 <span class="sd">    </span>
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    result: Spectrum object</span>
 <span class="sd">        The spectrum without the adduct mass</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -273,7 +276,8 @@
 <span class="sd">        adduct: str</span>
 <span class="sd">            The adduct to add to the spectrum, should be in the supported adducts list.</span>
 <span class="sd">    </span>
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    result: Spectrum object</span>
 <span class="sd">        The spectrum with the adduct mass</span>
 <span class="sd">    &#39;&#39;&#39;</span>
