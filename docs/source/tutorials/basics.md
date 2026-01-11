@@ -1,6 +1,22 @@
-# Basics Tutorial
+# ModiFinder Basics: Finding Modification Sites
 
-This guide tries to help you start working with ModiFinder.
+This guide shows you how to use ModiFinder's core functionality: predicting where structural modifications occur in molecules using MS/MS data.
+
+## What is ModiFinder?
+
+ModiFinder compares MS/MS spectra of a known compound and its modified analog to predict the most likely modification sites. It's particularly useful when you:
+
+- Have a known reference compound
+- Have identified a structurally similar unknown compound
+- Want to know where the modification occurred
+
+## Prerequisites
+
+Before diving into ModiFinder, you might want to familiarize yourself with:
+
+- [Creating Spectrum and Compound objects](creating_objects.md)
+- [Working with GNPS data and USIs](working_with_usi.md)
+- [Visualization tools](visualization.md)
 
 ## Create Spectrum
 
