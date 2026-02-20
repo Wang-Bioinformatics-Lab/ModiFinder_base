@@ -136,18 +136,20 @@ class ModiFinder:
         --------
 
         """
-
         self.network = None
         self.unknowns = None
         self.ppm_tolerance = ppm_tolerance
+
+        # Add ppm_tolerance to kwargs
+        kwargs["ppm_tolerance"] = ppm_tolerance
         
         if alignmentEngine is None:
-            self.alignmentEngine = CosineAlignmentEngine(ppm_tolerance = self.ppm_tolerance, **kwargs)
+            self.alignmentEngine = CosineAlignmentEngine(**kwargs)
         else:
             self.alignmentEngine = alignmentEngine
         
         if annotationEngine is None:
-            self.annotationEngine = MAGMaAnnotationEngine(ppm_tolerance = self.ppm_tolerance, **kwargs)
+            self.annotationEngine = MAGMaAnnotationEngine(**kwargs)
         else:
             self.annotationEngine = annotationEngine
 
@@ -230,7 +232,11 @@ class ModiFinder:
         smaller = u if self.network.nodes[u]["compound"].spectrum.precursor_mz <= self.network.nodes[v]["compound"].spectrum.precursor_mz else v
         larger = u if self.network.nodes[u]["compound"].spectrum.precursor_mz > self.network.nodes[v]["compound"].spectrum.precursor_mz else v
         if edgeDetail is None:
-            edgeDetail = self.alignmentEngine.align_single(self.network.nodes[smaller]["compound"].spectrum, self.network.nodes[larger]["compound"].spectrum, **kwargs)
+
+            edgeDetail = self.alignmentEngine.align_single(
+                self.network.nodes[smaller]["compound"].spectrum,
+                self.network.nodes[larger]["compound"].spectrum, 
+                **kwargs)
         
         self.update_edge(smaller, larger, edgeDetail, **kwargs)
     
