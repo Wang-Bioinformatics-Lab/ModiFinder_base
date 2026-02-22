@@ -26,16 +26,17 @@ def _cosine_fast(
         spec_other (Spectrum): Second spectrum
         mz_tolerance (float): Tolerance in Da for fragment m/z values, if None, it is not used.
         ppm_tolerance (float): Tolerance in ppm for fragment m/z values, if None, it is not used.
-        allow_shift (bool): _description_
+        allow_shift (bool): Shift for m/z values. If not 0, hybrid search is performed. shift = prec_mz(qry) - prec_mz(ref)
 
     Returns:
         Tuple[float, List[Tuple[int, int]]]: _description_
     """
-    
+
     if mz_tolerance is None and ppm_tolerance is None:
         raise ModiFinderError("At least one of mz_tolerance or ppm_tolerance must be provided.")
-    
     precursor_charge = spec.precursor_charge if spec.precursor_charge is not None else 1
+    if precursor_charge == 0:
+        precursor_charge = 1
     precursor_mass_diff = (
         spec.precursor_mz - spec_other.precursor_mz
     ) * precursor_charge
@@ -169,6 +170,7 @@ class CosineAlignmentEngine(AlignmentEngine):
         Returns:
             EdgeDetail: the edge detail object
         """
+
         cosine, matched_peaks = _cosine_fast(
             SpectrumTuple1,
             SpectrumTuple2,
