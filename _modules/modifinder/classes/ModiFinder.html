@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.classes.ModiFinder &mdash; ModiFinder 0.1.dev1+g9c18af224 documentation</title>
+  <title>modifinder.classes.ModiFinder &mdash; ModiFinder 0.1.dev1+gecb5ecfc9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=b7352a37"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=a47fec5b"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -209,18 +209,20 @@
 <span class="sd">        --------</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unknowns</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="n">ppm_tolerance</span>
+
+        <span class="c1"># Add ppm_tolerance to kwargs</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ppm_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ppm_tolerance</span>
         
         <span class="k">if</span> <span class="n">alignmentEngine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">alignmentEngine</span> <span class="o">=</span> <span class="n">CosineAlignmentEngine</span><span class="p">(</span><span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppm_tolerance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alignmentEngine</span> <span class="o">=</span> <span class="n">CosineAlignmentEngine</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">alignmentEngine</span> <span class="o">=</span> <span class="n">alignmentEngine</span>
         
         <span class="k">if</span> <span class="n">annotationEngine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">annotationEngine</span> <span class="o">=</span> <span class="n">MAGMaAnnotationEngine</span><span class="p">(</span><span class="n">ppm_tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppm_tolerance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">annotationEngine</span> <span class="o">=</span> <span class="n">MAGMaAnnotationEngine</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">annotationEngine</span> <span class="o">=</span> <span class="n">annotationEngine</span>
 
@@ -303,7 +305,11 @@
         <span class="n">smaller</span> <span class="o">=</span> <span class="n">u</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="k">else</span> <span class="n">v</span>
         <span class="n">larger</span> <span class="o">=</span> <span class="n">u</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="k">else</span> <span class="n">v</span>
         <span class="k">if</span> <span class="n">edgeDetail</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alignmentEngine</span><span class="o">.</span><span class="n">align_single</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">smaller</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">larger</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alignmentEngine</span><span class="o">.</span><span class="n">align_single</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">smaller</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">larger</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span> 
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">update_edge</span><span class="p">(</span><span class="n">smaller</span><span class="p">,</span> <span class="n">larger</span><span class="p">,</span> <span class="n">edgeDetail</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
     

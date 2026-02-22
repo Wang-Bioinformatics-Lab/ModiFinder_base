@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.engines.alignment.CosineAlignmentEngine &mdash; ModiFinder 0.1.dev1+g9c18af224 documentation</title>
+  <title>modifinder.engines.alignment.CosineAlignmentEngine &mdash; ModiFinder 0.1.dev1+gecb5ecfc9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=b7352a37"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=a47fec5b"></script>
       <script src="../../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -99,16 +99,17 @@
 <span class="sd">        spec_other (Spectrum): Second spectrum</span>
 <span class="sd">        mz_tolerance (float): Tolerance in Da for fragment m/z values, if None, it is not used.</span>
 <span class="sd">        ppm_tolerance (float): Tolerance in ppm for fragment m/z values, if None, it is not used.</span>
-<span class="sd">        allow_shift (bool): _description_</span>
+<span class="sd">        allow_shift (bool): Shift for m/z values. If not 0, hybrid search is performed. shift = prec_mz(qry) - prec_mz(ref)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple[float, List[Tuple[int, int]]]: _description_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">if</span> <span class="n">mz_tolerance</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ppm_tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;At least one of mz_tolerance or ppm_tolerance must be provided.&quot;</span><span class="p">)</span>
-    
     <span class="n">precursor_charge</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">precursor_charge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">precursor_charge</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">precursor_charge</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">precursor_mass_diff</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">spec</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">-</span> <span class="n">spec_other</span><span class="o">.</span><span class="n">precursor_mz</span>
     <span class="p">)</span> <span class="o">*</span> <span class="n">precursor_charge</span>
@@ -242,6 +243,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            EdgeDetail: the edge detail object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">cosine</span><span class="p">,</span> <span class="n">matched_peaks</span> <span class="o">=</span> <span class="n">_cosine_fast</span><span class="p">(</span>
             <span class="n">SpectrumTuple1</span><span class="p">,</span>
             <span class="n">SpectrumTuple2</span><span class="p">,</span>
