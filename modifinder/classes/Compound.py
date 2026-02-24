@@ -207,7 +207,7 @@ class Compound:
         return description
     
     
-    def print_peaks_to_fragments_map(self, peaks: list = None):
+    def print_peaks_to_fragments_map_by_id(self, peaks: list = None):
         """Print the peaks to fragments map
         
         Parameters
@@ -219,11 +219,11 @@ class Compound:
             peaks = range(len(self.spectrum.mz))
         
         for peak in peaks:
-            print(f"Peak {peak}: {self.spectrum.mz[peak]}, Fragments: {self.spectrum.peak_fragments_map[peak]}")
+            print(f"Peak {peak}: {self.spectrum.mz[peak]}, Fragments: {self.spectrum.peak_fragment_dict[peak]}")
         print()
         
     
-    def find_existance(self, peakids: list):
+    def find_existance_by_peak_ids(self, peakids: list):
         """
         For each atom, and for each peak in the list, find the fragments that the atom is part of
         
@@ -239,26 +239,26 @@ class Compound:
         
         existance = [dict() for i in range(len(self.structure.GetAtoms()))]
         for peak in peakids:
-            for fragment in self.spectrum.peak_fragments_map[peak]:
-                # get all the bits that are 1 in the fragment
-                bin_fragment = bin(fragment)
-                len_fragment = len(bin_fragment)
-                hitAtoms = [len_fragment-i-1 for i in range(len(bin_fragment)) if bin_fragment[i] == '1']
-                for atom in hitAtoms:
-                    if peak not in existance[atom]:
-                        existance[atom][peak] = []
-                    existance[atom][peak].append(fragment)
+                for fragment in self.spectrum.peak_fragment_dict.get(peak, []):
+                    # get all the bits that are 1 in the fragment
+                    bin_fragment = bin(fragment)
+                    len_fragment = len(bin_fragment)
+                    hitAtoms = [len_fragment-i-1 for i in range(len(bin_fragment)) if bin_fragment[i] == '1']
+                    for atom in hitAtoms:
+                        if peak not in existance[atom]:
+                            existance[atom][peak] = []
+                        existance[atom][peak].append(fragment)
         return existance
     
     
-    def calculate_contribution_atom_in_peak(self, atom: int, peakindx:int, existance_data:list, CI:bool = False, CPA:bool = True, CFA:bool = True):
+    def calculate_contribution_atom_by_peak_id(self, atom: int, peakid:int, existance_data:list, CI:bool = False, CPA:bool = True, CFA:bool = True):
         """Calculates the contribution of an atom to a peak
 
         Parameters
         ----------
         atom : int
             The index of the atom
-        peakindx : int
+        peakid : int
             The index of the peak
         existance_data : list of dicts
             The existance data for the atoms
@@ -270,7 +270,7 @@ class Compound:
             Calculate the fragment ambiguity factor
         """
         contribution = 0
-        if peakindx not in existance_data[atom]:
+        if peakid not in existance_data[atom]:
             return contribution
         
         intensity_factor = 1
@@ -278,11 +278,11 @@ class Compound:
         fragment_ambiguity_factor = 1
 
         if CI:
-            intensity_factor = self.spectrum.intensity[peakindx]
+            intensity_factor = self.spectrum.intensity[peakid]
         if CPA:
-            atom_peak_ambiguity_factor = 1/len(self.spectrum.peak_fragments_map[peakindx])
+            atom_peak_ambiguity_factor = 1/len(self.spectrum.peak_fragment_dict[peakid])
 
-        for frag in existance_data[atom][peakindx]:
+        for frag in existance_data[atom][peakid]:
             if CFA:
                 fragment_ambiguity_factor = 1/(bin(frag).count("1"))
             
@@ -291,22 +291,22 @@ class Compound:
         return contribution
     
     
-    def calculate_contributions(self, peakids, CI = False, CPA = True, CFA = True, CPE = True):
+    def calculate_contributions_by_peak_id(self, peakids, CI = False, CPA = True, CFA = True, CPE = True):
         """ 
         input:
         peakids: list of peak ids
         CI: (Consider_Intensity) bool, if True, the intensity of the peaks is considered (default: False)
         CPA: (Consider_Peak_Ambiguity) bool, if True, the peak ambiguity (number of fragments assigned to a peak) is considered (default: True)
         CFA: (Consider_Fragment_Ambiguity) bool, if True, the fragment ambiguity (number of atoms in fragment) is considered (default: True)
-        CPA: (Consider_Peak_Entropy) bool, if True, the peak entropy (how ambiguis the fragments are) is considered (default: True
+        CPE: (Consider_Peak_Entropy) bool, if True, the peak entropy (how ambiguis the fragments are) is considered (default: True)
         """
         num_atoms = len(self.structure.GetAtoms())
-        existance_data = self.find_existance(peakids)
+        existance_data = self.find_existance_by_peak_ids(peakids)
         contributions = [0 for i in range(num_atoms)]
         peak_atom_contributions = np.zeros((len(peakids), num_atoms))
         for i, peak in enumerate(peakids):
             for atom in range(num_atoms):
-                peak_atom_contributions[i][atom] = self.calculate_contribution_atom_in_peak(atom, peak, existance_data, CI=CI, CPA=CPA, CFA=CFA)
+                peak_atom_contributions[i][atom] = self.calculate_contribution_atom_by_peak_id(atom, peak, existance_data, CI=CI, CPA=CPA, CFA=CFA)
         
         if CPE:
             peak_entropies = np.zeros(len(peakids))
@@ -325,7 +325,7 @@ class Compound:
         return contributions
 
 
-    def filter_fragments_by_atoms(self, atoms: list, peaks: list = None):
+    def filter_fragments_by_atoms_and_peak_ids(self, atoms: list, peaks: list = None):
         """Filter the fragments by the atoms, remove fragments that do not contain at least one of the atoms
         Parameters
         ----------
@@ -340,25 +340,25 @@ class Compound:
             peaks = [i for i in range(len(self.peaks))]
         
         updated = 0
-        for i in peak_fragments_map.keys():
+        for i in peaks:
             updated_fragments = set()
-            for fragment in self.spectrum.peak_fragments_map[i]:
+            for fragment in self.spectrum.peak_fragment_dict[i]:
                 for atom in atoms:
                     if 1 << atom & fragment:
                         updated_fragments.add(fragment)
                         break
 
-            if len(updated_fragments) != len(self.spectrum.peak_fragments_map[i]):
+            if len(updated_fragments) != len(self.spectrum.peak_fragment_dict[i]):
                 updated += 1
             
-            self.spectrum.peak_fragments_map[i] = updated_fragments
+            self.spectrum.peak_fragment_dict[i] = updated_fragments
 
         return updated
     
     
     from typing import Tuple
 
-    def calculate_peak_annotation_ambiguity(self, peaks: list=None) -> Tuple[float, float]:
+    def calculate_peak_annotation_ambiguity_by_peak_ids(self, peaks: list=None) -> Tuple[float, float]:
         """Calculate the peak annotation ambiguity
         
         Parameters
@@ -376,9 +376,9 @@ class Compound:
         ambiguity = 0
         annotated_peaks = 0
         for peak in peaks:
-            if len(self.spectrum.peak_fragments_map[peak]) > 0:
+            if len(self.spectrum.peak_fragment_dict[peak]) > 0:
                 annotated_peaks += 1
-                ambiguity += len(self.spectrum.peak_fragments_map[peak])
+                ambiguity += len(self.spectrum.peak_fragment_dict[peak])
         if annotated_peaks == 0:
             return -1, 0
         if len(peaks) == 0:
@@ -386,7 +386,7 @@ class Compound:
         return ambiguity / annotated_peaks, annotated_peaks / len(peaks)
 
 
-    def calculate_annotation_entropy(self, peaks: list=None):
+    def calculate_annotation_entropy_by_peak_ids(self, peaks: list=None):
         """Calculate the entropy of the annotation
         
         Parameters
@@ -404,14 +404,14 @@ class Compound:
         n = len(self.structure.GetAtoms())
         for peak in peaks:
             atoms_appearance = [0 for i in range(n)]
-            for fragment in self.spectrum.peak_fragments_map[peak]:
+            for fragment in self.spectrum.peak_fragment_dict[peak]:
                 for atom in range(n):
                     if 1 << atom & fragment:
                         atoms_appearance[atom] += 1
             entropy = 0
             for atom in range(n):
                 if atoms_appearance[atom] > 0:
-                    p = atoms_appearance[atom] / len(self.spectrum.peak_fragments_map[peak])
+                    p = atoms_appearance[atom] / len(self.spectrum.peak_fragment_dict[peak])
                     entropy -= p * math.log(p)
             peak_entropies[peak] = entropy
         if len(peak_entropies) == 0:

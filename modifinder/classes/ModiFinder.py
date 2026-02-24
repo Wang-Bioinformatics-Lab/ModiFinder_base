@@ -441,20 +441,29 @@ class ModiFinder:
             if edgeDetail is None:
                 raise ValueError(f"Edge between {known_id} and {unknown_id} does not have edge details")
         
-            shifted_peaks_in_known = [match.first_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
-            unshifted_peaks_in_known = [match.first_peak_index for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+            shifted_peaks_in_known = [match.second_peak_mz for match in edgeDetail.matches if match.match_type == MatchType.shifted]
+            unshifted_peaks_in_known = [match.second_peak_mz for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+
+            # Verify that these indices exist in the known compound's spectrum
+            if max(shifted_peaks_in_known + unshifted_peaks_in_known) >= len(self.network.nodes[known_id]["compound"].spectrum.mz):
+                raise ValueError(f"Peak indices in edge details exceed the number of peaks in the known compound's spectrum")
+            if max(unshifted_peaks_in_known) >= len(self.network.nodes[known_id]["compound"].spectrum.mz):
+                raise ValueError(f"Unshifted peak indices in edge details exceed the number of peaks in the known compound's spectrum")
+
         elif self.network.has_edge(unknown_id, known_id):
             edgeDetail = self.network[unknown_id][known_id]["edgedetail"]
             if edgeDetail is None:
                 raise ValueError("No edge detail found between the known and unknown compounds")    
-            shifted_peaks_in_known = [match.second_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
-            unshifted_peaks_in_known = [match.second_peak_index for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+
+            shifted_peaks_in_known = [match.second_peak_mz for match in edgeDetail.matches if match.match_type == MatchType.shifted]
+            unshifted_peaks_in_known = [match.second_peak_mz for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+
         else:
             raise ValueError("No edge found between the known and unknown compounds")
         known_compound = self.network.nodes[known_id]["compound"]
-        positive_contributions = known_compound.calculate_contributions(shifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
+        positive_contributions = known_compound.calculate_contributions_by_peak_id(shifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
         if not shifted_only:
-            negative_contributions = known_compound.calculate_contributions(unshifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
+            negative_contributions = known_compound.calculate_contributions_by_peak_id(unshifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
         else:
             negative_contributions = [0 for i in range(len(known_compound.structure.GetAtoms()))]
         

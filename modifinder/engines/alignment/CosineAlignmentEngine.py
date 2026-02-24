@@ -187,10 +187,10 @@ class CosineAlignmentEngine(AlignmentEngine):
                 ppm_tolerance,
                 mz_tolerance,
             ):
-                Matches.append(Match(match[0], match[1], MatchType.shifted))
+                Matches.append(Match(SpectrumTuple1.mz[match[0]], SpectrumTuple2.mz[match[1]], MatchType.shifted))
             else:
-                Matches.append(Match(match[0], match[1], MatchType.unshifted))
-
+                Matches.append(Match(SpectrumTuple1.mz[match[0]], SpectrumTuple2.mz[match[1]], MatchType.unshifted))
+                
         return EdgeDetail(
             match_score=cosine, matches=Matches, number_of_modifications=-1
         )

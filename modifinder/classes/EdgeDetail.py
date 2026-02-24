@@ -18,17 +18,17 @@ class Match:
     match_type : MatchType
         Type of the match
     """
-    def __init__(self, first_peak_index:int, second_peak_index:int, match_type: MatchType):
+    def __init__(self, first_peak_mz:int, second_peak_mz:int, match_type: MatchType):
         """
         Initialize the Match object.
 
         Parameters
         ----------
-        first_peak_index : int
-            Index of the first peak
+        first_peak_mz : int
+            m/z of the first peak
             
-        second_peak_index : int
-            Index of the second peak
+        second_peak_mz : int
+            m/z of the second peak
             
         match_type : MatchType
             Type of the match
@@ -38,18 +38,18 @@ class Match:
         if you need matches with more information, create a new class and inherit from this class.
         
         """
-        self.first_peak_index = first_peak_index
-        self.second_peak_index = second_peak_index
+        self.first_peak_mz = first_peak_mz
+        self.second_peak_mz = second_peak_mz
         self.match_type = match_type
     
     def __repr__(self):
-        return f"Match({self.first_peak_index}, {self.second_peak_index}, {self.match_type})"
+        return f"Match({self.first_peak_mz}, {self.second_peak_mz}, {self.match_type})"
     
     def copy(self):
         """
         Create a copy of the Match object
         """
-        return Match(self.first_peak_index, self.second_peak_index, self.match_type)
+        return Match(self.first_peak_mz, self.second_peak_mz, self.match_type)
 
 class EdgeDetail:
     """
@@ -62,9 +62,9 @@ class EdgeDetail:
     match_score : float
         Match score, how well the two spectra match
     matches : List[Match]
-        List of matches, each match is a tuple of two peak indices and the match type. It is 
-        important to note that match has directionality. The first peak index is from the first 
-        node of the edge and the second peak index is from the second node of the edge.
+        List of matches, each match is a tuple of two peak m/z values and the match type. It is 
+        important to note that match has directionality. The first peak m/z is from the first 
+        node of the edge and the second peak m/z is from the second node of the edge.
     
     """
     def __init__(self, number_of_modifications: int = -1, match_score: float = 0, matches: List[Match] = None, start_spectrum_id: str = None, end_spectrum_id: str = None):
@@ -78,9 +78,9 @@ class EdgeDetail:
         match_score : float
             Match score, how well the two spectra match
         matches : List[Match]
-            List of matches, each match is a tuple of two peak indices and the match type. It is 
-            important to note that match has directionality. The first peak index is from the first 
-            node of the edge and the second peak index is from the second node of the edge.
+            List of matches, each match is a tuple of two peak m/z values and the match type. It is 
+            important to note that match has directionality. The first peak m/z is from the first 
+            node of the edge and the second peak m/z is from the second node of the edge.
         """
         self.start_spectrum_id = start_spectrum_id
         self.end_spectrum_id = end_spectrum_id
@@ -96,10 +96,10 @@ class EdgeDetail:
         Reverse the matches order in the EdgeDetail object
         
         This is useful when the reversed matches are needed from the edge in the network.
-        first_peak_index and second_peak_index are swapped in the matches.
+        first_peak_mz and second_peak_mz are swapped in the matches.
         """
         for match in self.matches:
-            match.first_peak_index, match.second_peak_index = match.second_peak_index, match.first_peak_index
+            match.first_peak_mz, match.second_peak_mz = match.second_peak_mz, match.first_peak_mz
     
     def copy(self):
         """
@@ -119,9 +119,9 @@ class EdgeDetail:
         Returns
         -------
         List[Tuple[int, int]]
-            List of tuples of peak indices
+            List of tuples of peak m/z values
         """
-        return [(match.first_peak_index, match.second_peak_index) for match in self.matches]
+        return [(match.first_peak_mz, match.second_peak_mz) for match in self.matches]
     
     def get_single_type_matches(self, match_type: MatchType) -> List[Tuple[int, int]]:
         """
@@ -135,9 +135,9 @@ class EdgeDetail:
         Returns
         -------
         List[Tuple[int, int]]
-            List of tuples of peak indices [(first_peak_index, second_peak_index)]
+            List of tuples of peak m/z values [(first_peak_mz, second_peak_mz), ...] of the specified match type
         """
-        return [(match.first_peak_index, match.second_peak_index) for match in self.matches if match.match_type == match_type]
+        return [(match.first_peak_mz, match.second_peak_mz) for match in self.matches if match.match_type == match_type]
     
     def get_meta_data(self):
         """

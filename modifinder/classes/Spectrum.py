@@ -33,7 +33,7 @@ class Spectrum:
         The dissociation method used.
     spectrum_id: str, optional
         The spectrum id. if not provided, it will be generated.
-    peak_fragments_map: dict, optional
+    peak_fragment_dict: dict, optional
         A dictionary mapping peaks to fragments
     
     Examples
@@ -62,7 +62,7 @@ class Spectrum:
         self.ms_mass_analyzer = None
         self.ms_dissociation_method = None
         self.spectrum_id = None
-        self.peak_fragments_map = {}
+        self.peak_fragment_dict = {}
         
         if incoming_data is None and len(kwargs) == 0:
             return
@@ -97,7 +97,7 @@ class Spectrum:
 
     def update(self, peaks = None, peaks_json = None, mz=None, intensity=None, precursor_mz=None, precursor_charge=None, 
                _adduct = None, adduct=None, ms_level=None, instrument=None, ms_mass_analyzer=None, 
-               ms_dissociation_method=None, spectrum_id=None, peak_fragments_map: dict = None, ignore_adduct_format = False, **kwargs):
+               ms_dissociation_method=None, spectrum_id=None, peak_fragment_dict: dict = None, ignore_adduct_format = False, **kwargs):
         """Update the Spectrum object with the given values.
 
         Args:
@@ -114,7 +114,7 @@ class Spectrum:
             ms_dissociation_method (str): The dissociation method used.
             spectrum_id (str): The spectrum id.
             keep_top_k (int): If not None, only keep the top k peaks.
-            peak_fragments_map (dict): A dictionary mapping peaks to fragments
+            peak_fragment_dict (dict): A dictionary mapping peaks to fragments
             ignore_adduct_format (bool): If True, if the adduct format is not recognized, it will not throw an error.
             **kwargs: Additional keyword arguments.
         """
@@ -135,7 +135,7 @@ class Spectrum:
         self.ms_mass_analyzer = ms_mass_analyzer if ms_mass_analyzer is not None else self.ms_mass_analyzer
         self.ms_dissociation_method = ms_dissociation_method if ms_dissociation_method is not None else self.ms_dissociation_method
         self.spectrum_id = spectrum_id if spectrum_id is not None else self.spectrum_id
-        self.peak_fragments_map = peak_fragments_map if peak_fragments_map is not None else self.peak_fragments_map
+        self.peak_fragment_dict = peak_fragment_dict if peak_fragment_dict is not None else self.peak_fragment_dict
         
         if self.mz is not None:
             self.mz, self.intensity = zip(*sorted(zip(self.mz, self.intensity)))
@@ -173,7 +173,7 @@ class Spectrum:
         self.ms_mass_analyzer = None
         self.ms_dissociation_method = None
         self.spectrum_id = None
-        self.peak_fragments_map = {}
+        self.peak_fragment_dict = {}
     
     
     def copy(self):
