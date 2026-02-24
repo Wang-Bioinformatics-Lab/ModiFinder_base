@@ -64,7 +64,7 @@ class ModiFinder:
         knownCompound: Compound = None,
         unknownCompound: Compound = None,
         edgeDetail: EdgeDetail = None,
-        helpers: list = [],
+        helpers: list = [Compound],
         network: nx.DiGraph = None,
         networkUnknowns: list = None,
         should_align: bool = True,
@@ -185,8 +185,9 @@ class ModiFinder:
         
         if helpers is not None:
             for helper in helpers:
+                if not isinstance(helper, Compound):
+                    raise ValueError("Helper compounds must be of type Compound")
                 try:
-                    helper = convert.to_compound(data=helper)
                     self.network.add_node(helper.id, compound=helper)
                     self.add_adjusted_edge(helper.id, knownCompound.id)
                 except Exception as e:

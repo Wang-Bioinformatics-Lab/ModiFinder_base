@@ -12,8 +12,8 @@ from modifinder.samples import (
 
 class TestCosineAlignment(unittest.TestCase):
     def test_single_alignment(self):
-        spectrum1 = convert.to_spectrum(caffeine_data.usi, normalize_peaks=True)
-        spectrum2 = convert.to_spectrum(theophylline_data.usi, normalize_peaks=True)
+        spectrum1 = convert.to_spectrum(caffeine_data.usi)
+        spectrum2 = convert.to_spectrum(theophylline_data.usi)
         
         cosine_engine = CosineAlignmentEngine()
         edge_detail = cosine_engine.align_single(spectrum1, spectrum2)
