@@ -463,8 +463,8 @@ def draw_spectrum(spectrum, output_type='png', normalize_peaks = False, colors: 
     if font_size is not None:
         plt.rcParams.update({'font.size': font_size})
 
-    for i in range(len(spectrum.mz)):
-        mz = spectrum.mz[i]
+    for i in range(len(spectrum.mz_key)):
+        mz = spectrum.mz_key[i] / 1e6
         intensity = spectrum.intensity[i]
         color = colors.get(i, 'gray')
         if isinstance(color, list):

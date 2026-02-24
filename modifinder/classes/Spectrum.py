@@ -51,7 +51,7 @@ class Spectrum:
             incoming_data : Input data (optional, default is None).
                 The data to initialize the Spectrum object. The data can be a dictionary, a usi, or a Spectrum object.
         """
-        self.mz = None
+        self.mz_key = None   # TODO: Finish implementing tomorrow, this is the mz values multiplied by 1e6 and converted to integers for accurate ID
         self.intensity = None
         self.precursor_mz = None
         self.precursor_charge = None
@@ -122,9 +122,9 @@ class Spectrum:
         if peaks_json is not None:
             peaks = json.loads(peaks_json)
         if peaks is not None:
-            self.mz = [peak[0] for peak in peaks]
+            self.mz_key = [int(peak[0] * 1e6) for peak in peaks]
             self.intensity = [peak[1] for peak in peaks]
-        self.mz = np.array(mz) if mz is not None else self.mz
+        self.mz_key = np.array([int(x * 1e6) for x in mz]) if mz is not None else self.mz_key
         self.intensity = np.array(intensity) if intensity is not None else self.intensity
         self.precursor_mz = float(precursor_mz) if precursor_mz is not None else self.precursor_mz
         self.precursor_charge = int(float(precursor_charge)) if precursor_charge is not None else self.precursor_charge
@@ -137,8 +137,8 @@ class Spectrum:
         self.spectrum_id = spectrum_id if spectrum_id is not None else self.spectrum_id
         self.peak_fragment_dict = peak_fragment_dict if peak_fragment_dict is not None else self.peak_fragment_dict
         
-        if self.mz is not None:
-            self.mz, self.intensity = zip(*sorted(zip(self.mz, self.intensity)))
+        if self.mz_key is not None:
+            self.mz_key, self.intensity = zip(*sorted(zip(self.mz_key, self.intensity)))
         
         self.normalize_peaks()
         
@@ -162,7 +162,7 @@ class Spectrum:
     
     def clear(self):
         """Clear the Spectrum object."""
-        self.mz = None
+        self.mz_key = None
         self.intensity = None
         self.precursor_mz = None
         self.precursor_charge = None
@@ -227,14 +227,15 @@ class Spectrum:
         list
             The indexes of the peaks within the given m/z tolerance.
         """
+        mzs = self.mz_key / 1e6
         
         min_range = max(mz-mz_tolerance, mz - (mz * ppm_tolerance / 1e6))
         max_range = min(mz+mz_tolerance, mz + (mz * ppm_tolerance / 1e6))
         
         # Find the leftmost index where min_val could be inserted
-        left_index = bisect.bisect_left(self.mz, min_range)
+        left_index = bisect.bisect_left(mzs, min_range)
         # Find the rightmost index where max_val could be inserted
-        right_index = bisect.bisect_right(self.mz, max_range)
+        right_index = bisect.bisect_right(mzs, max_range)
         # Return the range of indices between left_index and right_index (exclusive of right_index)
         return list(range(left_index, right_index))
     

@@ -66,4 +66,11 @@ spectrum = Spectrum(
     spectrum_id= data["SpectrumID"]
 )
 
-compound = mf.Compound(structure=data["Smiles"], spectrum=spectrum, name=data["Compound_Name"], id=accession)
+# compound = mf.Compound(structure=data["Smiles"], spectrum=spectrum, name=data["Compound_Name"], id=accession)
+compound = mf.Compound(
+    spectrum = peaks,
+    precursor_mz = data["Precursor_MZ"],
+    precursor_charge = data["Charge"],
+    adduct = data["Adduct"],
+    smiles = data["Smiles"],
+)

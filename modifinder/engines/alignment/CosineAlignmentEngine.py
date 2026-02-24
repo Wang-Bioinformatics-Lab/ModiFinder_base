@@ -51,14 +51,15 @@ def _cosine_fast(
 
     # Find the matching peaks between both spectra.
     peak_match_scores, peak_match_idx = [], []
+    # TODO, swap back once mz_key full integrated
     for peak_index, (peak_mz, peak_intensity) in enumerate(
-        zip(spec.mz, spec.intensity)
+        zip(np.array(spec.mz_key) / 1e6, np.array(spec.intensity))
     ):
         # Advance while there is an excessive mass difference.
         for cpi in range(num_shifts):
-            while other_peak_index[cpi] < len(spec_other.mz) - 1 and (
+            while other_peak_index[cpi] < len(spec_other.mz_key) - 1 and (
                 peak_mz - mz_tolerance
-                > spec_other.mz[other_peak_index[cpi]] + mass_diff[cpi]
+                > (spec_other.mz_key[other_peak_index[cpi]] / 1e6) + mass_diff[cpi]
             ):
                 other_peak_index[cpi] += 1
 
@@ -67,11 +68,11 @@ def _cosine_fast(
             index = 0
             other_peak_i = other_peak_index[cpi] + index
             while (
-                other_peak_i < len(spec_other.mz)
-                and abs(peak_mz - (spec_other.mz[other_peak_i] + mass_diff[cpi]))
+                other_peak_i < len(spec_other.mz_key)
+                and abs(peak_mz - ((spec_other.mz_key[other_peak_i] / 1e6) + mass_diff[cpi]))
                 <= mz_tolerance
             ):
-                if abs(peak_mz - (spec_other.mz[other_peak_i] + mass_diff[cpi])) <= (
+                if abs(peak_mz - ((spec_other.mz_key[other_peak_i] / 1e6) + mass_diff[cpi])) <= (
                     ppm_tolerance * peak_mz / 1e6
                 ):
                     peak_match_scores.append(
@@ -134,11 +135,18 @@ class CosineAlignmentEngine(AlignmentEngine):
         kwargs : dict
             additional arguments
         """
+        print(f"In CosineAlignmentEngine.align() with mz_tolerance={mz_tolerance}, ppm_tolerance={ppm_tolerance}, align_all={align_all}", flush=True)
         edges = network.edges(data=True)
+        print("Number of network edges:", len(edges), flush=True)
         for edge in edges:
             start_compound = network.nodes[edge[0]]["compound"]
             end_compound = network.nodes[edge[1]]["compound"]
+            print(f"Aligning edge {edge[0]} -> {edge[1]}", flush=True)
+            print(f"spectrum 1: mz={start_compound.spectrum.mz_key[:5]}, intensity={start_compound.spectrum.intensity[:5]}", flush=True)
+            print(f"spectrum 2: mz={end_compound.spectrum.mz_key[:5]}, intensity={end_compound.spectrum.intensity[:5]}", flush=True)
+                
             if "edgedetail" not in edge[2] or edge[2]["edgedetail"] is None or align_all:
+                
                 edge[2]["edgedetail"] = self.align_single(
                     start_compound.spectrum,
                     end_compound.spectrum,
@@ -182,15 +190,19 @@ class CosineAlignmentEngine(AlignmentEngine):
         Matches = []
         for match in matched_peaks:
             if is_shifted(
-                SpectrumTuple1.mz[match[0]],
-                SpectrumTuple2.mz[match[1]],
+                SpectrumTuple1.mz_key[match[0]]/1e6,
+                SpectrumTuple2.mz_key[match[1]]/1e6 ,
                 ppm_tolerance,
                 mz_tolerance,
             ):
-                Matches.append(Match(SpectrumTuple1.mz[match[0]], SpectrumTuple2.mz[match[1]], MatchType.shifted))
+                Matches.append(Match(SpectrumTuple1.mz_key[match[0]], SpectrumTuple2.mz_key[match[1]], MatchType.shifted))
             else:
-                Matches.append(Match(SpectrumTuple1.mz[match[0]], SpectrumTuple2.mz[match[1]], MatchType.unshifted))
-                
+                Matches.append(Match(SpectrumTuple1.mz_key[match[0]], SpectrumTuple2.mz_key[match[1]], MatchType.unshifted))
+
         return EdgeDetail(
-            match_score=cosine, matches=Matches, number_of_modifications=-1
+            match_score=cosine,
+            matches=Matches,
+            number_of_modifications=-1,
+            start_spectrum_id=SpectrumTuple1.spectrum_id,
+            end_spectrum_id=SpectrumTuple2.spectrum_id,
         )

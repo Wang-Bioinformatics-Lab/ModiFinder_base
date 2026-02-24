@@ -11,10 +11,10 @@ class Match:
     
     Attributes
     ----------
-    first_peak_index : int
-        Index of the peak in the first spectrum
-    second_peak_index : int
-        Index of the peak in the second spectrum
+    first_peak_mz : int
+        mz of the peak in the first spectrum
+    second_peak_mz : int
+        mz of the peak in the second spectrum
     match_type : MatchType
         Type of the match
     """
