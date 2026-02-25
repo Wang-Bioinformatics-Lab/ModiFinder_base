@@ -14,6 +14,22 @@ from modifinder.classes.Spectrum import Spectrum
 from modifinder.classes.StructureMeta import StructureMeta
 from .. import convert
 
+def _filter_peaks_by_precursor_mz(peaks:List[Tuple[float, float]], precursor_mz:float)->List[Tuple[float, float]]:
+    """Removes peaks that are higher than 0.99 * precursor_mz so only fragments remain in the spectrum.
+
+    Parameters
+    ----------
+    peaks : List[Tuple[float, float]]
+        A list of tuples representing the peaks in the spectrum, where each tuple contains the m/z and intensity of the peak.
+    precursor_mz : float
+        The m/z of the precursor ion, used to filter out peaks that are higher than 0.99 * precursor_mz.
+    
+    Returns
+    -------
+    """
+    filtered_peaks = [peak for peak in peaks if peak[0] < 0.99 * precursor_mz]
+    return filtered_peaks
+
 
 class Compound:
     """ A class to represent a compound 
@@ -100,6 +116,9 @@ class Compound:
             self.id = lower_kwargs["id"]
         else:
             self.id = str(uuid.uuid4())
+
+        spectrum = _filter_peaks_by_precursor_mz(spectrum, precursor_mz)
+
         self.spectrum = Spectrum(
             mz= [s[0] for s in spectrum],
             intensity= [s[1] for s in spectrum],
