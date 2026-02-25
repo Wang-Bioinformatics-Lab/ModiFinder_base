@@ -579,9 +579,11 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
             spectrum.normalize_peaks()
 
     if x_lim is None:
-        x_lim = (min(spectrums[0].mz), max(spectrums[0].mz))
+        x_lim = (min(spectrums[0].mz_key), max(spectrums[0].mz_key))
         for spectrum in spectrums:
-            x_lim = (min(x_lim[0], min(spectrum.mz)), max(x_lim[1], max(spectrum.mz)))
+            x_lim = (min(x_lim[0], min(spectrum.mz_key)), max(x_lim[1], max(spectrum.mz_key)))
+
+        x_lim = (x_lim[0] / 1e6, x_lim[1] / 1e6)  # Convert key to float
     
     # calculating the colors
     # matches should be a list of matchings for each spectrum pairs, each matching is a list of tuples (index1, index2)
@@ -615,7 +617,7 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
     for match_index, match in enumerate(matches):
         for pair in match:
             temp_color = 'blue'
-            if is_shifted(spectrums[match_index].mz[pair[0]], spectrums[match_index+1].mz[pair[1]], ppm, None):
+            if is_shifted(spectrums[match_index].mz_key[pair[0]] / 1e6, spectrums[match_index+1].mz_key[pair[1]] / 1e6, ppm, None):
                 temp_color = 'red'
             
             if pair[0] not in colors[match_index]:
@@ -636,9 +638,9 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
             
             if draw_mapping_lines:
                 if flipped and match_index == 0:
-                    lines.append([(match_index, spectrums[match_index].mz[pair[0]], 0), (match_index+1, spectrums[match_index+1].mz[pair[1]], 0), temp_color])
+                    lines.append([(match_index, spectrums[match_index].mz_key[pair[0]] / 1e6, 0), (match_index+1, spectrums[match_index+1].mz_key[pair[1]] / 1e6, 0), temp_color])
                 else:
-                    lines.append([(match_index, spectrums[match_index].mz[pair[0]], 0), (match_index+1, spectrums[match_index+1].mz[pair[1]], spectrums[match_index+1].intensity[pair[1]]), temp_color])
+                    lines.append([(match_index, spectrums[match_index].mz_key[pair[0]] / 1e6, 0), (match_index+1, spectrums[match_index+1].mz_key[pair[1]] / 1e6, spectrums[match_index+1].intensity[pair[1]]), temp_color])
     
                 
     if size is None:

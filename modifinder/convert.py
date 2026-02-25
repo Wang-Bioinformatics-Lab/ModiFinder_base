@@ -179,6 +179,9 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
             return spectrum
         except Exception as err:
             raise ModiFinderError("Input data is not a valid list. " + str(err)) from err
+        
+    if isinstance(data, _get_spectrum_class()):
+        return deepcopy(data)
     
     raise ModiFinderError("Input data is not a valid object.")
 
