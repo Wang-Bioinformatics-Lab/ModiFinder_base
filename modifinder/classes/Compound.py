@@ -238,16 +238,18 @@ class Compound:
         """
         
         existance = [dict() for i in range(len(self.structure.GetAtoms()))]
+
+
         for peak in peak_mzs:
-                for fragment in self.spectrum.peak_fragment_dict.get(peak, []):
-                    # get all the bits that are 1 in the fragment
-                    bin_fragment = bin(fragment)
-                    len_fragment = len(bin_fragment)
-                    hitAtoms = [len_fragment-i-1 for i in range(len(bin_fragment)) if bin_fragment[i] == '1']
-                    for atom in hitAtoms:
-                        if peak not in existance[atom]:
-                            existance[atom][peak] = []
-                        existance[atom][peak].append(fragment)
+            for fragment in self.spectrum.peak_fragment_dict.get(peak, []):
+                # get all the bits that are 1 in the fragment
+                bin_fragment = bin(fragment)
+                len_fragment = len(bin_fragment)
+                hitAtoms = [len_fragment-i-1 for i in range(len(bin_fragment)) if bin_fragment[i] == '1']
+                for atom in hitAtoms:
+                    if peak not in existance[atom]:
+                        existance[atom][peak] = []
+                    existance[atom][peak].append(fragment)
 
         return existance
     
@@ -355,7 +357,7 @@ class Compound:
                 updated += 1
             
             self.spectrum.peak_fragment_dict[int(i)] = updated_fragments
-
+            
         return updated
     
     

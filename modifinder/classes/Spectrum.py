@@ -150,6 +150,8 @@ class Spectrum:
             self.precursor_mz = float(self.precursor_mz)
         if self.precursor_charge is not None:
             self.precursor_charge = int(self.precursor_charge)
+            if self.precursor_charge == 0:
+                self.precursor_charge = 1
 
 
     def __str__(self):

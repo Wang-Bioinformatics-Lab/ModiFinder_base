@@ -43,18 +43,9 @@ class MAGMaAnnotationEngine(AnnotationEngine):
             if compound is not None and compound.is_known:
                 if annotate_all or (compound.spectrum.peak_fragment_dict is None or len(compound.spectrum.peak_fragment_dict) == 0):
                     self.annotate_single(compound, modify_compound=True, **kwargs)
-
-        print("After annotate():", flush=True)
-        # Print sample values for fragment dict or indicate if it's empty
-        if compound.spectrum.peak_fragment_dict:
-            print({k: compound.spectrum.peak_fragment_dict[k] for k in list(compound.spectrum.peak_fragment_dict.keys())[:5]}, flush=True)
-        else:
-            print("The fragment dict is empty.", flush=True)
-
         
         # refine by helpers
         for edge in network.edges:
-            print(f"Refining annotations for edge {edge[0]} -> {edge[1]}", flush=True)
             edge_detail = network.edges[edge]["edgedetail"]
             if edge_detail is not None:
                 first_compound = network.nodes[edge[0]]["compound"]
@@ -63,6 +54,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                     try:
                         self.refine_annotations_by_helper(network.nodes[edge[0]]["compound"], network.nodes[edge[1]]["compound"], edge_detail, modify_compound = True)
                         self.refine_annotations_by_helper(network.nodes[edge[1]]["compound"], network.nodes[edge[0]]["compound"], edge_detail, modify_compound = True)
+                    
                     except Exception as e:
                         raise e
 
@@ -113,8 +105,8 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                     peak_fragment_dict[int(mz_key)].add(annotation[0])
                 except KeyError:
                     # Get keys within 0.002 m/z for debugging
-                    print(f"KeyError for m/z {mz_key}. Available keys: {[key for key in peak_fragment_dict.keys() if abs(key - mz_key) <= 1e4]}")
-                    print(f"Sample of some keys: {list(peak_fragment_dict.keys())[:10]}")
+                    print(f"KeyError for m/z {mz_key}. Available keys: {[key for key in peak_fragment_dict.keys() if abs(key - mz_key) <= 1e4]}", flush=True)
+                    print(f"Sample of some keys: {list(peak_fragment_dict.keys())[:10]}", flush=True)
                     raise KeyError(f"m/z {mz_key} not found in peak_fragment_dict")
 
         # refine by formula
@@ -186,6 +178,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
             compound (Compound): the compound
             
         """
+        raise NotImplementedError("This function has not been tested in the new verion")
         print("Refining the annotations by formula", flush=True)
         
         structure = compound.structure
@@ -232,7 +225,6 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         """
         Refines the annotations of a compound by using the helper compound
         """
-        print("Refining the annotations by helper", flush=True)
         if not modify_compound:
             main_compound = main_compound.copy()
             
@@ -256,11 +248,8 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         main_compound.filter_fragments_by_atoms_and_peak_ids(modification_site, shifted_peaks)
         
         # filter unshifted peaks by intersection
-
-        print('helper_compound.spectrum.peak_fragment_dict', helper_compound.spectrum.peak_fragment_dict, flush=True)
         
         for edge in unshifted:
-            print("We're in refine_annotations_by_helper() and we're doubting that peak[1] makes any sense:", edge[1], flush=True)
             helper_fragments = set()
             for fragment in helper_compound.spectrum.peak_fragment_dict[int(edge[1])]:
                 new_fragment = 0
@@ -274,12 +263,9 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                 if new_fragment != -1:
                     helper_fragments.add(new_fragment)
             
-            print(f"Filtering the spectrum by taking the intersection with the helper. Starting with {len(main_compound.spectrum.peak_fragment_dict[int(edge[0])])} fragments and {len(helper_fragments)} fragments from the helper", flush=True)
             fragments_assigned_to_peak = set(main_compound.spectrum.peak_fragment_dict[int(edge[0])])
             main_compound.spectrum.peak_fragment_dict[int(edge[0])] = main_compound.spectrum.peak_fragment_dict[int(edge[0])].intersection(helper_fragments)
-     
-            print(f"After filtering, {len(main_compound.spectrum.peak_fragment_dict[int(edge[0])])} fragments remain", flush=True)
-        
+             
         return main_compound.spectrum.peak_fragment_dict
         
         

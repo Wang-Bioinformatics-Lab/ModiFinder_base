@@ -67,7 +67,7 @@ class EdgeDetail:
         node of the edge and the second peak m/z is from the second node of the edge.
     
     """
-    def __init__(self, number_of_modifications: int = -1, match_score: float = 0, matches: List[Match] = None, start_spectrum_id: str = None, end_spectrum_id: str = None):
+    def __init__(self, number_of_modifications: int = -1, match_score: float = 0, matches: List[Match] = None, start_spectrum_id: str = None, end_spectrum_id: str = None, start_compound_id: str = None, end_compound_id: str = None):
         """
         Initialize the EdgeDetail object.
 
@@ -84,6 +84,8 @@ class EdgeDetail:
         """
         self.start_spectrum_id = start_spectrum_id
         self.end_spectrum_id = end_spectrum_id
+        self.start_compound_id = start_compound_id
+        self.end_compound_id = end_compound_id
         self.number_of_modifications = number_of_modifications
         self.match_score = match_score
         self.matches = matches if matches else []
@@ -110,7 +112,15 @@ class EdgeDetail:
         EdgeDetail
             A copy of the EdgeDetail object
         """
-        return EdgeDetail(self.number_of_modifications, self.match_score, self.matches.copy(), self.start_spectrum_id, self.end_spectrum_id)
+        return EdgeDetail(
+            self.number_of_modifications,
+            self.match_score,
+            self.matches.copy(),
+            self.start_spectrum_id,
+            self.end_spectrum_id,
+            self.start_compound_id,
+            self.end_compound_id
+        )
     
     def get_matches_pairs(self) -> List[Tuple[int, int]]:
         """

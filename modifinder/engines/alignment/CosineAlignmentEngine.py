@@ -135,21 +135,18 @@ class CosineAlignmentEngine(AlignmentEngine):
         kwargs : dict
             additional arguments
         """
-        print(f"In CosineAlignmentEngine.align() with mz_tolerance={mz_tolerance}, ppm_tolerance={ppm_tolerance}, align_all={align_all}", flush=True)
         edges = network.edges(data=True)
-        print("Number of network edges:", len(edges), flush=True)
         for edge in edges:
             start_compound = network.nodes[edge[0]]["compound"]
             end_compound = network.nodes[edge[1]]["compound"]
-            print(f"Aligning edge {edge[0]} -> {edge[1]}", flush=True)
-            print(f"spectrum 1: mz={start_compound.spectrum.mz_key[:5]}, intensity={start_compound.spectrum.intensity[:5]}", flush=True)
-            print(f"spectrum 2: mz={end_compound.spectrum.mz_key[:5]}, intensity={end_compound.spectrum.intensity[:5]}", flush=True)
-                
+
             if "edgedetail" not in edge[2] or edge[2]["edgedetail"] is None or align_all:
                 
                 edge[2]["edgedetail"] = self.align_single(
                     start_compound.spectrum,
                     end_compound.spectrum,
+                    start_compound.id,
+                    end_compound.id,
                     mz_tolerance,
                     ppm_tolerance,
                     **kwargs,
@@ -161,6 +158,8 @@ class CosineAlignmentEngine(AlignmentEngine):
         self,
         SpectrumTuple1: Spectrum,
         SpectrumTuple2: Spectrum,
+        CompoundID1: str,
+        CompoundID2: str,
         mz_tolerance: float = 0.02,
         ppm_tolerance: float = 100.0,
         **kwargs,
@@ -205,4 +204,6 @@ class CosineAlignmentEngine(AlignmentEngine):
             number_of_modifications=-1,
             start_spectrum_id=SpectrumTuple1.spectrum_id,
             end_spectrum_id=SpectrumTuple2.spectrum_id,
+            start_compound_id=CompoundID1,
+            end_compound_id=CompoundID2,
         )
