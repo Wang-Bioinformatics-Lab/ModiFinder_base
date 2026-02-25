@@ -7,11 +7,28 @@ from rdkit import Chem
 import numpy as np
 import math
 import uuid
+from typing import List, Tuple
 
 # import modifinder as mf
 from modifinder.classes.Spectrum import Spectrum
 from modifinder.classes.StructureMeta import StructureMeta
 from .. import convert
+
+def _filter_peaks_by_precursor_mz(peaks:List[Tuple[float, float]], precursor_mz:float)->List[Tuple[float, float]]:
+    """Removes peaks that are higher than 0.99 * precursor_mz so only fragments remain in the spectrum.
+
+    Parameters
+    ----------
+    peaks : List[Tuple[float, float]]
+        A list of tuples representing the peaks in the spectrum, where each tuple contains the m/z and intensity of the peak.
+    precursor_mz : float
+        The m/z of the precursor ion, used to filter out peaks that are higher than 0.99 * precursor_mz.
+    
+    Returns
+    -------
+    """
+    filtered_peaks = [peak for peak in peaks if peak[0] < 0.99 * precursor_mz]
+    return filtered_peaks
 
 
 class Compound:
@@ -30,9 +47,7 @@ class Compound:
     structure (Chem.Mol): The structure of the compound
     
     is_known (bool): A boolean indicating whether the compound is known, derived from the structure
-    
-    usi (str): The USI of the compound
-    
+        
     name (str): The name of the compound
     
     accession (str): The accession of the compound
@@ -56,26 +71,21 @@ class Compound:
     ...     "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
     ... }
     >>> compound = Compound(data)
-
-    You can also create a compound by providing a usi:
-
-    >>> usi = "mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435812"
-    >>> compound = Compound(usi)
-
-    or with an accession:
-
-    >>> accession = "CCMSLIB00005435812"
-    >>> compound = Compound(accession)
     
     """
     
-    def __init__(self, incoming_data=None, **kwargs):
+    def __init__(self,
+                spectrum:List[Tuple[float, float]],
+                precursor_mz:float,
+                precursor_charge:int,
+                adduct:str,
+                smiles:str = None,
+                **kwargs):
         """Initialize the Compound class
 
         The compound class can be initialized in three different ways:
         1. By providing a dictionary of data to the *data* parameter that contains all the necessary information
-        2. By providing a usi to the *data* parameter to retrieve the necessary information from GNPS
-        3. By providing the necessary information as parameter
+        2. By providing the necessary information as parameter
         
         If both the *data* and the parameters are provided, the parameters will override the data.
         
@@ -84,7 +94,7 @@ class Compound:
         Parameters
         ----------
         incoming_data : input data (optional, default: None)
-            The data to initialize the class with, can be a dictionary of data, a usi, or a compound object. If not provided,
+            The data to initialize the class with, can be a dictionary of data or a compound object. If not provided,
             the class will be initialized with the provided keyword arguments. If provided, the keyword arguments will still
             override the data.
 
@@ -98,46 +108,42 @@ class Compound:
         Spectrum
 
         """
-        
+        lower_kwargs = {key.lower(): value for key, value in kwargs.items()}
+
         # define the attributes of the class
-        self._structure = None
         self.id = None
-        self._spectrum = None
-        self.usi = None
-        self.is_known = None
-        self.name = None
-        self._distances = None
-        self.additional_attributes = {}
-        self._exact_mass = None
-
-        if incoming_data is None and len(kwargs) == 0:
-            return
-
-        # attempt to initialize the class with the provided data
-        if incoming_data is not None:
-            convert.to_compound(incoming_data, use_object = self, **kwargs)
+        if "id" in lower_kwargs:
+            self.id = lower_kwargs["id"]
         else:
-            self.update(**kwargs)
+            self.id = str(uuid.uuid4())
 
-        # TODO: write setters for spectrum, structure to warn the user to update the dependent attributes
+        spectrum = _filter_peaks_by_precursor_mz(spectrum, precursor_mz)
 
-    @property
-    def structure(self):
-        return self._structure
+        self.spectrum = Spectrum(
+            mz= [s[0] for s in spectrum],
+            intensity= [s[1] for s in spectrum],
+            precursor_mz=precursor_mz,
+            precursor_charge=precursor_charge,
+            adduct=adduct,
+            ms_level=2,
+        )
+        self.structure = None
+        self.is_known = False
+        self._exact_mass = None
+        self._distances = None
+        if smiles:
+            self.structure = _get_molecule(
+                smiles = smiles,
+            )
+            if self.structure:
+                self.is_known = True
+                self._exact_mass = rdMolDescriptors.CalcExactMolWt(self.structure)
+                self._distances = Chem.rdmolops.GetDistanceMatrix(self.structure)
+        self.name = None
+        if self.name is None:
+            self.name = lower_kwargs.get('compound_name', None)
+        self.additional_attributes = {}
 
-    @structure.setter
-    def structure(self, value):
-        self._structure = value
-        # Automatically update the related attributes
-        if self._structure is not None:
-            self._exact_mass = rdMolDescriptors.CalcExactMolWt(self._structure)
-            self._distances = Chem.rdmolops.GetDistanceMatrix(self._structure)
-        if self.is_known is None and self._structure is not None:
-            self.is_known = True
-        
-        if self.is_known and self._structure is None:
-            self.is_known = None
-        
     @property
     def spectrum(self):
         return self._spectrum
@@ -172,87 +178,18 @@ class Compound:
         self.structure = None
         self.id = None
         self.spectrum = None
-        self.usi = None
         self.is_known = None
         self.name = None
         self._distances = None
         self.additional_attributes = {}
         self._exact_mass = None
-        
-    
-
-    def update(self, _structure = None, structure = None, id: str = None, _spectrum: Spectrum = None, spectrum: Spectrum = None, usi: str = None, 
-               is_known: bool = None, name: str = None,
-               additional_attributes: dict = {}, 
-               **kwargs):
-        """Update the attributes of the class
-
-        Parameters
-        ----------
-        _structure (Chem.Mol): The structure of the compound
-        structure (Chem.Mol, Smiles, InChi): The structure of the compound
-        id (str): The id of the compound
-        _spectrum (Spectrum): an instance of Spectrum containing peak information [(mz, intensity)], precursor mass, charge, and adduct for mass spectrumetry data
-        spectrum (Spectrum): an instance of Spectrum containing peak information [(mz, intensity)], precursor mass, charge, and adduct for mass spectrumetry data
-        usi (str): The USI of the compound
-        is_known (bool): A boolean indicating whether the compound is known, if set to False, annotators or other parts of the code will treat this compound as unknown, if not provided but the structure is provided, it will be set to True
-        name (str): The name of the compound
-        distances (dict): A dictionary of distances between every pair of atoms in the compound, if not provided, it will be calculated from the structure
-        **kwargs: Additional data
-            - A use case is for the scenarios where the *data* parameter is provided, these arguments will be used to parse and clean the data
-        """
-        # convert keys to lowercase
-        lower_kwargs = {key.lower(): value for key, value in kwargs.items()}
-        self.structure = _structure if _structure is not None else self.structure
-        try:
-            temp_structure = _get_molecule(structure, **lower_kwargs)
-            self.structure = temp_structure if temp_structure is not None else self.structure
-        except Exception:
-            pass
-        self.id = id if id is not None else self.id
-        self.spectrum = _spectrum if _spectrum is not None else self.spectrum
-        if spectrum is not None or "precursor_mz" in lower_kwargs:
-            try:
-                spectrum = convert.to_spectrum(spectrum, **lower_kwargs)
-            except Exception as e:
-                spectrum = None
-                raise e
-        
-        if spectrum is not None and spectrum.mz is not None:
-            self.spectrum = spectrum
-        self.usi = usi if usi is not None else self.usi
-        self.is_known = is_known if (is_known is not None) else self.is_known
-        self.name = name if name is not None else self.name
-        if self.name is None:
-            self.name = lower_kwargs.get('compound_name', None)
-
-        # update the rest of the attributes
-        self.additional_attributes.update(additional_attributes)
-        
-        self._parse_data()
-    
-
-    def _parse_data(self):
-        """ Parse missing and verify the data of the class"""
-        # if self.is_known is None:
-        #     self.is_known = (self.structure is not None)
-            
-        # if no id is provided, generate one
-        if self.id is None:
-            self.id = str(uuid.uuid4())
-            
-        
-        # TODO: check for a valid compound
-        # what is needed for a compound:
-        # id, spectrum.peaks, spectrum.precursor_mass, spectrum.charge, spectrum.adduct
-    
 
     def __str__(self):
-        valuable_data_keys = ['id', 'name', 'usi']
+        valuable_data_keys = ['id', 'name']
         strings = [f"{key}: {self.__dict__[key]}" for key in valuable_data_keys if self.__dict__[key] is not None]
         joined = ', '.join(strings)
 
-        result = f"Compound({joined}) with {len(self.spectrum.mz)} peaks"
+        result = f"Compound({joined}) with {len(self.spectrum.mz_key)} peaks"
         if self.structure is not None:
             result += f" and structure {Chem.MolToSmiles(self.structure)}"
 
@@ -273,7 +210,7 @@ class Compound:
             dict: A dictionary containing the meta data of the compound
         """
         description = {
-            "num_peaks": len(self.spectrum.mz),
+            "num_peaks": len(self.spectrum.mz_key),
             "adduct": self.spectrum.adduct,
             "precursor_mz": self.spectrum.precursor_mz,
             "charge": self.spectrum.precursor_charge,
@@ -289,7 +226,7 @@ class Compound:
         return description
     
     
-    def print_peaks_to_fragments_map(self, peaks: list = None):
+    def print_peaks_to_fragments_map_by_id(self, peaks: list = None):
         """Print the peaks to fragments map
         
         Parameters
@@ -298,20 +235,20 @@ class Compound:
             The list of peaks to print the fragments for, if None, print all peaks
         """
         if peaks is None:
-            peaks = range(len(self.spectrum.mz))
+            peaks = range(len(self.spectrum.mz_key))
         
         for peak in peaks:
-            print(f"Peak {peak}: {self.spectrum.mz[peak]}, Fragments: {self.spectrum.peak_fragments_map[peak]}")
+            print(f"Peak {peak}: {self.spectrum.mz_key[peak] / 1e6}, Fragments: {self.spectrum.peak_fragment_dict[peak]}")
         print()
         
     
-    def find_existance(self, peakids: list):
+    def find_existance_by_peak_mzs(self, peak_mzs: list):
         """
         For each atom, and for each peak in the list, find the fragments that the atom is part of
         
         Parameters
         ----------
-            peakids : list of peak ids
+            peak_mzs : list of peak mzs
         
         Returns
         -------
@@ -320,8 +257,10 @@ class Compound:
         """
         
         existance = [dict() for i in range(len(self.structure.GetAtoms()))]
-        for peak in peakids:
-            for fragment in self.spectrum.peak_fragments_map[peak]:
+
+
+        for peak in peak_mzs:
+            for fragment in self.spectrum.peak_fragment_dict.get(peak, []):
                 # get all the bits that are 1 in the fragment
                 bin_fragment = bin(fragment)
                 len_fragment = len(bin_fragment)
@@ -330,17 +269,18 @@ class Compound:
                     if peak not in existance[atom]:
                         existance[atom][peak] = []
                     existance[atom][peak].append(fragment)
+
         return existance
     
     
-    def calculate_contribution_atom_in_peak(self, atom: int, peakindx:int, existance_data:list, CI:bool = False, CPA:bool = True, CFA:bool = True):
+    def calculate_contribution_atom_by_peak_id(self, atom: int, peakid:int, existance_data:list, CI:bool = False, CPA:bool = True, CFA:bool = True):
         """Calculates the contribution of an atom to a peak
 
         Parameters
         ----------
         atom : int
             The index of the atom
-        peakindx : int
+        peakid : int
             The index of the peak
         existance_data : list of dicts
             The existance data for the atoms
@@ -352,7 +292,7 @@ class Compound:
             Calculate the fragment ambiguity factor
         """
         contribution = 0
-        if peakindx not in existance_data[atom]:
+        if peakid not in existance_data[atom]:
             return contribution
         
         intensity_factor = 1
@@ -360,11 +300,13 @@ class Compound:
         fragment_ambiguity_factor = 1
 
         if CI:
-            intensity_factor = self.spectrum.intensity[peakindx]
+            # TODO This is very unlikely to work post-refactor
+            raise NotImplementedError("CI (Consider Intensity) is not implemented yet, as the refactor changed how the spectrum data is stored. This will be implemented in a future update.")
+            intensity_factor = self.spectrum.intensity[peakid]
         if CPA:
-            atom_peak_ambiguity_factor = 1/len(self.spectrum.peak_fragments_map[peakindx])
+            atom_peak_ambiguity_factor = 1/len(self.spectrum.peak_fragment_dict[int(peakid)])
 
-        for frag in existance_data[atom][peakindx]:
+        for frag in existance_data[atom][peakid]:
             if CFA:
                 fragment_ambiguity_factor = 1/(bin(frag).count("1"))
             
@@ -373,41 +315,41 @@ class Compound:
         return contribution
     
     
-    def calculate_contributions(self, peakids, CI = False, CPA = True, CFA = True, CPE = True):
+    def calculate_contributions_by_peak_id(self, peak_mzs, CI = False, CPA = True, CFA = True, CPE = True):
         """ 
         input:
-        peakids: list of peak ids
+        peak_mzs: list of peak ids
         CI: (Consider_Intensity) bool, if True, the intensity of the peaks is considered (default: False)
         CPA: (Consider_Peak_Ambiguity) bool, if True, the peak ambiguity (number of fragments assigned to a peak) is considered (default: True)
         CFA: (Consider_Fragment_Ambiguity) bool, if True, the fragment ambiguity (number of atoms in fragment) is considered (default: True)
-        CPA: (Consider_Peak_Entropy) bool, if True, the peak entropy (how ambiguis the fragments are) is considered (default: True
+        CPE: (Consider_Peak_Entropy) bool, if True, the peak entropy (how ambiguis the fragments are) is considered (default: True)
         """
         num_atoms = len(self.structure.GetAtoms())
-        existance_data = self.find_existance(peakids)
+        existance_data = self.find_existance_by_peak_mzs(peak_mzs)
         contributions = [0 for i in range(num_atoms)]
-        peak_atom_contributions = np.zeros((len(peakids), num_atoms))
-        for i, peak in enumerate(peakids):
+        peak_atom_contributions = np.zeros((len(peak_mzs), num_atoms))
+        for i, peak in enumerate(peak_mzs):
             for atom in range(num_atoms):
-                peak_atom_contributions[i][atom] = self.calculate_contribution_atom_in_peak(atom, peak, existance_data, CI=CI, CPA=CPA, CFA=CFA)
+                peak_atom_contributions[i][atom] = self.calculate_contribution_atom_by_peak_id(atom, peak, existance_data, CI=CI, CPA=CPA, CFA=CFA)
         
         if CPE:
-            peak_entropies = np.zeros(len(peakids))
-            for i in range(len(peakids)):
+            peak_entropies = np.zeros(len(peak_mzs))
+            for i in range(len(peak_mzs)):
                 peak_entropies[i] = 1 - general_utils.entropy(peak_atom_contributions[i])
             
             # peak_entropies = peak_entropies / np.max(peak_entropies)
         else:
-            peak_entropies = np.ones(len(peakids))
+            peak_entropies = np.ones(len(peak_mzs))
             
         
         for i in range(num_atoms):
-            for j in range(len(peakids)):
+            for j in range(len(peak_mzs)):
                 contributions[i] += peak_atom_contributions[j][i] * peak_entropies[j]
         
         return contributions
 
 
-    def filter_fragments_by_atoms(self, atoms: list, peaks: list = None):
+    def filter_fragments_by_atoms_and_peak_ids(self, atoms: list, peaks: list = None):
         """Filter the fragments by the atoms, remove fragments that do not contain at least one of the atoms
         Parameters
         ----------
@@ -424,23 +366,23 @@ class Compound:
         updated = 0
         for i in peaks:
             updated_fragments = set()
-            for fragment in self.spectrum.peak_fragments_map[i]:
+            for fragment in self.spectrum.peak_fragment_dict[int(i)]:
                 for atom in atoms:
                     if 1 << atom & fragment:
                         updated_fragments.add(fragment)
                         break
 
-            if len(updated_fragments) != len(self.spectrum.peak_fragments_map[i]):
+            if len(updated_fragments) != len(self.spectrum.peak_fragment_dict[int(i)]):
                 updated += 1
             
-            self.spectrum.peak_fragments_map[i] = updated_fragments
-
+            self.spectrum.peak_fragment_dict[int(i)] = updated_fragments
+            
         return updated
     
     
     from typing import Tuple
 
-    def calculate_peak_annotation_ambiguity(self, peaks: list=None) -> Tuple[float, float]:
+    def calculate_peak_annotation_ambiguity_by_peak_ids(self, peaks: list=None) -> Tuple[float, float]:
         """Calculate the peak annotation ambiguity
         
         Parameters
@@ -458,9 +400,9 @@ class Compound:
         ambiguity = 0
         annotated_peaks = 0
         for peak in peaks:
-            if len(self.spectrum.peak_fragments_map[peak]) > 0:
+            if len(self.spectrum.peak_fragment_dict[int(peak)]) > 0:
                 annotated_peaks += 1
-                ambiguity += len(self.spectrum.peak_fragments_map[peak])
+                ambiguity += len(self.spectrum.peak_fragment_dict[int(peak)])
         if annotated_peaks == 0:
             return -1, 0
         if len(peaks) == 0:
@@ -468,7 +410,7 @@ class Compound:
         return ambiguity / annotated_peaks, annotated_peaks / len(peaks)
 
 
-    def calculate_annotation_entropy(self, peaks: list=None):
+    def calculate_annotation_entropy_by_peak_ids(self, peaks: list=None):
         """Calculate the entropy of the annotation
         
         Parameters
@@ -486,14 +428,14 @@ class Compound:
         n = len(self.structure.GetAtoms())
         for peak in peaks:
             atoms_appearance = [0 for i in range(n)]
-            for fragment in self.spectrum.peak_fragments_map[peak]:
+            for fragment in self.spectrum.peak_fragment_dict[int(peak)]:
                 for atom in range(n):
                     if 1 << atom & fragment:
                         atoms_appearance[atom] += 1
             entropy = 0
             for atom in range(n):
                 if atoms_appearance[atom] > 0:
-                    p = atoms_appearance[atom] / len(self.spectrum.peak_fragments_map[peak])
+                    p = atoms_appearance[atom] / len(self.spectrum.peak_fragment_dict[int(peak)])
                     entropy -= p * math.log(p)
             peak_entropies[peak] = entropy
         if len(peak_entropies) == 0:

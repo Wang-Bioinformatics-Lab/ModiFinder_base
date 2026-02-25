@@ -41,7 +41,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         for node in network.nodes:
             compound = network.nodes[node]["compound"]
             if compound is not None and compound.is_known:
-                if annotate_all or (compound.spectrum.peak_fragments_map is None or len(compound.spectrum.peak_fragments_map) == 0):
+                if annotate_all or (compound.spectrum.peak_fragment_dict is None or len(compound.spectrum.peak_fragment_dict) == 0):
                     self.annotate_single(compound, modify_compound=True, **kwargs)
         
         # refine by helpers
@@ -54,8 +54,9 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                     try:
                         self.refine_annotations_by_helper(network.nodes[edge[0]]["compound"], network.nodes[edge[1]]["compound"], edge_detail, modify_compound = True)
                         self.refine_annotations_by_helper(network.nodes[edge[1]]["compound"], network.nodes[edge[0]]["compound"], edge_detail, modify_compound = True)
+                    
                     except Exception as e:
-                        pass
+                        raise e
 
 
     def annotate_single(
@@ -93,22 +94,28 @@ class MAGMaAnnotationEngine(AnnotationEngine):
 
         # generate peak to fragment map
         base_precision = 1 + kwargs["ppm_tolerance"] / 1000000
-        peak_fragments_map = [set() for i in range(len(compound.spectrum.mz))]
-        for i in range(len(compound.spectrum.mz)):
-            search_weight = compound.spectrum.mz[i] - compound.spectrum.adduct_mass
+        peak_fragment_dict = {int(key): set() for key in compound.spectrum.mz_key}
+        for mz_key in compound.spectrum.mz_key:
+            search_weight = (mz_key / 1e6) - compound.spectrum.adduct_mass
             annotations = fragmentation_instance.find_fragments(
                 search_weight, 0.1, base_precision, kwargs["mz_tolerance"]
             )
             for annotation in annotations:
-                peak_fragments_map[i].add(annotation[0])
+                try:
+                    peak_fragment_dict[int(mz_key)].add(annotation[0])
+                except KeyError:
+                    # Get keys within 0.002 m/z for debugging
+                    print(f"KeyError for m/z {mz_key}. Available keys: {[key for key in peak_fragment_dict.keys() if abs(key - mz_key) <= 1e4]}", flush=True)
+                    print(f"Sample of some keys: {list(peak_fragment_dict.keys())[:10]}", flush=True)
+                    raise KeyError(f"m/z {mz_key} not found in peak_fragment_dict")
 
         # refine by formula
-        # peak_fragments_map = self.refine_annotations_by_formula(compound, peak_fragments_map, modify_compound = False)
+        # peak_fragment_dict = self.refine_annotations_by_formula(compound, peak_fragment_dict, modify_compound = False)
         
         if modify_compound:
-            compound.spectrum.peak_fragments_map = peak_fragments_map
+            compound.spectrum.peak_fragment_dict = peak_fragment_dict
 
-        return peak_fragments_map
+        return peak_fragment_dict
 
 
     def get_fragment_info(self, Compound: Compound, fragment):
@@ -157,7 +164,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         )
     
     
-    def refine_annotations_by_formula(self, compound: Compound, peak_fragments_map, modify_compound: bool = True):
+    def refine_annotations_by_formula(self, compound: Compound, peak_fragment_dict, modify_compound: bool = True):
         """
         Refines the annotations of a compound by using the formula from msbuddy
 
@@ -171,42 +178,47 @@ class MAGMaAnnotationEngine(AnnotationEngine):
             compound (Compound): the compound
             
         """
+        raise NotImplementedError("This function has not been tested in the new verion")
+        print("Refining the annotations by formula", flush=True)
         
         structure = compound.structure
         spectrum = compound.spectrum
         if structure is None:
-            return peak_fragments_map
+            return peak_fragment_dict
         
         main_compound_formula = Chem.rdMolDescriptors.CalcMolFormula(structure)
-        peak_mz = spectrum.mz
+        peak_mz = spectrum.mz_key / 1e6
         
-        if len(peak_mz) == 0:
-            return peak_fragments_map
+        if len(spectrum.mz_key) == 0:
+            return peak_fragment_dict
         
         subformla_list = assign_subformula(peak_mz,
                                         precursor_formula=main_compound_formula, adduct=spectrum.adduct,
                                         ms2_tol=self.ppm_tolerance, ppm=True, dbe_cutoff=-1.0)
         
-        new_peak_fragments_map = [set() for i in range(len(peak_mz))]
-        for i in range(len(self.peaks)):
+        new_peak_fragment_dict = {int(key): set() for key in spectrum.mz_key_ids}
+        for idx, key in enumerate(spectrum.mz_key):
             possibilites = set()
-            for subformula in subformla_list[i].subform_list:
+            for subformula in subformla_list[idx].subform_list:
                 formula = subformula.formula
                 # formula = utils.remove_adduct_from_formula(formula, self.Adduct)
                 
                 # find the fragments that contains the formula
-                for frag_id in peak_fragments_map[i]:
+                for frag_id in peak_fragment_dict[int(key)]:
                     molSubFormula = self.get_fragment_info(compound, frag_id)[2]
                     if is_submolecule(molSubFormula, formula, self.args["formula_ignore_H"]) and is_submolecule(formula, molSubFormula, self.args["formula_ignore_H"]):
                         possibilites.add(frag_id)
             
             if len(possibilites) > 0:
-                new_peak_fragments_map[i] = possibilites
+                new_peak_fragment_dict[int(key)] = possibilites
         
+
+        print(f"Refining the annotations by formula. Starting with {sum([len(peak_fragment_dict[i]) for i in peak_fragment_dict.keys()])} annotations and after refining, {sum([len(new_peak_fragment_dict[i]) for i in new_peak_fragment_dict.keys()])} annotations remain", flush=True)
+
         if modify_compound:
-            compound.spectrum.peak_fragments_map = new_peak_fragments_map
+            compound.spectrum.peak_fragment_dict = new_peak_fragment_dict
         
-        return new_peak_fragments_map
+        return new_peak_fragment_dict
     
     
     def refine_annotations_by_helper(self, main_compound: Compound, helper_compound: Compound, edgeDetail: EdgeDetail, modify_compound: bool = True):
@@ -218,28 +230,28 @@ class MAGMaAnnotationEngine(AnnotationEngine):
             
         if helper_compound.exact_mass < main_compound.exact_mass:
             modification_site = get_modification_nodes(main_compound.structure, helper_compound.structure, True)
-            shifted_peaks = [match.second_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
+            shifted_peaks = [match.second_peak_mz for match in edgeDetail.matches if match.match_type == MatchType.shifted]
             sub_match_indices = main_compound.structure.GetSubstructMatch(helper_compound.structure)
             mapping = dict()
             for i, atom in enumerate(sub_match_indices):
                 mapping[i] = atom
-            unshifted = [(match.second_peak_index, match.first_peak_index) for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+            unshifted = [(match.second_peak_mz, match.first_peak_mz) for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
         else:
             modification_site = get_modification_nodes(helper_compound.structure, main_compound.structure, False)
-            shifted_peaks = [match.first_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
+            shifted_peaks = [match.first_peak_mz for match in edgeDetail.matches if match.match_type == MatchType.shifted]
             sub_match_indices = helper_compound.structure.GetSubstructMatch(main_compound.structure)
             mapping = dict()
             for i, atom in enumerate(sub_match_indices):
                 mapping[atom] = i
-            unshifted = [(match.first_peak_index, match.second_peak_index) for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+            unshifted = [(match.first_peak_mz, match.second_peak_mz) for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
         
-        main_compound.filter_fragments_by_atoms(modification_site, shifted_peaks)
+        main_compound.filter_fragments_by_atoms_and_peak_ids(modification_site, shifted_peaks)
         
         # filter unshifted peaks by intersection
         
-        for peak in unshifted:
-            helper_peak_fragment_map = set()
-            for fragment in helper_compound.spectrum.peak_fragments_map[peak[1]]:
+        for edge in unshifted:
+            helper_fragments = set()
+            for fragment in helper_compound.spectrum.peak_fragment_dict[int(edge[1])]:
                 new_fragment = 0
                 for i in range(len(helper_compound.structure.GetAtoms())):
                     if 1 << i & fragment:
@@ -249,11 +261,12 @@ class MAGMaAnnotationEngine(AnnotationEngine):
                         else:
                             new_fragment += 1 << mapping[i]
                 if new_fragment != -1:
-                    helper_peak_fragment_map.add(new_fragment)
+                    helper_fragments.add(new_fragment)
             
-            main_compound.spectrum.peak_fragments_map[peak[0]] = main_compound.spectrum.peak_fragments_map[peak[0]].intersection(helper_peak_fragment_map)
-        
-        return main_compound.spectrum.peak_fragments_map
+            fragments_assigned_to_peak = set(main_compound.spectrum.peak_fragment_dict[int(edge[0])])
+            main_compound.spectrum.peak_fragment_dict[int(edge[0])] = main_compound.spectrum.peak_fragment_dict[int(edge[0])].intersection(helper_fragments)
+             
+        return main_compound.spectrum.peak_fragment_dict
         
         
             

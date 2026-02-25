@@ -20,7 +20,6 @@ def to_compound(data = None, use_object=None, **kwargs):
 
         Current supported types are:
          Compound object (return the same object, for copying you can pass use_object or use .copy() method)
-         USI string
          dictionary-of-data
     
     use_object: object, optional
@@ -45,41 +44,8 @@ def to_compound(data = None, use_object=None, **kwargs):
             raise ModiFinderError("Input data is not a valid dictionary. " + str(err)) from err
 
     # Compound Object
-    if hasattr(data, "spectrum"):
-        try:
-            if use_object:
-                compound = use_object
-                compound.clear()
-                data_dict = compound_to_dict(data)
-                data_dict.update(kwargs)
-                compound.update(**data_dict)
-            else:
-                compound = data
-                parsed_kwargs = parse_data_to_universal(kwargs)
-                compound.update(**parsed_kwargs)
-            return compound
-
-        except Exception as err:
-            raise ModiFinderError("Input data is not a valid Compound object. " + str(err)) from err
-    
-    # USI
-    if isinstance(data, str):
-        try:
-            
-            data = network.get_data(data)
-            data.update(kwargs)
-            Compound = _get_compound_class()
-            if use_object:
-                compound = use_object
-                compound.clear()
-                compound.update(**data)
-            else:
-                compound = Compound()
-                compound.update(**data)
-            return compound
-
-        except Exception as err:
-            raise ModiFinderError("Input data is not a valid USI string. " + str(err)) from err
+    if isinstance(data, _get_compound_class()):
+        return deepcopy(data)
     
     # Dictionary
     if isinstance(data, dict):
@@ -213,6 +179,9 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
             return spectrum
         except Exception as err:
             raise ModiFinderError("Input data is not a valid list. " + str(err)) from err
+        
+    if isinstance(data, _get_spectrum_class()):
+        return deepcopy(data)
     
     raise ModiFinderError("Input data is not a valid object.")
 

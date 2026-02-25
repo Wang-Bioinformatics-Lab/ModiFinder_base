@@ -46,6 +46,7 @@ def get_data(identifier: str) -> dict:
     param identifier: str - USI or Accession
     return: dict - dictionary of data
     """
+    raise NotImplementedError("This function is deprecated, all data should be passed to the constructor.")
 
     if not identifier:
         raise ModiFinderNetworkError("No identifier provided")

@@ -33,6 +33,57 @@ License
 
     Commercial entities: please contact mingxun.wang@cs.ucr.edu or tp@ucr.edu for licensing opportunities.
 
+Core API (Working)
+--------
+ModiFinder requires two spectrum objects:
+```
+main_compound = Compound(
+    spectrum=s1_peaks,                       # Formatted as [[mz, int], ...]
+    precursor_mz=s1_prec_mz,                 # Float
+    precursor_charge=s1_charge,              # Int
+    adduct=s1_adduct,                        # Str
+    smiles=s1_smiles                         # Str
+)
+mod_compound = Compound(
+    spectrum=s2_peaks,
+    precursor_mz=s2_prec_mz,
+    precursor_charge=s2_charge,
+    adduct=s2_adduct,
+    smiles=s2_smiles                         # Optional
+)
+```
+Pass these to a ModiFinder Object
+```
+helper_compounds = None
+siteLocator = ModiFinder(
+    main_compound,
+    mod_compound,
+    helpers=helper_compounds,
+    **args)
+```
+Collect dictionary results:
+```
+peaksObj, fragmentsObj = siteLocator.get_result()
+```
+Dictionary format:
+```
+peaksObj = {
+            "main_compound_peaks": main_compound_peaks,
+            "mod_compound_peaks": mod_compound_peaks,
+            "matched_peaks": matched_peaks,
+            "main_precursor_mz": knownCompound.spectrum.precursor_mz,
+            "mod_precursor_mz": unknownCompound.spectrum.precursor_mz,
+        }
+```
+```
+fragmentsObj = {
+    "frags_map": knownCompound.spectrum.peak_fragment_dict,
+    "structure": knownCompound.structure,
+    "peaks": main_compound_peaks,
+    "Precursor_MZ": knownCompound.spectrum.precursor_mz,
+}
+```
+
 Useful Utility Functions
 ------------------------
 ModiFinder includes several useful utility functions for mass spectrometry data analysis and visualization, exposed under `modifinder.utilities`.

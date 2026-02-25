@@ -23,7 +23,7 @@ def _cluster_spectrums(spectrums, ppm_tolerance = 10, mz_tolerance = 0.1, verbos
     
     all_points = []
     for index, spectrum in tqdm.tqdm(enumerate(spectrums), disable = not verbose):
-        for mz, intensity in zip(spectrum.mz, spectrum.intensity):
+        for mz, intensity in zip(spectrum.mz_key / 1e6, spectrum.intensity):
             all_points.append((mz, intensity, index))
     
     # print("all points", len(all_points))
@@ -147,7 +147,7 @@ def refine_consensus(spectrum, spectrums, ppm_tolerance = 10, mz_tolerance = 0.1
     spectrum = remove_adduct(spectrum)
     spectrums = [remove_adduct(s) for s in spectrums]
     
-    for mz, intensity in zip(spectrum.mz, spectrum.intensity):
+    for mz, intensity in zip(spectrum.mz_key / 1e6, spectrum.intensity):
         found_count = 0
         for other_spectrum in spectrums:
             peak_indexes = other_spectrum.get_peak_indexes(mz, ppm_tolerance = ppm_tolerance, mz_tolerance = mz_tolerance)
@@ -184,7 +184,7 @@ def remove_adduct(spectrum):
     
     result = spectrum.copy()
     adduct_mass = spectrum.adduct_mass
-    result.mz = [mz - adduct_mass for mz in result.mz]
+    result.mz_key = [mz - (adduct_mass*1e6) for mz in result.mz_key]
     if result.precursor_mz is not None:
         result.precursor_mz -= adduct_mass
     result.adduct = None
@@ -211,7 +211,7 @@ def add_adduct(spectrum, adduct):
     
     result = spectrum.copy()
     adduct_mass = mf_gu.get_adduct_mass(adduct)
-    result.mz = [mz + adduct_mass for mz in result.mz]
+    result.mz_key = [mz + (adduct_mass*1e6) for mz in result.mz_key]
     if result.precursor_mz is not None:
         result.precursor_mz += adduct_mass
     result.adduct = adduct

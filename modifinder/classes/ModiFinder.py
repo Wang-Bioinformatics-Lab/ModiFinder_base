@@ -64,7 +64,7 @@ class ModiFinder:
         knownCompound: Compound = None,
         unknownCompound: Compound = None,
         edgeDetail: EdgeDetail = None,
-        helpers: list = [],
+        helpers: list = [Compound],
         network: nx.DiGraph = None,
         networkUnknowns: list = None,
         should_align: bool = True,
@@ -137,6 +137,7 @@ class ModiFinder:
 
         """
         self.network = None
+        self.knowns = None
         self.unknowns = None
         self.ppm_tolerance = ppm_tolerance
 
@@ -172,11 +173,12 @@ class ModiFinder:
                 unknownCompound = convert.to_compound(data=unknownCompound, **kwargs)
                 unknownCompound.is_known = False
                 self.network.add_node(unknownCompound.id, compound=unknownCompound)
-                self.unknowns = [unknownCompound.id]
+                self.unknowns = [unknownCompound]
             
             if knownCompound is not None:
                 knownCompound = convert.to_compound(data=knownCompound, **kwargs)
                 self.network.add_node(knownCompound.id, compound=knownCompound)
+                self.knowns = [knownCompound]
             
             
             if knownCompound is not None and unknownCompound is not None:
@@ -185,8 +187,9 @@ class ModiFinder:
         
         if helpers is not None:
             for helper in helpers:
+                if not isinstance(helper, Compound):
+                    raise ValueError("Helper compounds must be of type Compound")
                 try:
-                    helper = convert.to_compound(data=helper)
                     self.network.add_node(helper.id, compound=helper)
                     self.add_adjusted_edge(helper.id, knownCompound.id)
                 except Exception as e:
@@ -195,11 +198,59 @@ class ModiFinder:
         
         if should_align:
             self.re_align(self.alignmentEngine, **kwargs)
-        
+            
         if should_annotate:
             self.re_annotate(self.annotationEngine, **kwargs)
-    
-    
+    def get_result(self):
+        """
+        Get the result of the ModiFinder object.
+
+        The method will return a dictionary with the following keys:
+        - probabilities: the probabilities of the atoms in the unknown compound.
+        
+        Returns
+        -------
+        dict
+            A dictionary with the following keys:
+            - probabilities: the probabilities of the atoms in the unknown compound.
+        
+        """
+
+        unknownCompound = self.unknowns[0]
+        knownCompound = self.knowns[0]
+
+        if unknownCompound.structure is not None:
+            if not (unknownCompound.structure.HasSubstructMatch(knownCompound.structure) or knownCompound.structure.HasSubstructMatch(unknownCompound.structure)):
+                return None, None, None, None, "None of the structures are substructures of the other"
+            if unknownCompound.structure.HasSubstructMatch(knownCompound.structure) and knownCompound.structure.HasSubstructMatch(unknownCompound.structure):
+                return None, None, None, None, "Structures are the same"
+
+        main_compound_peaks = [(knownCompound.spectrum.mz_key[i], knownCompound.spectrum.intensity[i]) for i in range(len(knownCompound.spectrum.mz_key))]
+        mod_compound_peaks = [(unknownCompound.spectrum.mz_key[i], unknownCompound.spectrum.intensity[i]) for i in range(len(unknownCompound.spectrum.mz_key))]
+        matched_peaks = self.get_edge_detail(knownCompound.id, unknownCompound.id)
+        if matched_peaks is None:
+            matched_peaks = []
+        else:
+            matched_peaks = matched_peaks.get_matches_pairs()
+        
+        peaksObj = {
+            "main_compound_peaks": main_compound_peaks,
+            "mod_compound_peaks": mod_compound_peaks,
+            "matched_peaks": matched_peaks,
+            "main_precursor_mz": knownCompound.spectrum.precursor_mz,
+            "mod_precursor_mz": unknownCompound.spectrum.precursor_mz,
+        }
+
+        fragmentsObj = {
+            "frags_map": knownCompound.spectrum.peak_fragment_dict,
+            "structure": knownCompound.structure,
+            "peaks": main_compound_peaks,
+            "Precursor_MZ": knownCompound.spectrum.precursor_mz,
+        }
+
+        return peaksObj, fragmentsObj
+
+
     def add_adjusted_edge(self, u, v, edgeDetail: EdgeDetail = None, **kwargs):
         """
         Add an edge between two compounds.
@@ -235,11 +286,11 @@ class ModiFinder:
 
             edgeDetail = self.alignmentEngine.align_single(
                 self.network.nodes[smaller]["compound"].spectrum,
-                self.network.nodes[larger]["compound"].spectrum, 
+                self.network.nodes[larger]["compound"].spectrum,
+                self.network.nodes[smaller]["compound"].id,
+                self.network.nodes[larger]["compound"].id,
                 **kwargs)
-        
         self.update_edge(smaller, larger, edgeDetail, **kwargs)
-    
     
     def re_align(self, alignmentEngine: AlignmentEngine, **kwargs):
         """
@@ -261,7 +312,6 @@ class ModiFinder:
         kwargs["ppm_tolerance"] = ppm_tolerance
         alignmentEngine.align(self.network, **kwargs)
     
-    
     def re_annotate(self, annotationEngine: AnnotationEngine, **kwargs):
         """
         Annotate the network.
@@ -279,8 +329,7 @@ class ModiFinder:
         if annotationEngine is None:
             raise ValueError("Annotation engine is required to annotate the network")
         annotationEngine.annotate(self.network, annotate_all = True, **kwargs)
-    
-    
+
     def solve(self, unknown: str, **kwargs):
         """
         Solve the network.
@@ -340,6 +389,7 @@ class ModiFinder:
                     f"the edge between {u.id} and {v.id} must be from the smaller compound to the larger compound"
                 )
             else:
+                raise NotImplementedError("EdgeDetail must be provided to update the edge")
                 self.network[u][v]["edgedetail"] = EdgeDetail()
                 
 
@@ -416,9 +466,9 @@ class ModiFinder:
             self.network.add_node(unknown.id, compound=unknown)
         
         if not self.unknowns:
-            self.unknowns = [unknown.id]
+            self.unknowns = [unknown]
         else:
-            self.unknowns.append(unknown.id)
+            self.unknowns.append(unknown)
         
         return unknown.id
         
@@ -426,38 +476,42 @@ class ModiFinder:
     def generate_probabilities(self, known_id = None, unknown_id = None, shifted_only = False, CI = False, CPA = True, CFA = True, CPE = True, **kwargs):
         
         if unknown_id is None:
-            unknown_id = self._get_unknown()
+            unknown_id = self.unknowns[0].id
         
         if known_id is None and unknown_id is not None:
-            known_id = self._get_known_neighbor(unknown_id)
+            known_id = self.knowns[0].id
         
         if known_id is None or unknown_id is None:
             raise ValueError("Both known and unknown compound ids must be specified")
         
-        # check if unknown is connected to known
-        if self.network.has_edge(known_id, unknown_id):
-            edgeDetail = self.network[known_id][unknown_id]["edgedetail"]
-            if edgeDetail is None:
-                raise ValueError(f"Edge between {known_id} and {unknown_id} does not have edge details")
-        
-            shifted_peaks_in_known = [match.first_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
-            unshifted_peaks_in_known = [match.first_peak_index for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
-        elif self.network.has_edge(unknown_id, known_id):
-            edgeDetail = self.network[unknown_id][known_id]["edgedetail"]
-            if edgeDetail is None:
-                raise ValueError("No edge detail found between the known and unknown compounds")    
-            shifted_peaks_in_known = [match.second_peak_index for match in edgeDetail.matches if match.match_type == MatchType.shifted]
-            unshifted_peaks_in_known = [match.second_peak_index for match in edgeDetail.matches if match.match_type == MatchType.unshifted]
+        edgeDetail = self.get_edge_detail(known_id, unknown_id)
+        if edgeDetail is None:
+            raise ValueError(f"No edge detail found between {known_id} and {unknown_id}")
+
+        # Determine if 'known_id' was the first or second spectrum in the alignment
+        # CosineAlignmentEngine stores these IDs during alignment
+        if edgeDetail.start_compound_id == known_id:
+            shifted_peaks_in_known = [m.first_peak_mz for m in edgeDetail.matches if m.match_type == MatchType.shifted]
+            unshifted_peaks_in_known = [m.first_peak_mz for m in edgeDetail.matches if m.match_type == MatchType.unshifted]
+        elif edgeDetail.end_compound_id == known_id:
+            shifted_peaks_in_known = [m.second_peak_mz for m in edgeDetail.matches if m.match_type == MatchType.shifted]
+            unshifted_peaks_in_known = [m.second_peak_mz for m in edgeDetail.matches if m.match_type == MatchType.unshifted]
         else:
-            raise ValueError("No edge found between the known and unknown compounds")
+            raise ValueError(f"EdgeDetail does not contain compound ID for {known_id}")
+
         known_compound = self.network.nodes[known_id]["compound"]
-        positive_contributions = known_compound.calculate_contributions(shifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
+        assert known_compound.is_known, f"Compound {known_id} is not a known compound"
+        assert known_compound.id == known_id, f"Compound id {known_compound.id} does not match known_id {known_id}"
+
+        positive_contributions = known_compound.calculate_contributions_by_peak_id(shifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
+        
         if not shifted_only:
-            negative_contributions = known_compound.calculate_contributions(unshifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
+            negative_contributions = known_compound.calculate_contributions_by_peak_id(unshifted_peaks_in_known, CI=CI, CPA=CPA, CFA=CFA, CPE=CPE)
         else:
             negative_contributions = [0 for i in range(len(known_compound.structure.GetAtoms()))]
-        
+
         probabilities = np.zeros(len(known_compound.structure.GetAtoms()))
+        assert len(positive_contributions) == len(negative_contributions) == len(probabilities), "The length of contributions and probabilities must be the same"
         for i in range(len(positive_contributions)):
             probabilities[i] = positive_contributions[i] - negative_contributions[i]
         
@@ -471,7 +525,6 @@ class ModiFinder:
         probabilities = general_utils.power_prob(probabilities)
 
         return probabilities
-    
     
     def get_edge_detail(self, id1, id2) -> EdgeDetail:
         """Returns the edge detail between two compounds. If the backward edge exists, the matching data is replaced
@@ -558,7 +611,7 @@ class ModiFinder:
     def _get_unknown(self):
         if len(self.unknowns) > 1:
             raise ValueError("More than one unknown compound found in the network. Please specify the unknown compound id")
-        unknown_id = self.unknowns[0]
+        unknown_id = self.unknowns[0].id
         return unknown_id
     
     def _get_known_neighbor(self, unknown_id):
