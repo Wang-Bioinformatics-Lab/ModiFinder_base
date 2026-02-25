@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EdgeDetail module &mdash; ModiFinder 0.1.dev1+gecb5ecfc9 documentation</title>
+  <title>EdgeDetail module &mdash; ModiFinder 0.1.dev1+gfa2380264 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,14 +14,14 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=a47fec5b"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=114fc3a8"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="ModiFinder" href="classes.ModiFinder.html" />
-    <link rel="prev" title="modifinder.Compound.update" href="generated/modifinder.Compound.update.html" /> 
+    <link rel="prev" title="modifinder.Compound.get_meta_data" href="generated/modifinder.Compound.get_meta_data.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -101,7 +101,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.EdgeDetail" title="modifinder.classes.EdgeDetail.EdgeDetail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EdgeDetail</span></code></a>([number_of_modifications, ...])</p></td>
 <td><p>Class for Edge Details</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Match</span></code></a>(first_peak_index, second_peak_index, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Match</span></code></a>(first_peak_mz, second_peak_mz, match_type)</p></td>
 <td><p>Class for Match</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MatchType</span></code></a>(value)</p></td>
@@ -113,7 +113,7 @@
 <h2>EdgeDetail<a class="headerlink" href="#edgedetail" title="Permalink to this heading"></a></h2>
 <span class="target" id="id1"></span><dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">EdgeDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><span class="pre">Match</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">EdgeDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><span class="pre">Match</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_compound_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_compound_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for Edge Details</p>
 <dl class="field-list simple">
@@ -121,24 +121,24 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>number_of_modifications</strong> (<em>int</em>) – Number of modifications, -1 for unknown</p></li>
 <li><p><strong>match_score</strong> (<em>float</em>) – Match score, how well the two spectra match</p></li>
-<li><p><strong>matches</strong> (<em>List</em><em>[</em><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><em>Match</em></a><em>]</em>) – List of matches, each match is a tuple of two peak indices and the match type. It is
-important to note that match has directionality. The first peak index is from the first
-node of the edge and the second peak index is from the second node of the edge.</p></li>
+<li><p><strong>matches</strong> (<em>List</em><em>[</em><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><em>Match</em></a><em>]</em>) – List of matches, each match is a tuple of two peak m/z values and the match type. It is
+important to note that match has directionality. The first peak m/z is from the first
+node of the edge and the second peak m/z is from the second node of the edge.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.EdgeDetail.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><span class="pre">Match</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><span class="pre">Match</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_spectrum_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_compound_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_compound_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the EdgeDetail object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>number_of_modifications</strong> (<em>int</em>) – Number of modifications, -1 for unknown</p></li>
 <li><p><strong>match_score</strong> (<em>float</em>) – Match score, how well the two spectra match</p></li>
-<li><p><strong>matches</strong> (<em>List</em><em>[</em><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><em>Match</em></a><em>]</em>) – List of matches, each match is a tuple of two peak indices and the match type. It is
-important to note that match has directionality. The first peak index is from the first
-node of the edge and the second peak index is from the second node of the edge.</p></li>
+<li><p><strong>matches</strong> (<em>List</em><em>[</em><a class="reference internal" href="#modifinder.classes.EdgeDetail.Match" title="modifinder.classes.EdgeDetail.Match"><em>Match</em></a><em>]</em>) – List of matches, each match is a tuple of two peak m/z values and the match type. It is
+important to note that match has directionality. The first peak m/z is from the first
+node of the edge and the second peak m/z is from the second node of the edge.</p></li>
 </ul>
 </dd>
 </dl>
@@ -164,7 +164,7 @@ node of the edge and the second peak index is from the second node of the edge.<
 <dd><p>Get the matches as a list of tuples</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of tuples of peak indices</p>
+<dd class="field-odd"><p>List of tuples of peak m/z values</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>List[Tuple[int, int]]</p>
@@ -187,7 +187,7 @@ node of the edge and the second peak index is from the second node of the edge.<
 <dd class="field-odd"><p><strong>match_type</strong> (<a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><em>MatchType</em></a>) – Type of the match</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of tuples of peak indices [(first_peak_index, second_peak_index)]</p>
+<dd class="field-even"><p>List of tuples of peak m/z values [(first_peak_mz, second_peak_mz), …] of the specified match type</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[Tuple[int, int]]</p>
@@ -200,7 +200,7 @@ node of the edge and the second peak index is from the second node of the edge.<
 <span class="sig-name descname"><span class="pre">reverse_match</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#EdgeDetail.reverse_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.EdgeDetail.reverse_match" title="Permalink to this definition"></a></dt>
 <dd><p>Reverse the matches order in the EdgeDetail object</p>
 <p>This is useful when the reversed matches are needed from the edge in the network.
-first_peak_index and second_peak_index are swapped in the matches.</p>
+first_peak_mz and second_peak_mz are swapped in the matches.</p>
 </dd></dl>
 
 </dd></dl>
@@ -210,13 +210,13 @@ first_peak_index and second_peak_index are swapped in the matches.</p>
 <h2>Match<a class="headerlink" href="#match" title="Permalink to this heading"></a></h2>
 <span class="target" id="id2"></span><dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">Match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.EdgeDetail.</span></span><span class="sig-name descname"><span class="pre">Match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_peak_mz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_peak_mz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for Match</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.first_peak_index">
-<span class="sig-name descname"><span class="pre">first_peak_index</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.first_peak_index" title="Permalink to this definition"></a></dt>
-<dd><p>Index of the peak in the first spectrum</p>
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.first_peak_mz">
+<span class="sig-name descname"><span class="pre">first_peak_mz</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.first_peak_mz" title="Permalink to this definition"></a></dt>
+<dd><p>mz of the peak in the first spectrum</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
@@ -225,9 +225,9 @@ first_peak_index and second_peak_index are swapped in the matches.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.second_peak_index">
-<span class="sig-name descname"><span class="pre">second_peak_index</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.second_peak_index" title="Permalink to this definition"></a></dt>
-<dd><p>Index of the peak in the second spectrum</p>
+<dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.second_peak_mz">
+<span class="sig-name descname"><span class="pre">second_peak_mz</span></span><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.second_peak_mz" title="Permalink to this definition"></a></dt>
+<dd><p>mz of the peak in the second spectrum</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
@@ -248,13 +248,13 @@ first_peak_index and second_peak_index are swapped in the matches.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.EdgeDetail.Match.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_peak_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_peak_mz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_peak_mz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><span class="pre">MatchType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/EdgeDetail.html#Match.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.EdgeDetail.Match.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the Match object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>first_peak_index</strong> (<em>int</em>) – Index of the first peak</p></li>
-<li><p><strong>second_peak_index</strong> (<em>int</em>) – Index of the second peak</p></li>
+<li><p><strong>first_peak_mz</strong> (<em>int</em>) – m/z of the first peak</p></li>
+<li><p><strong>second_peak_mz</strong> (<em>int</em>) – m/z of the second peak</p></li>
 <li><p><strong>match_type</strong> (<a class="reference internal" href="#modifinder.classes.EdgeDetail.MatchType" title="modifinder.classes.EdgeDetail.MatchType"><em>MatchType</em></a>) – Type of the match</p></li>
 </ul>
 </dd>
@@ -298,7 +298,7 @@ first_peak_index and second_peak_index are swapped in the matches.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="generated/modifinder.Compound.update.html" class="btn btn-neutral float-left" title="modifinder.Compound.update" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/modifinder.Compound.get_meta_data.html" class="btn btn-neutral float-left" title="modifinder.Compound.get_meta_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="classes.ModiFinder.html" class="btn btn-neutral float-right" title="ModiFinder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

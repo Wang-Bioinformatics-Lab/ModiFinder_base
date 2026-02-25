@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Compound &mdash; ModiFinder 0.1.dev1+gecb5ecfc9 documentation</title>
+  <title>Compound &mdash; ModiFinder 0.1.dev1+gfa2380264 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,14 +14,14 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=a47fec5b"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=114fc3a8"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="modifinder.Compound.calculate_annotation_entropy" href="generated/modifinder.Compound.calculate_annotation_entropy.html" />
-    <link rel="prev" title="modifinder.Spectrum.keep_top_k" href="generated/modifinder.Spectrum.keep_top_k.html" /> 
+    <link rel="next" title="modifinder.Compound.clear" href="generated/modifinder.Compound.clear.html" />
+    <link rel="prev" title="modifinder.Spectrum.normalize_peaks" href="generated/modifinder.Spectrum.normalize_peaks.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -98,7 +98,7 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.Compound">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.</span></span><span class="sig-name descname"><span class="pre">Compound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Compound.html#Compound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Compound" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.</span></span><span class="sig-name descname"><span class="pre">Compound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_mz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_charge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adduct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Compound.html#Compound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Compound" title="Permalink to this definition"></a></dt>
 <dd><p>A class to represent a compound</p>
 <p>The compound always has spectrum data.
 If the compound structure is known, it also has a structure property.</p>
@@ -138,16 +138,6 @@ If the compound structure is known, it also has a structure property.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A boolean indicating whether the compound is known, derived from the structure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="modifinder.classes.Compound.usi">
-<span class="sig-name descname"><span class="pre">usi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modifinder.classes.Compound.usi" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The USI of the compound</p>
 </dd>
 </dl>
 </dd></dl>
@@ -199,30 +189,19 @@ If the compound structure is known, it also has a structure property.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can also create a compound by providing a usi:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">usi</span> <span class="o">=</span> <span class="s2">&quot;mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435812&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">usi</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>or with an accession:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">accession</span> <span class="o">=</span> <span class="s2">&quot;CCMSLIB00005435812&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">(</span><span class="n">accession</span><span class="p">)</span>
-</pre></div>
-</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.Compound.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Compound.html#Compound.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Compound.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_mz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precursor_charge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adduct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Compound.html#Compound.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Compound.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the Compound class</p>
 <p>The compound class can be initialized in three different ways:
 1. By providing a dictionary of data to the <em>data</em> parameter that contains all the necessary information
-2. By providing a usi to the <em>data</em> parameter to retrieve the necessary information from GNPS
-3. By providing the necessary information as parameter</p>
+2. By providing the necessary information as parameter</p>
 <p>If both the <em>data</em> and the parameters are provided, the parameters will override the data.</p>
 <p>If of the incoming data and kwargs are provided, an empty instance of the class will be created.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>incoming_data</strong> (<em>input data</em><em> (</em><em>optional</em><em>, </em><em>default: None</em><em>)</em>) – The data to initialize the class with, can be a dictionary of data, a usi, or a compound object. If not provided,
+<li><p><strong>incoming_data</strong> (<em>input data</em><em> (</em><em>optional</em><em>, </em><em>default: None</em><em>)</em>) – The data to initialize the class with, can be a dictionary of data or a compound object. If not provided,
 the class will be initialized with the provided keyword arguments. If provided, the keyword arguments will still
 override the data.</p></li>
 <li><p><strong>kwargs</strong> (<em>keyword arguments</em><em> (</em><em>optional</em><em>, </em><em>default: No attributes</em><em>)</em>) – Attributes to initialize the class with, if provided, they will override the attributes from the data</p></li>
@@ -238,38 +217,14 @@ override the data.</p></li>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Compound.calculate_annotation_entropy.html#modifinder.Compound.calculate_annotation_entropy" title="modifinder.Compound.calculate_annotation_entropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_annotation_entropy</span></code></a>([peaks])</p></td>
-<td><p>Calculate the entropy of the annotation</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/modifinder.Compound.calculate_contribution_atom_in_peak.html#modifinder.Compound.calculate_contribution_atom_in_peak" title="modifinder.Compound.calculate_contribution_atom_in_peak"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_contribution_atom_in_peak</span></code></a>(atom, ...)</p></td>
-<td><p>Calculates the contribution of an atom to a peak</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Compound.calculate_contributions.html#modifinder.Compound.calculate_contributions" title="modifinder.Compound.calculate_contributions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_contributions</span></code></a>(peakids[, CI, CPA, ...])</p></td>
-<td><p>input: peakids: list of peak ids CI: (Consider_Intensity) bool, if True, the intensity of the peaks is considered (default: False) CPA: (Consider_Peak_Ambiguity) bool, if True, the peak ambiguity (number of fragments assigned to a peak) is considered (default: True) CFA: (Consider_Fragment_Ambiguity) bool, if True, the fragment ambiguity (number of atoms in fragment) is considered (default: True) CPA: (Consider_Peak_Entropy) bool, if True, the peak entropy (how ambiguis the fragments are) is considered (default: True</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/modifinder.Compound.calculate_peak_annotation_ambiguity.html#modifinder.Compound.calculate_peak_annotation_ambiguity" title="modifinder.Compound.calculate_peak_annotation_ambiguity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_peak_annotation_ambiguity</span></code></a>([peaks])</p></td>
-<td><p>Calculate the peak annotation ambiguity</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Compound.clear.html#modifinder.Compound.clear" title="modifinder.Compound.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p>Clear the compound data and reset all the attributes to None</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/modifinder.Compound.copy.html#modifinder.Compound.copy" title="modifinder.Compound.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</p></td>
 <td><p>Return a copy of the compound</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Compound.filter_fragments_by_atoms.html#modifinder.Compound.filter_fragments_by_atoms" title="modifinder.Compound.filter_fragments_by_atoms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_fragments_by_atoms</span></code></a>(atoms[, peaks])</p></td>
-<td><p>Filter the fragments by the atoms, remove fragments that do not contain at least one of the atoms :param atoms: :type atoms: a list of atoms to filter the fragments :param peaks: :type peaks: a list of peaks to filter their fragments, if None, use all peaks</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/modifinder.Compound.find_existance.html#modifinder.Compound.find_existance" title="modifinder.Compound.find_existance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_existance</span></code></a>(peakids)</p></td>
-<td><p>For each atom, and for each peak in the list, find the fragments that the atom is part of</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Compound.get_meta_data.html#modifinder.Compound.get_meta_data" title="modifinder.Compound.get_meta_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_meta_data</span></code></a>()</p></td>
 <td><p>Get the meta data of the compound</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/modifinder.Compound.print_peaks_to_fragments_map.html#modifinder.Compound.print_peaks_to_fragments_map" title="modifinder.Compound.print_peaks_to_fragments_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_peaks_to_fragments_map</span></code></a>([peaks])</p></td>
-<td><p>Print the peaks to fragments map</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Compound.update.html#modifinder.Compound.update" title="modifinder.Compound.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([_structure, structure, id, ...])</p></td>
-<td><p>Update the attributes of the class</p></td>
 </tr>
 </tbody>
 </table>
@@ -282,8 +237,8 @@ override the data.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="generated/modifinder.Spectrum.keep_top_k.html" class="btn btn-neutral float-left" title="modifinder.Spectrum.keep_top_k" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="generated/modifinder.Compound.calculate_annotation_entropy.html" class="btn btn-neutral float-right" title="modifinder.Compound.calculate_annotation_entropy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="generated/modifinder.Spectrum.normalize_peaks.html" class="btn btn-neutral float-left" title="modifinder.Spectrum.normalize_peaks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/modifinder.Compound.clear.html" class="btn btn-neutral float-right" title="modifinder.Compound.clear" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

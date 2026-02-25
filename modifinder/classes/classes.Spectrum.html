@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spectrum &mdash; ModiFinder 0.1.dev1+gecb5ecfc9 documentation</title>
+  <title>Spectrum &mdash; ModiFinder 0.1.dev1+gfa2380264 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=a47fec5b"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=114fc3a8"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -98,7 +98,7 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="modifinder.classes.Spectrum">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Spectrum.html#Spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Spectrum" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modifinder.classes.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Spectrum.html#Spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Spectrum" title="Permalink to this definition"></a></dt>
 <dd><p>A class to represent a spectrum.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -114,22 +114,19 @@
 <li><p><strong>ms_mass_analyzer</strong> (<em>str</em><em>, </em><em>optional</em>) – The mass analyzer used.</p></li>
 <li><p><strong>ms_dissociation_method</strong> (<em>str</em><em>, </em><em>optional</em>) – The dissociation method used.</p></li>
 <li><p><strong>spectrum_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The spectrum id. if not provided, it will be generated.</p></li>
-<li><p><strong>peak_fragments_map</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary mapping peaks to fragments</p></li>
+<li><p><strong>peak_fragment_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary mapping peaks to fragments</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="modifinder.classes.Spectrum.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Spectrum.html#Spectrum.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Spectrum.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incoming_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/modifinder/classes/Spectrum.html#Spectrum.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modifinder.classes.Spectrum.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructor for the Spectrum class.</p>
 <p>the spectrum class can be initialized with a dictionary of data or with the individual values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>incoming_data</strong> (<em>Input data</em><em> (</em><em>optional</em><em>, </em><em>default is None</em><em>)</em><em>.</em>) – The data to initialize the Spectrum object. The data can be a dictionary, a usi, or a Spectrum object.</p></li>
-<li><p><strong>normalize_peaks</strong> (<em>bool</em><em>, </em><em>default is True.</em>) – If True, the intensity of the peaks will be normalized at initialization.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>incoming_data</strong> (<em>Input data</em><em> (</em><em>optional</em><em>, </em><em>default is None</em><em>)</em><em>.</em>) – The data to initialize the Spectrum object. The data can be a dictionary, a usi, or a Spectrum object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -145,12 +142,6 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Spectrum.normalize_peaks.html#modifinder.Spectrum.normalize_peaks" title="modifinder.Spectrum.normalize_peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_peaks</span></code></a>([change_self])</p></td>
 <td><p>l2 Normalize the intensity of the Spectrum object.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/modifinder.Spectrum.remove_small_peaks.html#modifinder.Spectrum.remove_small_peaks" title="modifinder.Spectrum.remove_small_peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_small_peaks</span></code></a>([ratio_to_base_peak, ...])</p></td>
-<td><p>Remove peaks with intensity lower than a given ratio to the base peak.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/modifinder.Spectrum.keep_top_k.html#modifinder.Spectrum.keep_top_k" title="modifinder.Spectrum.keep_top_k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_top_k</span></code></a>([k, change_self])</p></td>
-<td><p>Keep only the top k peaks in the Spectrum object.</p></td>
 </tr>
 </tbody>
 </table>

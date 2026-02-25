@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.convert &mdash; ModiFinder 0.1.dev1+gecb5ecfc9 documentation</title>
+  <title>modifinder.convert &mdash; ModiFinder 0.1.dev1+gfa2380264 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=a47fec5b"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=114fc3a8"></script>
       <script src="../../_static/doctools.js?v=888ff710"></script>
       <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -93,7 +93,6 @@
 
 <span class="sd">        Current supported types are:</span>
 <span class="sd">         Compound object (return the same object, for copying you can pass use_object or use .copy() method)</span>
-<span class="sd">         USI string</span>
 <span class="sd">         dictionary-of-data</span>
 <span class="sd">    </span>
 <span class="sd">    use_object: object, optional</span>
@@ -118,41 +117,8 @@
             <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid dictionary. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
 
     <span class="c1"># Compound Object</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;spectrum&quot;</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">use_object</span><span class="p">:</span>
-                <span class="n">compound</span> <span class="o">=</span> <span class="n">use_object</span>
-                <span class="n">compound</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-                <span class="n">data_dict</span> <span class="o">=</span> <span class="n">compound_to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="n">data_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">compound</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">data_dict</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">compound</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="n">parsed_kwargs</span> <span class="o">=</span> <span class="n">parse_data_to_universal</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">compound</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">parsed_kwargs</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">compound</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid Compound object. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
-    
-    <span class="c1"># USI</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            
-            <span class="n">data</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">Compound</span> <span class="o">=</span> <span class="n">_get_compound_class</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">use_object</span><span class="p">:</span>
-                <span class="n">compound</span> <span class="o">=</span> <span class="n">use_object</span>
-                <span class="n">compound</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-                <span class="n">compound</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">compound</span> <span class="o">=</span> <span class="n">Compound</span><span class="p">()</span>
-                <span class="n">compound</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">compound</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid USI string. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_get_compound_class</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     
     <span class="c1"># Dictionary</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -286,6 +252,9 @@
             <span class="k">return</span> <span class="n">spectrum</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid list. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+        
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_get_spectrum_class</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     
     <span class="k">raise</span> <span class="n">ModiFinderError</span><span class="p">(</span><span class="s2">&quot;Input data is not a valid object.&quot;</span><span class="p">)</span></div>
 
