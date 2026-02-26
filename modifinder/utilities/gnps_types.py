@@ -41,7 +41,7 @@ def convert_to_SpectrumTuple_seprated(mz, intensity, precursor_mz, precursor_cha
 
 
 def Convert_SpectrumTuple_to_peaks(spectrum):
-    return list(zip(spectrum.mz_key/1e6, spectrum.intensity))
+    return list(zip(spectrum.mz, spectrum.intensity))
 
 
 def convert_to_universal_key(key: str) -> str:

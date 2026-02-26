@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import List, Tuple
 from enum import Enum
 
@@ -115,7 +116,7 @@ class EdgeDetail:
         return EdgeDetail(
             self.number_of_modifications,
             self.match_score,
-            self.matches.copy(),
+            deepcopy(self.matches),
             self.start_spectrum_id,
             self.end_spectrum_id,
             self.start_compound_id,

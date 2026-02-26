@@ -46,7 +46,7 @@ class MAGMaAnnotationEngine(AnnotationEngine):
         
         # refine by helpers
         for edge in network.edges:
-            edge_detail = network.edges[edge]["edgedetail"]
+            edge_detail = network.edges[edge]["edgeDetail"]
             if edge_detail is not None:
                 first_compound = network.nodes[edge[0]]["compound"]
                 second_compound = network.nodes[edge[1]]["compound"]

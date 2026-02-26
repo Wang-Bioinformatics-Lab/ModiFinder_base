@@ -114,12 +114,19 @@ def get_matched_peaks(identifier1: str, identifier2: str) -> dict:
     payload = {
         'usi1': identifier1,
         'usi2': identifier2,
-     'mz_min': 'None',
-     'mz_max':'None',
-     'cosine':'shifted',
-     'mz_tolerance':'0.1',
-      'grid': 'True'}
-    r = requests.get('https://metabolomics-usi.gnps2.org/json/mirror/', params=payload,  timeout=5)
+        'mz_min': 'None',
+        'mz_max':'None',
+        'cosine':'shifted',
+        'fragment_mz_tolerance':'0.1',
+        'grid': 'True'
+    }
+    r = requests.get(
+        'https://metabolomics-usi.gnps2.org/json/mirror/',
+        params=payload,
+        timeout=5
+    )
+    r.raise_for_status()
+
     return json.loads(r.text)
 
 

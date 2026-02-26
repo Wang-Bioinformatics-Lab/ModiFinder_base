@@ -466,7 +466,7 @@ def draw_spectrum(spectrum, output_type='png', normalize_peaks = False, colors: 
     for i in range(len(spectrum.mz_key)):
         mz = spectrum.mz_key[i] / 1e6
         intensity = spectrum.intensity[i]
-        color = colors.get(i, 'gray')
+        color = colors.get(spectrum.mz_key[i], 'gray')
         if isinstance(color, list):
             if color[0] is None:
                 color[0] = 'gray'
@@ -528,7 +528,7 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
     spectrums : list of SpectrumTuple or list of list of tuples (mz, intensity)
         list of spectrums to draw
     matches : list of list of tuples or list of tuples, optional (default=None)
-        matching between the spectrums
+        peak keys for matching between the spectrums
     output_type : str, optional (default='png')
         type of output (png or svg)
     normalize_peaks : bool, optional (default=False)
@@ -586,19 +586,24 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
         x_lim = (x_lim[0] / 1e6, x_lim[1] / 1e6)  # Convert key to float
     
     # calculating the colors
-    # matches should be a list of matchings for each spectrum pairs, each matching is a list of tuples (index1, index2)
+    # matches should be a list of matchings for each spectrum pairs, each matching is a list of tuples (key, key2)
 
     colors = [dict() for i in range(len(spectrums))]
 
     if matches is None:
         # perform the alignment
         matches = []
-    
-    if matches == 'default':
+
+
+    if matches == 'default':    # TODO: Deprecate this
+        import sys
+        print("Default alignment with visualizer will be deprecated in an upcoming version of ModiFinder. Please pass a list of mz keys for matches.", file=sys.stderr)
         matches = []
         for i in range(len(spectrums) - 1):
-            cosine, match = _cosine_fast(spectrums[i], spectrums[i+1], 0.1, ppm, True)
-            matches.append(match)
+            cosine, match_indices = _cosine_fast(spectrums[i], spectrums[i+1], 0.1, ppm, True)
+            # Convert indices to mz keys
+            match_indices = [(spectrums[i].mz_key[idx1], spectrums[i+1].mz_key[idx2]) for idx1, idx2 in match_indices]
+            matches.append(match_indices)
             
     
     # if matches is one dimentional, convert it to two dimentional
@@ -614,33 +619,35 @@ def draw_alignment(spectrums, matches = None, output_type='png', normalize_peaks
         kwargs.pop("flipped")
 
     lines = []
-    for match_index, match in enumerate(matches):
-        for pair in match:
+    for spec_idx, match in enumerate(matches):
+        for peak1_key, peak2_key in match:
             temp_color = 'blue'
-            if is_shifted(spectrums[match_index].mz_key[pair[0]] / 1e6, spectrums[match_index+1].mz_key[pair[1]] / 1e6, ppm, None):
+            if is_shifted(peak1_key / 1e6, peak2_key / 1e6, ppm, None):
                 temp_color = 'red'
             
-            if pair[0] not in colors[match_index]:
-                if match_index > 0:
-                    colors[match_index][pair[0]] = [None, temp_color]
+            if peak1_key not in colors[spec_idx]:
+                if spec_idx > 0:
+                    colors[spec_idx][peak1_key] = [None, temp_color]
                 else:
-                    colors[match_index][pair[0]] = temp_color
+                    colors[spec_idx][peak1_key] = temp_color
             else:
-                colors[match_index][pair[0]][1] = temp_color
+                colors[spec_idx][peak1_key][1] = temp_color
             
-            if pair[1] not in colors[match_index+1]:
-                if match_index < len(spectrums) - 2:
-                    colors[match_index+1][pair[1]] = [temp_color, None]
+            if peak2_key not in colors[spec_idx+1]:
+                if spec_idx < len(spectrums) - 2:
+                    colors[spec_idx+1][peak2_key] = [temp_color, None]
                 else:
-                    colors[match_index+1][pair[1]] = temp_color
+                    colors[spec_idx+1][peak2_key] = temp_color
             else:
-                colors[match_index+1][pair[1]][0] = temp_color
+                colors[spec_idx+1][peak2_key][0] = temp_color
             
             if draw_mapping_lines:
-                if flipped and match_index == 0:
-                    lines.append([(match_index, spectrums[match_index].mz_key[pair[0]] / 1e6, 0), (match_index+1, spectrums[match_index+1].mz_key[pair[1]] / 1e6, 0), temp_color])
+                if flipped and spec_idx == 0:
+                    lines.append([(spec_idx, peak1_key / 1e6, 0), (spec_idx+1, peak2_key / 1e6, 0), temp_color])
                 else:
-                    lines.append([(match_index, spectrums[match_index].mz_key[pair[0]] / 1e6, 0), (match_index+1, spectrums[match_index+1].mz_key[pair[1]] / 1e6, spectrums[match_index+1].intensity[pair[1]]), temp_color])
+                    index_of_matched_peak = spectrums[spec_idx+1].mz_key.index(peak2_key)
+                    int_of_matched_peak = spectrums[spec_idx+1].intensity[index_of_matched_peak]
+                    lines.append([(spec_idx, peak1_key / 1e6, 0), (spec_idx+1, peak2_key / 1e6, int_of_matched_peak), temp_color])
     
                 
     if size is None:

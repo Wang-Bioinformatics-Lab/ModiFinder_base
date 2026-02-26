@@ -140,9 +140,9 @@ class CosineAlignmentEngine(AlignmentEngine):
             start_compound = network.nodes[edge[0]]["compound"]
             end_compound = network.nodes[edge[1]]["compound"]
 
-            if "edgedetail" not in edge[2] or edge[2]["edgedetail"] is None or align_all:
+            if "edgeDetail" not in edge[2] or edge[2]["edgeDetail"] is None or align_all:
                 
-                edge[2]["edgedetail"] = self.align_single(
+                edge[2]["edgeDetail"] = self.align_single(
                     start_compound.spectrum,
                     end_compound.spectrum,
                     start_compound.id,

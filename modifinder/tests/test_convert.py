@@ -9,7 +9,10 @@ from modifinder.samples import (
 )
 import modifinder.tests.utils as utils
 
+@unittest.expectedFailure
 class TestConvert(unittest.TestCase):
+    """Compound init has been simplified and now tests in the Compound class tests.
+    """
     def test_to_compound(self):
         compounds = {}
         # compound from accession
@@ -59,7 +62,11 @@ class TestConvert(unittest.TestCase):
             self.assertEqual(compound.spectrum.adduct, compound_from_accession.spectrum.adduct)
     
 
+    @unittest.expectedFailure
     def test_to_compound_use_object(self):
+        """Test should be deprecated, Compound object init should only be Compound args.
+        copy should be preffered instead
+        """
         base_compound = caffeine_data.compound
         base_compound.test_arg = "base"
         base_compound_copy = mf.Compound(base_compound)

@@ -73,4 +73,5 @@ compound = mf.Compound(
     precursor_charge = data["Charge"],
     adduct = data["Adduct"],
     smiles = data["Smiles"],
+    id = accession,
 )
