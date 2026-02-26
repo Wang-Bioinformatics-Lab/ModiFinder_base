@@ -37,7 +37,14 @@ class TestPairMGFFlow(unittest.TestCase):
             "name": row.get("name"),
             "spectrum_id": row.get("spectrumid"),
         }
-        return Compound(data)
+        return Compound(
+            spectrum=zip(data["mz"], data["intensity"]),
+            precursor_mz=data["precursor_mz"],
+            precursor_charge=data["precursor_charge"],
+            adduct=row.get("adduct"),
+            smiles=data["smiles"],
+            id=data["spectrum_id"],
+            )
 
     def test_read_mgf(self):
         self.assertEqual(len(self.mgf_df), 2)
@@ -54,8 +61,8 @@ class TestPairMGFFlow(unittest.TestCase):
             precursor_mz=row["precursor_mz"],
             precursor_charge=charge,
         )
-        self.assertIsNotNone(spectrum.mz)
-        self.assertEqual(len(spectrum.mz), 3)
+        self.assertIsNotNone(spectrum.mz_key)
+        self.assertEqual(len(spectrum.mz_key), 3)
         self.assertEqual(spectrum.precursor_charge, 1)
 
     def test_create_compound(self):

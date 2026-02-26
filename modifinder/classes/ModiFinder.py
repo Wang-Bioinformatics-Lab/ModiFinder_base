@@ -6,6 +6,8 @@ The object can be used to get information about unknown compounds in the network
 This class Builds and maintains a network of compounds where the nodes are compounds (known and unknown)
 """
 
+from typing import List
+
 from .. import convert as convert
 from modifinder.classes.Compound import Compound
 from modifinder.classes.EdgeDetail import EdgeDetail, MatchType
@@ -64,7 +66,7 @@ class ModiFinder:
         knownCompound: Compound = None,
         unknownCompound: Compound = None,
         edgeDetail: EdgeDetail = None,
-        helpers: list = [Compound],
+        helpers: List[Compound] = None,
         network: nx.DiGraph = None,
         networkUnknowns: list = None,
         should_align: bool = True,
@@ -604,8 +606,11 @@ class ModiFinder:
                 matched_peaks = []
             else:
                 matched_peaks = edgeDetail.get_matches_pairs()
+
+        s1 = self.network.nodes[id1]["compound"].spectrum
+        s2 = self.network.nodes[id2]["compound"].spectrum
         
-        return mf_vis.draw_alignment([self.network.nodes[id1]["compound"].spectrum, self.network.nodes[id2]["compound"].spectrum], [matched_peaks], **kwargs)
+        return mf_vis.draw_alignment([s1, s2], [matched_peaks], **kwargs)
         
 
     def _get_unknown(self):
