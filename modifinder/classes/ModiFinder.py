@@ -43,7 +43,7 @@ class ModiFinder:
     network : nx.DiGraph
         A networkx graph object with the nodes are identified by the compound ids and the "compound"
         attibute of a node is a Compound object. The edges are the relationships between the compounds
-        and the "edgedetail" attribute of an edge is an EdgeDetail object.
+        and the "edgeDetail" attribute of an edge is an EdgeDetail object.
 
     unknowns : list
         A list of compound ids that are unknown in the network.
@@ -104,7 +104,7 @@ class ModiFinder:
         network : nx.Graph (if passed, then Use Case 2 is used, if None, then Use Case 1 is used)
             A networkx graph object with the nodes are identified by the compound ids and the "compound"
             attibute of a node is a *Compound* object. The edges are the relationships between the compounds
-            and the "edgedetail" attribute of an edge is an *EdgeDetail* object.
+            and the "edgeDetail" attribute of an edge is an *EdgeDetail* object.
 
         networkUnknowns : list (ignored in Use Case 1, optional in Use Case 2)
             A list of compound ids that are unknown in the network, if not passed, the unknowns will be driven from 'is_known' attribute
@@ -203,6 +203,7 @@ class ModiFinder:
             
         if should_annotate:
             self.re_annotate(self.annotationEngine, **kwargs)
+
     def get_result(self):
         """
         Get the result of the ModiFinder object.
@@ -292,6 +293,7 @@ class ModiFinder:
                 self.network.nodes[smaller]["compound"].id,
                 self.network.nodes[larger]["compound"].id,
                 **kwargs)
+            
         self.update_edge(smaller, larger, edgeDetail, **kwargs)
     
     def re_align(self, alignmentEngine: AlignmentEngine, **kwargs):
@@ -384,7 +386,7 @@ class ModiFinder:
             self.network.add_edge(u, v, edgeDetail=None)
         
         if edgeDetail:
-            self.network[u][v]["edgedetail"] = edgeDetail
+            self.network[u][v]["edgeDetail"] = edgeDetail
         else:
             if not u.spectrum.precursor_mz <= v.spectrum.precursor_mz:
                 raise ValueError(
@@ -392,13 +394,13 @@ class ModiFinder:
                 )
             else:
                 raise NotImplementedError("EdgeDetail must be provided to update the edge")
-                self.network[u][v]["edgedetail"] = EdgeDetail()
+                self.network[u][v]["edgeDetail"] = EdgeDetail()
                 
 
-        # update the key in the edgedetail if passed in kwargs
-        for key in self.network[u][v]["edgedetail"].__dict__:
+        # update the key in the edgeDetail if passed in kwargs
+        for key in self.network[u][v]["edgeDetail"].__dict__:
             if key in kwargs:
-                setattr(self.network[u][v]["edgedetail"], key, kwargs[key])
+                setattr(self.network[u][v]["edgeDetail"], key, kwargs[key])
                 
     
     def add_neighbor(self, compound: Compound, neighbor: str, edgeDetail: EdgeDetail = None, **kwargs):
@@ -551,9 +553,9 @@ class ModiFinder:
         """
         
         if self.network.has_edge(id1, id2):
-            return self.network[id1][id2]["edgedetail"]
+            return self.network[id1][id2]["edgeDetail"]
         elif self.network.has_edge(id2, id1):
-            edge_detail = self.network[id2][id1]["edgedetail"]
+            edge_detail = self.network[id2][id1]["edgeDetail"]
             new_edge_detail = edge_detail.copy()
             new_edge_detail.reverse_match()
             return new_edge_detail
@@ -593,7 +595,7 @@ class ModiFinder:
             if not self.network.has_edge(id2, id1):
                 raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
             else:
-                edgeDetail = self.network[id2][id1]["edgedetail"]
+                edgeDetail = self.network[id2][id1]["edgeDetail"]
                 edgeDetailCopy = edgeDetail.copy()
                 edgeDetailCopy.reverse_match()
                 if edgeDetail is None:
@@ -601,7 +603,7 @@ class ModiFinder:
                 else:
                     matched_peaks = edgeDetailCopy.get_matches_pairs()
         else:
-            edgeDetail = self.network[id1][id2]["edgedetail"]
+            edgeDetail = self.network[id1][id2]["edgeDetail"]
             if edgeDetail is None:
                 matched_peaks = []
             else:

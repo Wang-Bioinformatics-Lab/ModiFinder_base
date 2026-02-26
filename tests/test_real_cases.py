@@ -159,9 +159,9 @@ class TestUSICase2(unittest.TestCase):
         kid = self.known.id
 
         if self.mf.network.has_edge(uid, kid):
-            orig_edge = self.mf.network[uid][kid]["edgedetail"]
+            orig_edge = self.mf.network[uid][kid]["edgeDetail"]
         else:
-            orig_edge = self.mf.network[kid][uid]["edgedetail"]
+            orig_edge = self.mf.network[kid][uid]["edgeDetail"]
 
         orig_first = [m.first_peak_mz for m in orig_edge.matches]
         orig_second = [m.second_peak_mz for m in orig_edge.matches]

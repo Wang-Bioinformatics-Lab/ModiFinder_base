@@ -6,19 +6,19 @@ class TestIsShifted(unittest.TestCase):
     def __init__(self, methodName = "runTest"):
         super().__init__(methodName)
         self.positive_spectrums = []
-        self.spectrums.append(Spectrum(mz = [100, 200, 300], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
-        self.spectrums.append(Spectrum(mz = [100, 199, 300], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
-        self.spectrums.append(Spectrum(mz = [99, 200, 301], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
-        self.spectrums.append(Spectrum(mz = [100, 200, 299], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
+        self.positive_spectrums.append(Spectrum(mz = [100, 200, 300], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
+        self.positive_spectrums.append(Spectrum(mz = [100, 199, 300], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
+        self.positive_spectrums.append(Spectrum(mz = [99, 200, 301], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
+        self.positive_spectrums.append(Spectrum(mz = [100, 200, 299], intensity = [1, 2, 3], adduct = "[M+H]+", precursor_mz = 1000))
         
         self.negative_spectrums = []
         h = 100 - 2 * 1.0078250321
         w = 200 - 2 * 1.0078250321
         t = 300 - 2 * 1.0078250321
-        self.spectrums.append(Spectrum(mz = [h, w, t], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
-        self.spectrums.append(Spectrum(mz = [h, w - 1, t], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
-        self.spectrums.append(Spectrum(mz = [h - 1, w, t + 1], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
-        self.spectrums.append(Spectrum(mz = [h, w, t - 1], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
+        self.negative_spectrums.append(Spectrum(mz = [h, w, t], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
+        self.negative_spectrums.append(Spectrum(mz = [h, w - 1, t], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
+        self.negative_spectrums.append(Spectrum(mz = [h - 1, w, t + 1], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
+        self.negative_spectrums.append(Spectrum(mz = [h, w, t - 1], intensity = [1, 2, 3], adduct = "[M-H]-", precursor_mz = 1000))
         
     
     def refine_consensus(self):

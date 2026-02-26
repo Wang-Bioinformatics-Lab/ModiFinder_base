@@ -63,7 +63,8 @@ class TestConvert(unittest.TestCase):
             adduct=adduct,
             smiles=smiles,
             name=name,
-            id="CCMSLIB00005435812"
+            id="CCMSLIB00005435812",
+            create_time=caffeine_data.data["create_time"]
         )
 
         # check for additional argument create_time to exist here

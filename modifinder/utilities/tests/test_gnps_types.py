@@ -4,10 +4,11 @@ from modifinder.utilities.gnps_types import (
     convert_to_SpectrumTuple,
     convert_to_SpectrumTuple_seprated,
     convert_to_universal_key,
-    parse_data_to_universal,
     Convert_SpectrumTuple_to_peaks,
     SpectrumTuple
 )
+
+from modifinder.utilities.general_utils import parse_data_to_universal
 
 class TestGNPSTypes(unittest.TestCase):
 

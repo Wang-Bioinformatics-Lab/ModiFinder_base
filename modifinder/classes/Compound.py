@@ -1,5 +1,7 @@
 
 
+import sys
+
 import modifinder.utilities.general_utils as general_utils
 from modifinder.utilities.mol_utils import _get_molecule
 import rdkit.Chem.rdMolDescriptors as rdMolDescriptors
@@ -14,6 +16,7 @@ from modifinder.classes.Spectrum import Spectrum
 from modifinder.classes.StructureMeta import StructureMeta
 from .. import convert
 
+# TODO: Move to Spectrum.py
 def _filter_peaks_by_precursor_mz(peaks:List[Tuple[float, float]], precursor_mz:float)->List[Tuple[float, float]]:
     """Removes peaks that are higher than 0.99 * precursor_mz so only fragments remain in the spectrum.
 
@@ -27,7 +30,15 @@ def _filter_peaks_by_precursor_mz(peaks:List[Tuple[float, float]], precursor_mz:
     Returns
     -------
     """
-    filtered_peaks = [peak for peak in peaks if peak[0] < 0.99 * precursor_mz]
+    precursor_mz = float(precursor_mz)
+
+    # Ensure each peak is a tuple and m/z is a float
+    filtered_peaks = []
+    for peak in peaks:
+        mz = float(peak[0])
+        intensity = float(peak[1])
+        if mz < 0.99 * precursor_mz:
+            filtered_peaks.append((mz, intensity))
     return filtered_peaks
 
 
@@ -143,6 +154,10 @@ class Compound:
         if self.name is None:
             self.name = lower_kwargs.get('compound_name', None)
         self.additional_attributes = {}
+        # Add kwargs to additional attributes
+        for key, value in lower_kwargs.items():
+            if key not in ['id', 'compound_name']:
+                self.additional_attributes[key] = value
 
     @property
     def spectrum(self):
@@ -172,7 +187,12 @@ class Compound:
         """
         return self._exact_mass
     
-    
+    def __getattr__(self, name):
+        if 'additional_attributes' in self.__dict__:
+            if name in self.__dict__['additional_attributes']:
+                return self.__dict__['additional_attributes'][name]
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
     def clear(self):
         """Clear the compound data and reset all the attributes to None"""
         self.structure = None

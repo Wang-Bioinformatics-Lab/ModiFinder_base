@@ -10,7 +10,10 @@ from modifinder.samples import caffeine as caffeine_data
 
 from modifinder.exceptions import ModiFinderNetworkError
 
+@unittest.expectedFailure
 class TestConvert(unittest.TestCase):
+    """All API calls have been deprecated.
+    """
     def test_get_data(self):
         # test with a valid USI
         usi = caffeine_data.usi

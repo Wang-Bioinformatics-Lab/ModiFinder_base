@@ -180,10 +180,29 @@ def to_spectrum(data = None, use_object=None, needs_parse = True, **kwargs):
         except Exception as err:
             raise ModiFinderError("Input data is not a valid list. " + str(err)) from err
         
+    if isinstance(data, _get_compound_class()):
+        new_data = dict()
+
+        new_data["mz"] = [mzk / 1e6 for mzk in data.spectrum.mz_key]
+        new_data["intensity"] = data.spectrum.intensity
+        # Deep copy all other attrs
+        for key, value in data.spectrum.__dict__.items():
+            if key not in ["mz_key", "intensity"]:
+                new_data[key] = deepcopy(value)
+
+        Spectrum = _get_spectrum_class()
+        if use_object:
+            spectrum = use_object
+            spectrum.clear()
+            spectrum.update(**new_data)
+        else:
+            spectrum = Spectrum(**new_data)
+        return spectrum
+        
     if isinstance(data, _get_spectrum_class()):
         return deepcopy(data)
     
-    raise ModiFinderError("Input data is not a valid object.")
+    raise ModiFinderError(f"Input data {data} of type {type(data)} is not a valid object.")
 
 
     
