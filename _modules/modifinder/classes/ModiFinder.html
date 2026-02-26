@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.classes.ModiFinder &mdash; ModiFinder 0.1.dev1+gfa2380264 documentation</title>
+  <title>modifinder.classes.ModiFinder &mdash; ModiFinder 0.1.dev1+gb0b2b7a3e documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=114fc3a8"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=972efd25"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -79,6 +79,8 @@
 <span class="sd">This class Builds and maintains a network of compounds where the nodes are compounds (known and unknown)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span> <span class="k">as</span> <span class="n">convert</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.classes.Compound</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">modifinder.classes.EdgeDetail</span><span class="w"> </span><span class="kn">import</span> <span class="n">EdgeDetail</span><span class="p">,</span> <span class="n">MatchType</span>
@@ -114,7 +116,7 @@
 <span class="sd">    network : nx.DiGraph</span>
 <span class="sd">        A networkx graph object with the nodes are identified by the compound ids and the &quot;compound&quot;</span>
 <span class="sd">        attibute of a node is a Compound object. The edges are the relationships between the compounds</span>
-<span class="sd">        and the &quot;edgedetail&quot; attribute of an edge is an EdgeDetail object.</span>
+<span class="sd">        and the &quot;edgeDetail&quot; attribute of an edge is an EdgeDetail object.</span>
 
 <span class="sd">    unknowns : list</span>
 <span class="sd">        A list of compound ids that are unknown in the network.</span>
@@ -137,7 +139,7 @@
         <span class="n">knownCompound</span><span class="p">:</span> <span class="n">Compound</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">unknownCompound</span><span class="p">:</span> <span class="n">Compound</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">edgeDetail</span><span class="p">:</span> <span class="n">EdgeDetail</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">helpers</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="n">Compound</span><span class="p">],</span>
+        <span class="n">helpers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Compound</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">network</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">networkUnknowns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">should_align</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -175,7 +177,7 @@
 <span class="sd">        network : nx.Graph (if passed, then Use Case 2 is used, if None, then Use Case 1 is used)</span>
 <span class="sd">            A networkx graph object with the nodes are identified by the compound ids and the &quot;compound&quot;</span>
 <span class="sd">            attibute of a node is a *Compound* object. The edges are the relationships between the compounds</span>
-<span class="sd">            and the &quot;edgedetail&quot; attribute of an edge is an *EdgeDetail* object.</span>
+<span class="sd">            and the &quot;edgeDetail&quot; attribute of an edge is an *EdgeDetail* object.</span>
 
 <span class="sd">        networkUnknowns : list (ignored in Use Case 1, optional in Use Case 2)</span>
 <span class="sd">            A list of compound ids that are unknown in the network, if not passed, the unknowns will be driven from &#39;is_known&#39; attribute</span>
@@ -274,6 +276,7 @@
             
         <span class="k">if</span> <span class="n">should_annotate</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">re_annotate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotationEngine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
 <div class="viewcode-block" id="ModiFinder.get_result"><a class="viewcode-back" href="../../../modifinder/classes/classes.ModiFinder.html#modifinder.classes.ModiFinder.get_result">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the result of the ModiFinder object.</span>
@@ -363,6 +366,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">smaller</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">larger</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            
         <span class="bp">self</span><span class="o">.</span><span class="n">update_edge</span><span class="p">(</span><span class="n">smaller</span><span class="p">,</span> <span class="n">larger</span><span class="p">,</span> <span class="n">edgeDetail</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="ModiFinder.re_align"><a class="viewcode-back" href="../../../modifinder/classes/classes.ModiFinder.html#modifinder.classes.ModiFinder.re_align">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">re_align</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alignmentEngine</span><span class="p">:</span> <span class="n">AlignmentEngine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -455,7 +459,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">edgeDetail</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">edgeDetail</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edgeDetail</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edgeDetail</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">u</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">precursor_mz</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -463,13 +467,13 @@
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;EdgeDetail must be provided to update the edge&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeDetail</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeDetail</span><span class="p">()</span>
                 
 
-        <span class="c1"># update the key in the edgedetail if passed in kwargs</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="c1"># update the key in the edgeDetail if passed in kwargs</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">],</span> <span class="n">key</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span></div>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">],</span> <span class="n">key</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span></div>
                 
     
 <div class="viewcode-block" id="ModiFinder.add_neighbor"><a class="viewcode-back" href="../../../modifinder/classes/classes.ModiFinder.html#modifinder.classes.ModiFinder.add_neighbor">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_neighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compound</span><span class="p">:</span> <span class="n">Compound</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">edgeDetail</span><span class="p">:</span> <span class="n">EdgeDetail</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -622,9 +626,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">id1</span><span class="p">,</span> <span class="n">id2</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">id2</span><span class="p">,</span> <span class="n">id1</span><span class="p">):</span>
-            <span class="n">edge_detail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span>
+            <span class="n">edge_detail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
             <span class="n">new_edge_detail</span> <span class="o">=</span> <span class="n">edge_detail</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">new_edge_detail</span><span class="o">.</span><span class="n">reverse_match</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">new_edge_detail</span>
@@ -664,7 +668,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">id2</span><span class="p">,</span> <span class="n">id1</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compounds </span><span class="si">{</span><span class="n">id1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">id2</span><span class="si">}</span><span class="s2"> are not connected in the network&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span>
+                <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
                 <span class="n">edgeDetailCopy</span> <span class="o">=</span> <span class="n">edgeDetail</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">edgeDetailCopy</span><span class="o">.</span><span class="n">reverse_match</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">edgeDetail</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -672,13 +676,16 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">matched_peaks</span> <span class="o">=</span> <span class="n">edgeDetailCopy</span><span class="o">.</span><span class="n">get_matches_pairs</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;edgedetail&quot;</span><span class="p">]</span>
+            <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">edgeDetail</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">matched_peaks</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">matched_peaks</span> <span class="o">=</span> <span class="n">edgeDetail</span><span class="o">.</span><span class="n">get_matches_pairs</span><span class="p">()</span>
+
+        <span class="n">s1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span>
+        <span class="n">s2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span>
         
-        <span class="k">return</span> <span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_alignment</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;compound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spectrum</span><span class="p">],</span> <span class="p">[</span><span class="n">matched_peaks</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">mf_vis</span><span class="o">.</span><span class="n">draw_alignment</span><span class="p">([</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">],</span> <span class="p">[</span><span class="n">matched_peaks</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
         
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

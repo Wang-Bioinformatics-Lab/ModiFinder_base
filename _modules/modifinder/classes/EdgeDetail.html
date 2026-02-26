@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.classes.EdgeDetail &mdash; ModiFinder 0.1.dev1+gfa2380264 documentation</title>
+  <title>modifinder.classes.EdgeDetail &mdash; ModiFinder 0.1.dev1+gb0b2b7a3e documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=114fc3a8"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=972efd25"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -71,7 +71,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for modifinder.classes.EdgeDetail</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 
 <div class="viewcode-block" id="MatchType"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.MatchType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MatchType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -188,7 +189,7 @@
         <span class="k">return</span> <span class="n">EdgeDetail</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">number_of_modifications</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">match_score</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start_spectrum_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">end_spectrum_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start_compound_id</span><span class="p">,</span>
