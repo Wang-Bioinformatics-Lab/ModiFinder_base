@@ -3,54 +3,57 @@
 Case 1: Known compound (scan:12430) with SMILES + Modified compound (scan:5538).
 Case 2: Known compound (scan:1850) with SMILES + Modified compound (scan:1728).
          This is the typical dashboard use case.
+
+Spectrum data is stored as a JSON fixture in test_files/usi_test_spectra.json
+to avoid API calls during testing.
 """
 
 import unittest
-import requests
+import json
+import os
 import numpy as np
 
 from modifinder import Compound, ModiFinder
 
+FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "test_files", "usi_test_spectra.json")
 
-def _fetch_usi(usi: str) -> dict:
-    """Fetch spectrum data from a USI via the GNPS2 API."""
-    url = "https://metabolomics-usi.gnps2.org/json/"
-    r = requests.get(url, params={"usi1": usi}, timeout=30)
-    r.raise_for_status()
-    data = r.json()
-    spectrum = [tuple(p) for p in data["peaks"]]
+with open(FIXTURE_PATH) as f:
+    _FIXTURES = json.load(f)
+
+
+def _load_fixture(key: str) -> dict:
+    """Load spectrum data from the JSON fixture."""
+    data = _FIXTURES[key]
     return {
-        "spectrum": spectrum,
-        "precursor_mz": float(data["precursor_mz"]),
-        "precursor_charge": int(data.get("precursor_charge", 1) or 1),
+        "spectrum": [tuple(p) for p in data["spectrum"]],
+        "precursor_mz": data["precursor_mz"],
+        "precursor_charge": data["precursor_charge"],
     }
 
 
 class TestUSICase1(unittest.TestCase):
     """Known compound (scan:12430) with SMILES vs modified compound (scan:5538)."""
 
-    KNOWN_USI = "mzspec:GNPS2:TASK-1b5b94b4191d4223a5f57afb2aaaf0b0-nf_output/clustering/spectra_reformatted.mgf:scan:12430"
-    UNKNOWN_USI = "mzspec:GNPS2:TASK-1b5b94b4191d4223a5f57afb2aaaf0b0-nf_output/clustering/spectra_reformatted.mgf:scan:5538"
     KNOWN_SMILES = "CCC(C)(C)C(=O)O[C@H]1C[C@H](C=C2[C@H]1[C@H]([C@H](C=C2)C)CC[C@@H]3C[C@H](CC(=O)O3)O)C"
 
     @classmethod
     def setUpClass(cls):
-        known_data = _fetch_usi(cls.KNOWN_USI)
-        unknown_data = _fetch_usi(cls.UNKNOWN_USI)
+        known_data = _load_fixture("case1_known")
+        unknown_data = _load_fixture("case1_unknown")
         cls.known = Compound(
             spectrum=known_data["spectrum"],
             precursor_mz=known_data["precursor_mz"],
             precursor_charge=known_data["precursor_charge"],
             adduct="[M+H]1+",
             smiles=cls.KNOWN_SMILES,
-            id=cls.KNOWN_USI,
+            id="case1_known",
         )
         cls.unknown = Compound(
             spectrum=unknown_data["spectrum"],
             precursor_mz=unknown_data["precursor_mz"],
             precursor_charge=unknown_data["precursor_charge"],
             adduct="[M+H]1+",
-            id=cls.UNKNOWN_USI,
+            id="case1_unknown",
         )
         cls.mf = ModiFinder(
             knownCompound=cls.known,
@@ -90,28 +93,26 @@ class TestUSICase1(unittest.TestCase):
 class TestUSICase2(unittest.TestCase):
     """Known compound (scan:1850) with SMILES vs modified compound (scan:1728)."""
 
-    KNOWN_USI = "mzspec:GNPS2:TASK-f121ff43e4e2424ca719d85de44fbf19-nf_output/clustering/specs_ms.mgf:scan:1850"
-    UNKNOWN_USI = "mzspec:GNPS2:TASK-f121ff43e4e2424ca719d85de44fbf19-nf_output/clustering/specs_ms.mgf:scan:1728"
     KNOWN_SMILES = "CCCCCCCCCCCC=CC(=O)N(CCCCCNC(=O)CCC(=O)N(CCCCCNC(=O)C1COC(=N1)C2=CC=CC=C2O)O)O"
 
     @classmethod
     def setUpClass(cls):
-        known_data = _fetch_usi(cls.KNOWN_USI)
-        unknown_data = _fetch_usi(cls.UNKNOWN_USI)
+        known_data = _load_fixture("case2_known")
+        unknown_data = _load_fixture("case2_unknown")
         cls.known = Compound(
             spectrum=known_data["spectrum"],
             precursor_mz=known_data["precursor_mz"],
             precursor_charge=known_data["precursor_charge"],
             adduct="[M+H]1+",
             smiles=cls.KNOWN_SMILES,
-            id=cls.KNOWN_USI,
+            id="case2_known",
         )
         cls.unknown = Compound(
             spectrum=unknown_data["spectrum"],
             precursor_mz=unknown_data["precursor_mz"],
             precursor_charge=unknown_data["precursor_charge"],
             adduct="[M+H]1+",
-            id=cls.UNKNOWN_USI,
+            id="case2_unknown",
         )
         cls.mf = ModiFinder(
             knownCompound=cls.known,
