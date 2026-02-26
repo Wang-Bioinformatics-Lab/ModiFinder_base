@@ -148,11 +148,10 @@ class TestUSICase2(unittest.TestCase):
             f"Predicted site {predicted_site} is not on the alkyl tail (atoms 0-9)",
         )
 
-    @unittest.expectedFailure
     def test_get_edge_detail_no_side_effect(self):
-        """Calling get_edge_detail should not mutate the original edge matches.
+        """Previously, calling get_edge_detail should not mutate the original edge matches.
 
-        Known bug: EdgeDetail.copy() uses shallow list copy, so reverse_match()
+        Bug description: EdgeDetail.copy() used a shallow copy of self.matches, so reverse_match()
         on the copy mutates the original Match objects.
         """
         uid = self.unknown.id
