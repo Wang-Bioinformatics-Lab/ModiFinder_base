@@ -552,17 +552,24 @@ class ModiFinder:
         ValueError
             If the compounds are not connected in the network.
         """
-        
+        edge_detail = None
+
         if self.network.has_edge(id1, id2):
-            return self.network[id1][id2]["edgeDetail"]
+            edge_detail = self.network[id1][id2]["edgeDetail"]
         elif self.network.has_edge(id2, id1):
             edge_detail = self.network[id2][id1]["edgeDetail"]
             new_edge_detail = deepcopy(edge_detail)
-            new_edge_detail.reverse_edge()
-            return new_edge_detail
-        else:
+            new_edge_detail = new_edge_detail.reverse_edge()
+            edge_detail = new_edge_detail
+        
+
+        if edge_detail is None:
             raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
         
+        if not (edge_detail.start_compound_id == id1 or edge_detail.end_compound_id == id2):
+            raise ValueError(f"Edge detail does not contain the correct compound ids.\nExpected ({id1}, {id2}), got ({edge_detail.start_compound_id}, {edge_detail.end_compound_id})")
+
+        return edge_detail
         
     
     
@@ -598,7 +605,7 @@ class ModiFinder:
             else:
                 edgeDetail = self.network[id2][id1]["edgeDetail"]
                 edgeDetailCopy = deepcopy(edgeDetail)
-                edgeDetailCopy.reverse_edge()
+                edgeDetailCopy = edgeDetailCopy.reverse_edge()
                 if edgeDetail is None:
                     matched_peaks = []
                 else:
