@@ -6,6 +6,7 @@ The object can be used to get information about unknown compounds in the network
 This class Builds and maintains a network of compounds where the nodes are compounds (known and unknown)
 """
 
+from copy import deepcopy
 from typing import List
 
 from .. import convert as convert
@@ -556,8 +557,8 @@ class ModiFinder:
             return self.network[id1][id2]["edgeDetail"]
         elif self.network.has_edge(id2, id1):
             edge_detail = self.network[id2][id1]["edgeDetail"]
-            new_edge_detail = edge_detail.copy()
-            new_edge_detail.reverse_match()
+            new_edge_detail = deepcopy(edge_detail)
+            new_edge_detail.reverse_edge()
             return new_edge_detail
         else:
             raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
@@ -596,8 +597,8 @@ class ModiFinder:
                 raise ValueError(f"Compounds {id1} and {id2} are not connected in the network")
             else:
                 edgeDetail = self.network[id2][id1]["edgeDetail"]
-                edgeDetailCopy = edgeDetail.copy()
-                edgeDetailCopy.reverse_match()
+                edgeDetailCopy = deepcopy(edgeDetail)
+                edgeDetailCopy.reverse_edge()
                 if edgeDetail is None:
                     matched_peaks = []
                 else:

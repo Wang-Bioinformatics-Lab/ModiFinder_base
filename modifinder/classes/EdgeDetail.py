@@ -94,15 +94,20 @@ class EdgeDetail:
     def __str__(self):
         return f"EdgeDetail({self.number_of_modifications}, {self.match_score}, {self.matches})"
     
-    def reverse_match(self):
+    def reverse_edge(self):
         """
-        Reverse the matches order in the EdgeDetail object
+        Reverse an edge details in the network.
         
         This is useful when the reversed matches are needed from the edge in the network.
-        first_peak_mz and second_peak_mz are swapped in the matches.
+        first_peak_mz and second_peak_mz are swapped in the matches, and start and end spectrum and compound ids are also swapped.
         """
-        for match in self.matches:
+        new_obj = deepcopy(self)
+
+        for match in new_obj.matches:
             match.first_peak_mz, match.second_peak_mz = match.second_peak_mz, match.first_peak_mz
+        new_obj.start_spectrum_id, new_obj.end_spectrum_id = new_obj.end_spectrum_id, new_obj.start_spectrum_id
+        new_obj.start_compound_id, new_obj.end_compound_id = new_obj.end_compound_id, new_obj.start_compound_id
+        return new_obj
     
     def copy(self):
         """
