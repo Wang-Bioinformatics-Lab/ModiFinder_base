@@ -136,17 +136,29 @@ class TestUSICase2(unittest.TestCase):
         self.assertAlmostEqual(np.sum(scores), 1.0, places=5)
         self.assertTrue(np.all(scores >= 0))
 
-    def test_top_prediction_on_tail(self):
+    def test_tail_high_probability(self):
         """The modification is on the alkyl tail (atoms 0-9).
-        The top predicted atom should be in that region."""
+        Tail atoms should have high probability and non-tail atoms should have low probability."""
         scores = self.mf.generate_probabilities()
-        predicted_site = int(np.argmax(scores))
         tail_atoms = list(range(0, 10))
-        self.assertIn(
-            predicted_site,
-            tail_atoms,
-            f"Predicted site {predicted_site} is not on the alkyl tail (atoms 0-9)",
-        )
+        non_tail_atoms = list(range(10, len(scores)))
+
+        tail_sum = sum(scores[i] for i in tail_atoms)
+        tail_mean = np.mean([scores[i] for i in tail_atoms])
+        non_tail_mean = np.mean([scores[i] for i in non_tail_atoms])
+
+        # Tail should hold the majority of probability mass
+        self.assertGreater(tail_sum, 0.5,
+            f"Tail probability sum {tail_sum:.4f} should be > 0.5")
+
+        # Tail mean should be significantly higher than non-tail mean
+        self.assertGreater(tail_mean, non_tail_mean * 3,
+            f"Tail mean {tail_mean:.4f} should be much higher than non-tail mean {non_tail_mean:.4f}")
+
+        # Every non-tail atom should have low probability
+        for i in non_tail_atoms:
+            self.assertLess(scores[i], 0.03,
+                f"Non-tail atom {i} has unexpectedly high probability {scores[i]:.4f}")
 
     def test_get_edge_detail_no_side_effect(self):
         """Previously, calling get_edge_detail should not mutate the original edge matches.
