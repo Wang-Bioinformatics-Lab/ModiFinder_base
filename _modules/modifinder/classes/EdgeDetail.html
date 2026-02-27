@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.classes.EdgeDetail &mdash; ModiFinder 0.1.dev1+gb0b2b7a3e documentation</title>
+  <title>modifinder.classes.EdgeDetail &mdash; ModiFinder 0.1.dev1+g5918489fb documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=972efd25"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=685b676b"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -167,15 +167,20 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;EdgeDetail(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_modifications</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">match_score</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="si">}</span><span class="s2">)&quot;</span>
     
-<div class="viewcode-block" id="EdgeDetail.reverse_match"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail.reverse_match">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reverse_match</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EdgeDetail.reverse_edge"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail.reverse_edge">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reverse_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reverse the matches order in the EdgeDetail object</span>
+<span class="sd">        Reverse an edge details in the network.</span>
 <span class="sd">        </span>
 <span class="sd">        This is useful when the reversed matches are needed from the edge in the network.</span>
-<span class="sd">        first_peak_mz and second_peak_mz are swapped in the matches.</span>
+<span class="sd">        first_peak_mz and second_peak_mz are swapped in the matches, and start and end spectrum and compound ids are also swapped.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">:</span>
-            <span class="k">match</span><span class="o">.</span><span class="n">first_peak_mz</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_mz</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_mz</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">first_peak_mz</span></div>
+        <span class="n">new_obj</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">matches</span><span class="p">:</span>
+            <span class="k">match</span><span class="o">.</span><span class="n">first_peak_mz</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_mz</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">second_peak_mz</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">first_peak_mz</span>
+        <span class="n">new_obj</span><span class="o">.</span><span class="n">start_spectrum_id</span><span class="p">,</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">end_spectrum_id</span> <span class="o">=</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">end_spectrum_id</span><span class="p">,</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">start_spectrum_id</span>
+        <span class="n">new_obj</span><span class="o">.</span><span class="n">start_compound_id</span><span class="p">,</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">end_compound_id</span> <span class="o">=</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">end_compound_id</span><span class="p">,</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">start_compound_id</span>
+        <span class="k">return</span> <span class="n">new_obj</span></div>
     
 <div class="viewcode-block" id="EdgeDetail.copy"><a class="viewcode-back" href="../../../modifinder/classes/classes.EdgeDetail.html#modifinder.classes.EdgeDetail.EdgeDetail.copy">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
