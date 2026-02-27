@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modifinder.classes.ModiFinder &mdash; ModiFinder 0.1.dev1+g322b7b05e documentation</title>
+  <title>modifinder.classes.ModiFinder &mdash; ModiFinder 0.1.dev1+gcb9fbe7fb documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=7542973e"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=1047303e"></script>
       <script src="../../../_static/doctools.js?v=888ff710"></script>
       <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -625,17 +625,24 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the compounds are not connected in the network.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="n">edge_detail</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">id1</span><span class="p">,</span> <span class="n">id2</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
+            <span class="n">edge_detail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id1</span><span class="p">][</span><span class="n">id2</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">id2</span><span class="p">,</span> <span class="n">id1</span><span class="p">):</span>
             <span class="n">edge_detail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
             <span class="n">new_edge_detail</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">edge_detail</span><span class="p">)</span>
-            <span class="n">new_edge_detail</span><span class="o">.</span><span class="n">reverse_edge</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">new_edge_detail</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compounds </span><span class="si">{</span><span class="n">id1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">id2</span><span class="si">}</span><span class="s2"> are not connected in the network&quot;</span><span class="p">)</span></div>
+            <span class="n">new_edge_detail</span> <span class="o">=</span> <span class="n">new_edge_detail</span><span class="o">.</span><span class="n">reverse_edge</span><span class="p">()</span>
+            <span class="n">edge_detail</span> <span class="o">=</span> <span class="n">new_edge_detail</span>
         
+
+        <span class="k">if</span> <span class="n">edge_detail</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compounds </span><span class="si">{</span><span class="n">id1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">id2</span><span class="si">}</span><span class="s2"> are not connected in the network&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">edge_detail</span><span class="o">.</span><span class="n">start_compound_id</span> <span class="o">==</span> <span class="n">id1</span> <span class="ow">or</span> <span class="n">edge_detail</span><span class="o">.</span><span class="n">end_compound_id</span> <span class="o">==</span> <span class="n">id2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Edge detail does not contain the correct compound ids.</span><span class="se">\n</span><span class="s2">Expected (</span><span class="si">{</span><span class="n">id1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">id2</span><span class="si">}</span><span class="s2">), got (</span><span class="si">{</span><span class="n">edge_detail</span><span class="o">.</span><span class="n">start_compound_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">edge_detail</span><span class="o">.</span><span class="n">end_compound_id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">edge_detail</span></div>
         
     
     
@@ -671,7 +678,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">edgeDetail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">[</span><span class="n">id2</span><span class="p">][</span><span class="n">id1</span><span class="p">][</span><span class="s2">&quot;edgeDetail&quot;</span><span class="p">]</span>
                 <span class="n">edgeDetailCopy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">edgeDetail</span><span class="p">)</span>
-                <span class="n">edgeDetailCopy</span><span class="o">.</span><span class="n">reverse_edge</span><span class="p">()</span>
+                <span class="n">edgeDetailCopy</span> <span class="o">=</span> <span class="n">edgeDetailCopy</span><span class="o">.</span><span class="n">reverse_edge</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">edgeDetail</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">matched_peaks</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">else</span><span class="p">:</span>
