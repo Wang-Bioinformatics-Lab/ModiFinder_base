@@ -185,6 +185,84 @@ class TestUSICase2(unittest.TestCase):
         self.assertEqual(orig_first, after_first, "first_peak_mz was mutated by get_edge_detail")
         self.assertEqual(orig_second, after_second, "second_peak_mz was mutated by get_edge_detail")
 
+    def test_get_result_returns_valid_dicts(self):
+        """get_result() should return (peaksObj, fragmentsObj) with correct keys and types."""
+        peaksObj, fragmentsObj = self.mf.get_result()
+
+        # peaksObj should be a dict with the expected keys
+        self.assertIsInstance(peaksObj, dict)
+        expected_peaks_keys = [
+            "main_compound_peaks", "mod_compound_peaks", "matched_peaks",
+            "main_precursor_mz", "mod_precursor_mz",
+        ]
+        for key in expected_peaks_keys:
+            self.assertIn(key, peaksObj, f"peaksObj missing key: {key}")
+
+        # fragmentsObj should be a dict with the expected keys
+        self.assertIsInstance(fragmentsObj, dict)
+        expected_frags_keys = ["frags_map", "structure", "peaks", "Precursor_MZ"]
+        for key in expected_frags_keys:
+            self.assertIn(key, fragmentsObj, f"fragmentsObj missing key: {key}")
+
+    def test_get_result_peaks_content(self):
+        """get_result() peaks lists should be non-empty tuples of length 2."""
+        peaksObj, _ = self.mf.get_result()
+
+        self.assertGreater(len(peaksObj["main_compound_peaks"]), 0)
+        self.assertGreater(len(peaksObj["mod_compound_peaks"]), 0)
+
+        # Each peak should be a (mz, intensity) pair
+        for peak in peaksObj["main_compound_peaks"]:
+            self.assertEqual(len(peak), 2)
+        for peak in peaksObj["mod_compound_peaks"]:
+            self.assertEqual(len(peak), 2)
+
+    def test_get_result_precursor_mz(self):
+        """get_result() precursor_mz values should match the compounds."""
+        peaksObj, fragmentsObj = self.mf.get_result()
+
+        self.assertAlmostEqual(peaksObj["main_precursor_mz"],
+                               self.known.spectrum.precursor_mz)
+        self.assertAlmostEqual(peaksObj["mod_precursor_mz"],
+                               self.unknown.spectrum.precursor_mz)
+        self.assertAlmostEqual(fragmentsObj["Precursor_MZ"],
+                               self.known.spectrum.precursor_mz)
+
+    def test_get_result_fragments_structure(self):
+        """fragmentsObj structure and peaks should reference the known compound."""
+        from rdkit import Chem
+        peaksObj, fragmentsObj = self.mf.get_result()
+
+        # Compare by SMILES since RDKit Mol objects may be copied internally
+        self.assertEqual(
+            Chem.MolToSmiles(fragmentsObj["structure"]),
+            Chem.MolToSmiles(self.known.structure),
+        )
+        self.assertEqual(fragmentsObj["peaks"], peaksObj["main_compound_peaks"])
+
+    def test_get_result_matched_peaks(self):
+        """get_result() matched_peaks should contain expected pairs (unknown_mz, known_mz)."""
+        peaksObj, _ = self.mf.get_result()
+        matched = peaksObj["matched_peaks"]
+
+        self.assertIsInstance(matched, list)
+        self.assertEqual(len(matched), 9)
+
+        expected_matched_peaks = [
+            (409304992, 313139007),
+            (308160003, 308160003),
+            (209190002, 113023002),
+            (310273986, 214106994),
+            (102091003, 102091003),
+            (84081001, 84080001),
+            (390165008, 390165985),
+            (201123001, 201123001),
+            (165102005, 165102005),
+        ]
+
+        self.assertEqual(matched, expected_matched_peaks,
+                         "matched_peaks do not match expected values")
+
 
 if __name__ == "__main__":
     unittest.main()
